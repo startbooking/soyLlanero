@@ -1,0 +1,51 @@
+# ----------------------------------------------------------------------
+# 1. FORZAR HTTPS (Fundamental para HSTS)
+# ----------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Redirigir HTTP a HTTPS (HSTS no sirve si el usuario entra por HTTP y no lo rediriges)
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Manejo de Rutas para React (SPA)
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 2. ENCABEZADOS DE SEGURIDAD (HSTS, CSP, XSS)
+# ----------------------------------------------------------------------
+<IfModule mod_headers.c>
+    # HSTS: Fuerza el uso de SSL por 1 año e incluye subdominios para el preload list
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    # CSP: Optimizado para Google Fonts y APIs externas
+    # He añadido 'https://*.google.com' y 'https://*.googleapis.com' por si usas mapas o analíticas.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com;"
+
+    # Evita que el sitio sea embebido en iFrames externos (previene Clickjacking)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Previene que el navegador intente adivinar el tipo de contenido (MIME Sniffing)
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Control de Referrer: No envía la URL completa a sitios externos por privacidad
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Protección XSS para navegadores antiguos
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Permite que la cámara/micro solo se use en tu dominio (opcional, muy seguro)
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 3. OPTIMIZACIÓN DE CARGA (Gzip y Caché)
+# ----------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
