@@ -68,7 +68,7 @@ const Index = () => {
         {renderSection()}
       </main>
       {activeSection === "home" && <Footer />}
-      <CookieConsent />
+      {/* <CookieConsent /> */}
       
     </div>
   );
