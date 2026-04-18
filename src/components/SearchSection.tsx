@@ -116,19 +116,19 @@ export const SearchSection = () => {
   return (
     <div className="space-y-1">
       <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-lg border-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative md:col-span-2">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 " />
             <Input
               placeholder="¿Qué estás buscando? (hoteles, restaurantes, experiencias...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 border border-black-700"
+              className="pl-10 border border-sabana-700"
             />
           </div>
 
           <Select value={category} onValueChange={setCategory} >
-            <SelectTrigger className="border border-black-700">
+            <SelectTrigger className="border border-sabana-700">
               <SelectValue placeholder="Categoría" />
             </SelectTrigger>
             <SelectContent>
@@ -140,16 +140,16 @@ export const SearchSection = () => {
               <SelectItem value="Compras">Compras</SelectItem>
             </SelectContent>
           </Select>
+          <Button 
+            className="w-full bg-white/70 hover:bg-sabana/40 text-black-700 border border-black-500"
+            onClick={handleSearch}
+            disabled={isSearching}
+          >
+            <Search className="w-4 h-4 mr-2" />
+            {isSearching ? "Buscando..." : "Buscar"}
+          </Button>
         </div>
 
-        <Button 
-          className="w-full mt-4 bg-white/70 hover:bg-primary/40 text-black-700 border border-black-500"
-          onClick={handleSearch}
-          disabled={isSearching}
-        >
-          <Search className="w-4 h-4 mr-2" />
-          {isSearching ? "Buscando..." : "Buscar"}
-        </Button>
       </Card>
 
       {/* Sección de Clientes VIP/Top Sponsors */}
@@ -211,7 +211,7 @@ export const SearchSection = () => {
       {/* Resultados de búsqueda */}
       {searchResults.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-2xl font-bold text-foreground">
+          <h3 className="text-2xl font-bold text-foreground px-4 py-8">
             Resultados de búsqueda ({searchResults.length})
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -220,7 +220,7 @@ export const SearchSection = () => {
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-foreground group-hover:text-primary/50 transition-colors">
+                      <CardTitle className="text-foreground group-hover:text-sabana/50 transition-colors">
                         {result.name}
                       </CardTitle>
                       <Badge variant="outline" className="mt-2">
@@ -256,8 +256,8 @@ export const SearchSection = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-bold text-black">{result.price}</span>
                     <div className="flex gap-2">
-                      <Button className="border border-black-500 bg-white hover:bg-primary/50 text-black-500" variant="outline" size="sm">Ver Detalles</Button>
-                      <Button className="border border-black-500 bg-white hover:bg-primary/50 text-black-500" size="sm">Reservar</Button>
+                      <Button className="border border-black-500 bg-sabana hover:bg-sabana/50 text-black-500" variant="outline" size="sm">Ver Detalles</Button>
+                      <Button className="border border-black-500 bg-sabana hover:bg-sabana/50 text-black-500" size="sm">Reservar</Button>
                     </div>
                   </div>
                 </CardContent>

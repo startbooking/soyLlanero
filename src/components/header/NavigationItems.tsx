@@ -83,8 +83,8 @@ export const NavigationItems = ({
                 size="sm"
                 onClick={() => toggleMenu(item.id)}
                 className={cn(
-                  "flex items-center gap-2 whitespace-nowrap hover:bg-primary/20",
-                  openMenuId === item.id && "bg-primary/20"
+                  "flex items-center gap-2 whitespace-nowrap hover:bg-llanero/20",
+                  openMenuId === item.id && "bg-llanero/20"
                 )}
               >
                 <item.icon className="w-4 h-4" />
@@ -104,7 +104,7 @@ export const NavigationItems = ({
                       <button
                         key={subItem.id}
                         onClick={() => handleSubItemClick(subItem.route)}
-                        className="w-full flex items-center gap-3 p-3 rounded-md hover:bg-primary/20 transition-colors text-left"
+                        className="w-full flex items-center gap-3 p-3 rounded-md hover:bg-llanero/20 transition-colors text-left"
                       >
                         <subItem.icon className="w-4 h-4 text-muted-foreground" />
                         <span className="font-medium text-sm">{subItem.label}</span>
@@ -119,7 +119,7 @@ export const NavigationItems = ({
               variant={activeSection === item.id ? "default" : "ghost"}
               size="sm"
               onClick={() => onNavigation(item)}
-              className="flex items-center gap-2 whitespace-nowrap bg-white text-black hover:bg-primary/20"
+              className="flex items-center gap-2 whitespace-nowrap bg-white text-black hover:bg-llanero/20"
             >
               <item.icon className="w-4 h-4" />
               {item.label}

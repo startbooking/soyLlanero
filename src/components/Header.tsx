@@ -94,7 +94,7 @@ export const Header = ({ activeSection, onSectionChange, language }: HeaderProps
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="flex items-center gap-2 hover:bg-primary/20"
+                    className="flex items-center gap-2 hover:bg-llanero/20"
                     onClick={handleLoginClick}
                   >
                     <LogIn className="w-4 h-4" />

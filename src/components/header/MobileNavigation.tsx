@@ -42,7 +42,7 @@ export const MobileNavigation = ({
         <Button
           variant="ghost"
           size="sm"
-          className="absolute left-0 z-10 bg-green-tenue backdrop-blur-sm hover:bg-green-200 shadow-sm h-8 w-8 p-0"
+          className="absolute left-0 z-10 bg-sabana-tenue backdrop-blur-sm hover:bg-sabana-200 shadow-sm h-8 w-8 p-0"
           onClick={() => scrollNavigation('left')}
         >
           <ChevronLeft className="w-4 h-4" />
@@ -62,7 +62,7 @@ export const MobileNavigation = ({
         <Button
           variant="ghost"
           size="sm"
-          className="absolute right-0 z-10 bg-green-tenue backdrop-blur-sm hover:bg-green-200 shadow-sm h-8 w-8 p-0"
+          className="absolute right-0 z-10 bg-sabana-tenue backdrop-blur-sm hover:bg-sabana-200 shadow-sm h-8 w-8 p-0"
           onClick={() => scrollNavigation('right')}
         >
           <ChevronRight className="w-4 h-4" />

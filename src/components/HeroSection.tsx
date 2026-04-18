@@ -36,11 +36,11 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
     <>
       <section className="relative min-h-[80vh] py-10 flex items-center justify-center overflow-hidden">
         {/* Fondo con gradiente */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-background to-accent/50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-sabana/50 via-background to-accent/50" />
 
         {/* Patrones decorativos */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-20 w-32 h-32 border-2 border-primary rounded-full animate-pulse" />
+          <div className="absolute top-20 left-20 w-32 h-32 border-2 border-sabana rounded-full animate-pulse" />
           <div className="absolute bottom-40 right-32 w-24 h-24 border-2 border-accent rounded-full animate-pulse" />
           <div className="absolute top-1/2 left-1/4 w-16 h-16 border-2 border-secondary rounded-full animate-pulse" />
         </div>
@@ -60,7 +60,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 animate-fade-in">
               {appTexts?.hero_title || t.hero.welcome}{" "}
             </h1>
-            <span className="text-xl md:text-2xl lg:text-3xl  bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-black-700">
+            <span className="text-xl md:text-2xl lg:text-3xl  bg-gradient-to-r from-sabana via-accent to-secondary bg-clip-text text-black-700">
               {appConfig?.app_name || "Plataforma Turismo SACTel"}
             </span>
 
@@ -103,13 +103,13 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="group p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300 hover:scale-105"
+                  className="group p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-sabana/50 transition-all duration-300 hover:scale-105"
                 >
                   <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-black/20 to-accent/20 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                    <feature.icon className="w-6 h-6 text-sabana" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {feature.title}
+                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-sabana transition-colors">
+                    {feature.title} xxxx
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {feature.description}
@@ -121,7 +121,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
         </div>
 
         {/* Elementos flotantes decorativos */}
-        <div className="absolute bottom-10 left-10 w-6 h-6 bg-primary/20 rounded-full animate-pulse float-animation" />
+        <div className="absolute bottom-10 left-10 w-6 h-6 bg-sabana/20 rounded-full animate-pulse float-animation" />
         <div
           className="absolute top-32 right-16 w-4 h-4 bg-accent/30 rounded-full animate-pulse float-animation"
           style={{ animationDelay: "1s" }}
@@ -131,13 +131,13 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
           style={{ animationDelay: "2s" }}
         />
       </section>
-            {/* Botones de acceso rápido */}
+      {/* Botones de acceso rápido */}
 
       <section className="container mx-auto px-4">
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             size="lg"
-            className="bg-white hover:bg-primary/50 text-black-500 border border-black-400"
+            className="bg-llanero hover:bg-llanero/50 text-black-500 border border-black-400"
             onClick={() => navigate("/points-of-interest")}
           >
             <MapPin className="w-5 h-5 mr-2" />
@@ -146,7 +146,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
           <Button
             size="lg"
             variant="outline"
-            className="bg-white hover:bg-primary/50 text-black-500 border border-black-400"
+            className="bg-llanero hover:bg-llanero/50 text-black-500 border border-black-400"
             onClick={() => navigate("/events")}
           >
             <Calendar className="w-5 h-5 mr-2" />
