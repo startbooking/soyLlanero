@@ -7,8 +7,8 @@
 
 export const API_CONFIG = {
   // URL base del backend
-  BASE_URL: 'https://soyllanero.com/apiRest',
-  // BASE_URL: 'http://backend.lan/meta',
+  /// BASE_URL: 'https://soyllanero.com/apiRest',
+  BASE_URL: 'http://backend.lan/meta',
   // BASE_URL: 'http://localhost:3000',
   
   // Endpoints principales

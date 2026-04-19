@@ -50,8 +50,8 @@ export const translations = {
       clearFilters: "Limpiar filtros"
     },
     sections: {
-      discover: "Descubre Villavicencio",
-      featured: "Empresas Destacadas",
+      discover: "Descubre El Llano",
+      featured: "Nuestros Hoteles",
       upcoming: "Próximos Eventos",
       experiences: "Experiencias Únicas",
       services: "Servicios Turísticos",
@@ -250,8 +250,8 @@ export const translations = {
       clearFilters: "Clear filters"
     },
     sections: {
-      discover: "Discover Villavicencio",
-      featured: "Featured Businesses",
+      discover: "Discover El Llano",
+      featured: "Featured Hotels",
       upcoming: "Upcoming Events",
       experiences: "Unique Experiences",
       services: "Tourism Services",
@@ -450,8 +450,8 @@ export const translations = {
       clearFilters: "Effacer les filtres"
     },
     sections: {
-      discover: "Découvrir Villavicencio",
-      featured: "Entreprises Vedettes",
+      discover: "Découvrir El Llano",
+      featured: "Hôtels en vedette",
       upcoming: "Événements à Venir",
       experiences: "Expériences Uniques",
       services: "Services Touristiques",

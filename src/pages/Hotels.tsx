@@ -62,7 +62,7 @@ const AccommodationCard = ({ item }: AccommodationCardProps) => {
           src={`/images/businnesses/${item.image}`} // Asumiendo que 'image' es una URL accesible
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-          onError={(e) => (e.currentTarget.src = 'placeholder-image.jpg')} // Fallback en caso de error de imagen
+          onError={(e) => (e.currentTarget.src = 'placeholder.svg')} // Fallback en caso de error de imagen
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute top-4 right-4 flex items-center bg-white/90 rounded-full px-2 py-1">
@@ -125,10 +125,12 @@ const Hotels = () => {
     fetchFn: dataService.getBusinesses
   });
 
+  console.log(featuredBusinesses);
+
   // Función para agrupar los negocios por type_category_id
   const groupedAccommodations = useMemo(() => {
     if (!featuredBusinesses || featuredBusinesses.length === 0) {
-      return { 1: [], 2: [], 3: [], 4: [] }; // Inicializar con arrays vacíos
+      return { 1: [], 2: [], 3: [], 4: [], 5: [] }; // Inicializar con arrays vacíos
     }
 
     const accommodationsMap: Record<number, BusinessAccommodation[]> = {
@@ -136,6 +138,7 @@ const Hotels = () => {
       2: [], // Glamping
       3: [], // Cabañas
       4: [], // Fincas
+      5: [], // Hostales
     };
 
     // Filtra solo los alojamientos (category_id === 1) y los agrupa
@@ -173,6 +176,8 @@ const Hotels = () => {
     { id: 2, value: "glamping", label: "Glamping" },
     { id: 3, value: "cabanas", label: "Cabañas" },
     { id: 4, value: "fincas", label: "Fincas" },
+    { id: 5, value: "hostales", label: "Hostales" },
+
   ];
 
   return (
@@ -192,7 +197,7 @@ const Hotels = () => {
           </div>
 
           <Tabs defaultValue="hoteles" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-primary/30">
+            <TabsList className="grid w-full grid-cols-5 bg-primary/30">
               {tabCategories.map(tab => (
                 <TabsTrigger key={tab.id} value={tab.value}>
                   {tab.label}

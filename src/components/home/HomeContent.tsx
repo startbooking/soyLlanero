@@ -44,7 +44,7 @@ export const HomeContent = ({ language }: HomeContentProps) => {
       <ExperiencesSection language={language} />
 
       {/* Sección de servicios */}
-      <ServicesSection language={language} />
+      {/* <ServicesSection language={language} /> */}
 
       {/* Sección de próximos eventos */}
       <UpcomingEventsSection language={language} />

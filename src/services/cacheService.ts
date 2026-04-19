@@ -7,7 +7,7 @@ interface CacheItem<T> {
 
 class CacheService {
   private cache = new Map<string, CacheItem<any>>();
-  private readonly DEFAULT_EXPIRY = 60 * 60 * 1000; // 1 hora en milisegundos
+  private readonly DEFAULT_EXPIRY = 1 * 60 * 1000; // 1 hora en milisegundos
 
   set<T>(key: string, data: T, expiry: number = this.DEFAULT_EXPIRY): void {
     const item: CacheItem<T> = {

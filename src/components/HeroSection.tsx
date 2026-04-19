@@ -32,6 +32,8 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
     },
   ];
 
+  console.log(appStats)
+
   return (
     <>
       <section className="relative min-h-[80vh] py-10 flex items-center justify-center overflow-hidden">
@@ -91,7 +93,8 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
                 <div className="flex items-center justify-center gap-1">
                   <Star className="w-5 h-5 text-yellow-500 fill-current" />
                   <span className="text-3xl font-bold text-text-black-700">
-                    {Number(appStats?.averageBusinnesses).toFixed(2)}
+                    {/* {Number(appStats?.averageBusinnesses).toFixed(2)} */}
+                    {Number(appStats?.averageBusinnesses ?? 5).toFixed(2)}
                   </span>
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -109,7 +112,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
                     <feature.icon className="w-6 h-6 text-sabana" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-sabana transition-colors">
-                    {feature.title} xxxx
+                    {feature.title}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {feature.description}
@@ -137,7 +140,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             size="lg"
-            className="bg-llanero hover:bg-llanero/50 text-black-500 border border-black-400"
+            className="bg-sabana hover:bg-sabana/50 text-black-500 border border-black-400"
             onClick={() => navigate("/points-of-interest")}
           >
             <MapPin className="w-5 h-5 mr-2" />
@@ -146,7 +149,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
           <Button
             size="lg"
             variant="outline"
-            className="bg-llanero hover:bg-llanero/50 text-black-500 border border-black-400"
+            className="bg-sabana hover:bg-sabana/50 text-black-500 border border-black-400"
             onClick={() => navigate("/events")}
           >
             <Calendar className="w-5 h-5 mr-2" />

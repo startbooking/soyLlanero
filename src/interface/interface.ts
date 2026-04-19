@@ -1,3 +1,9 @@
+export interface CategoryBussinesses {
+  id:number;
+  name:string;
+  category_id:number;
+}
+
 
 export interface Business {
   id: string;

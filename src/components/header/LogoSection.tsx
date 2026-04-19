@@ -8,7 +8,7 @@ interface LogoSectionProps {
 
 export const LogoSection = ({ onHomeClick }: LogoSectionProps) => {
   const { appConfig } = useAppConfig();
-  console.log(appConfig)
+  // console.log(appConfig)
   return (
     <div 
       className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
