@@ -118,11 +118,11 @@ export const Footer = () => {
                   "Plataforma  oficial del clúster de turismo de Villavicencio. Promoviendo el turismo sostenible y las empresas locales."}
               </p>
               <div className="flex gap-2">
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="sabana" className="text-xs">
                   <Star className="w-3 h-3 mr-1" />
                   120+ Empresas
                 </Badge>
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="sabana" className="text-xs">
                   25+ Eventos
                 </Badge>
               </div>

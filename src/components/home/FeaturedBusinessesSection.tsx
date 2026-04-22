@@ -15,8 +15,6 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
   const navigate = useNavigate();
   const { appTexts } = useAppConfig();
 
-  console.log(appTexts);
-
   const { data: featuredBusinesses, isLoading } = useCachedData<Business[]>({
     cacheKey: 'featured-businesses',
     fetchFn: dataService.getBusinesses

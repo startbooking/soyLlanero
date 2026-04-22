@@ -26,6 +26,10 @@ export interface Business {
   review_count?:number;
   type_category_id?:number;
   category_id:number;
+  website_url:string;
+  rnt:number;
+  check_in:string;
+  check_out:string;
 }
 
 export interface FeaturedBusiness {
@@ -71,6 +75,7 @@ export interface Experience {
   description: string;
   long_description:string;
   short_description:string;
+  experience:string;
 }
 
 export interface ServicesData {

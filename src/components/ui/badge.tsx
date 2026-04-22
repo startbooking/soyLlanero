@@ -8,6 +8,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
+        turismo:
+          "border-transparent bg-turismo text-turismo-foreground hover:bg-turismo/50 rounded-md",
+        sabana:
+          "border-transparent bg-sabana text-sabana-foreground hover:bg-sabana/50 rounded-md",
         default:
           "border-transparent bg-primary text-primary-foreground hover:bg-primary/80 rounded-md",
         secondary:

@@ -43,7 +43,7 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
         <div className="flex items-center gap-2 md:gap-6">
           <div>
             <a className="flex items-center gap-2 flex" href={`tel:${appConfig?.company_phone}`}>
-              <Phone className="w-4 h-4" />
+              <Phone className="w-5 h-5" />
               <span className="hidden md:inline">
                 {formattedPhone}
               </span>
@@ -52,7 +52,7 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
           <div>
             <a  className="flex items-center gap-2" href={`mail:${appConfig?.company_email}`}>
 
-            <Mail className="w-4 h-4" />
+            <Mail className="w-5 h-5" />
             <span className="hidden md:inline">
               {appConfig?.company_email}
             </span>
@@ -62,61 +62,62 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
 
         {/* Redes sociales e idiomas - Sin WhatsApp */}
         <div className="flex items-center gap-2 md:gap-4">
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="flex items-center gap-1">
             {appConfig?.facebook_url && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20"
+                className="h-8 w-8 p-2 text-black hover:bg-black/20 sr-only"
+                
                 onClick={() =>
                   openSocialMedia(
                     appConfig?.facebook_url
                   )
                 }
               >
-                <Facebook className="w-4 h-4" />
+                <Facebook className="w-5 h-5" />
               </Button>
             )}
             {appConfig?.instagram_url && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20"
+                className="h-8 w-8 p-0 text-black hover:bg-black/20 sr-only"
                 onClick={() =>
                   openSocialMedia(
                     appConfig?.instagram_url
                   )
                 }
               >
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-5 h-5" />
               </Button>
             )}
             {appConfig?.youtube_url && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20"
+                className="h-8 w-8 p-0 text-black hover:bg-black/20 sr-only"
                 onClick={() =>
                   openSocialMedia(
                     appConfig?.youtube_url
                   )
                 }
               >
-                <Youtube className="w-4 h-4" />
+                <Youtube className="w-5 h-5" />
               </Button>
             )}
             {appConfig?.linkedin_url && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20"
+                className="h-8 w-8 p-0 text-black hover:bg-black/20 sr-only"
                 onClick={() =>
                   openSocialMedia(
                     appConfig?.linkedin_url
                   )
                 }
               >
-                <Linkedin className="w-4 h-4" />
+                <Linkedin className="w-5 h-5" />
               </Button>
             )}
           </div>
@@ -126,11 +127,12 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-black hover:bg-black/20"
+                size="lg"
+                className="h-8 p-2 text-black hover:bg-black/20 sr-only"
+                aria-label="Abrir menú de opciones"
               >
-                <Languages className="w-4 h-4 mr-1" />
-                <span className="hidden md:inline">
+                <Languages className="w-5 h-5 mr-1" />
+                <span className="hidden md:inline sr-only">
                   {
                     languages.find((lang) => lang.code === currentLanguage)
                       ?.flag
@@ -143,7 +145,7 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
                 <DropdownMenuItem
                   key={language.code}
                   onClick={() => onLanguageChange(language.code)}
-                  className="cursor-pointer"
+                  className="h-8 p-2 cursor-pointer sr-only"
                 >
                   <span className="mr-2">{language.flag}</span>
                   {language.name}

@@ -23,8 +23,6 @@ const FeaturedBusinessDetail = () => {
     return <Navigate to="/404" replace />;
   }
 
-
-  // console.log(business)
   // Aseguramos que la navegación a teléfonos y correos use el método correcto.
   const handleCall = () => {
     window.location.href = `tel:${business.phone}`;
@@ -39,7 +37,7 @@ const FeaturedBusinessDetail = () => {
   };
 
   const handleReservation = () => {
-    console.log("Iniciar proceso de reserva para:", business.name);
+    // console.log("Iniciar proceso de reserva para:", business.name);
   };
 
   useEffect(() => {
@@ -54,12 +52,11 @@ const FeaturedBusinessDetail = () => {
       <main className="pt-24">
         <div className="container mx-auto px-4 relative">
           <Button
-            variant="ghost"
-            className="relative top-3 z-50 left-1 top-[3rem] border border-black text-black bg-transparent hover:border-primary/50 hover:text-primary/70"
+            className="relative top-3 z-50 left-1 top-[3rem] border border-black text-black bg-transparent hover:border-sabana/50 hover:text-sabana/70"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver 
+            Volver
           </Button>
 
           <div className="rounded-lg bg-white shadow-xl max-w-[80%] w-full mx-auto">
@@ -92,7 +89,7 @@ const FeaturedBusinessDetail = () => {
                           <div
                             key={index}
                             // Ajusta la altura de la imagen si hay muchas para permitir el scroll
-                            className={`relative overflow-hidden rounded-lg ${business.images.length > 3 ? 'h-16' : 'h-32'
+                            className={`relative overflow-hidden rounded-lg ${business.images.length > 3 ? 'h-24' : 'h-32'
                               }`}
                           >
                             <img
@@ -115,12 +112,15 @@ const FeaturedBusinessDetail = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8  p-4">
                 <div className="lg:col-span-2 space-y-6">
                   <div className="p-4">
                     <div className="flex flex-wrap items-center gap-4 mb-4">
                       <h1 className="text-3xl md:text-4xl font-bold text-foreground">{business.name}</h1>
                       {/* Se asume que business.is_sponsor existe o que business.is_vip = 1 */}
+                      <Badge variant="outline" className="text-base px-2 py-1">
+                        RNT {business.rnt}
+                      </Badge>
                       {(business as any).is_vip && (
                         <Badge className="border-black-500 bg-white text-black-foreground px-3 py-1 hover:bg-primary/50">
                           ⭐ VIP Sponsor
@@ -150,11 +150,11 @@ const FeaturedBusinessDetail = () => {
                   </div>
 
                   <Card className="p-4 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-                    <CardHeader>
+                    <CardHeader className="p-0">
                       <CardTitle className="text-xl">Información de Precios</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
+                      <div className="space-y-4 p-4">
                         <div className="flex justify-between items-center">
                           <span className="text-2xl font-bold text-primary">{business.price}</span>
                         </div>
@@ -173,18 +173,28 @@ const FeaturedBusinessDetail = () => {
                             </div>
                             <span className="font-semibold">{business.tax_percentage}%</span>
                           </div>
+                          <div className="flex justify-between items-center mt-4">
+                            <div className="flex items-center text-muted-foreground">
+                              <span>Check-IN</span>
+                            </div>
+                            <span className="font-semibold">{business.check_in}</span>
+                            <div className="flex items-center text-muted-foreground">
+                              <span>Check-OUT</span>
+                            </div>
+                            <span className="font-semibold">{business.check_out}</span>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="p-4 ">
                     <CardHeader>
                       <CardTitle>Servicios y Amenidades</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {business.amenities.map((amenity, index) => (
+                      <div className="grid grid-cols-2 md:grid-cols-3">
+                        {business.amenities?.map((amenity, index) => (
                           <div key={index} className="flex items-center p-2 bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors">
                             <span className="text-sm font-medium">✓ {amenity}</span>
                           </div>
@@ -195,7 +205,7 @@ const FeaturedBusinessDetail = () => {
                 </div>
 
                 <div className="space-y-6">
-                  <Card className="sticky top-24">
+                  <Card className="top-24">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Phone className="w-5 h-5" />
@@ -238,7 +248,7 @@ const FeaturedBusinessDetail = () => {
                       </div>
 
                       <Button
-                        className="w-full border border-black-500 bg-back-500 text-black-700 hover:bg-primary/30"
+                        className="w-full border border-black-500 bg-back-500 text-black-700 hover:bg-sabana/30"
                         onClick={openWaze}
                       >
                         <Navigation />
@@ -275,7 +285,7 @@ const FeaturedBusinessDetail = () => {
                     {
                       business.category_id === 1 &&
                       <Button
-                        className="w-full border-black-500 text-black-500"
+                        className="w-full border-sabana text-black-500 hover:bg-sabana/30 hover:border-sabana/30"
                         size="lg"
                         onClick={handleReservation}
                       >
@@ -296,7 +306,7 @@ const FeaturedBusinessDetail = () => {
                     </Button> */}
                     <Button
                       variant="outline"
-                      className="w-full  text-black-500 border-black-500"
+                      className="w-full text-black-500 border-black-500"
                       onClick={handleEmail}
                     >
                       <Mail className="w-4 h-4 mr-2" />

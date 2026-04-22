@@ -82,10 +82,10 @@ import BusinessSupport from "./pages/business/BusinessSupport";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  
+
   const { appConfig, isLoading } = useAppConfig();
   const [currentLanguage, setCurrentLanguage] = useState("es");
-  
+
 
   // Show loading while checking maintenance mode
   if (isLoading) {
@@ -171,12 +171,12 @@ const AppRoutes = () => {
       <Route path="/guest/dashboard" element={<GuestDashboard />} />
       <Route path="/system-manual" element={<SystemManual />} />
 
-            
-            {/* Business Routes */}
-            <Route path="/business/register" element={<RegisterBusiness />} />
-            <Route path="/business/promote" element={<PromoteServices />} />
-            <Route path="/business/statistics" element={<BusinessStatistics />} />
-            <Route path="/business/support" element={<BusinessSupport />} />
+
+      {/* Business Routes */}
+      <Route path="/business/register" element={<RegisterBusiness />} />
+      <Route path="/business/promote" element={<PromoteServices />} />
+      <Route path="/business/statistics" element={<BusinessStatistics />} />
+      <Route path="/business/support" element={<BusinessSupport />} />
 
 
       {/* Form Routes */}
@@ -215,7 +215,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-{/*             <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
+            {/*             <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
             <Header activeSection={activeSection} onSectionChange={handleSectionChange} language={currentLanguage} />
  <TopBar /> */}
             <AppRoutes />

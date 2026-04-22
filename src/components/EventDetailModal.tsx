@@ -62,6 +62,8 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
               src={`images/events/${event.image}`} 
               alt={event.title}
               className="w-full h-[60vh] object-cover"
+              onError={(e) => (e.currentTarget.src = 'placeholder.svg')} // Fallback en caso de error de imagen
+              
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-4 left-4 text-white">

@@ -42,7 +42,7 @@ export const UpcomingEventsSection = ({
 
   return (
     <section className="relative mx-auto py-10">
-      <div className="absolute inset-0 bg-green-100/30 via-background to-accent/50" />
+      <div className="absolute inset-0 bg-sabana/10 via-background to-accent/50" />
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
           {t.sections.upcoming}

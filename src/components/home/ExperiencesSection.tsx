@@ -32,7 +32,7 @@ export const ExperiencesSection = ({ language }: ExperiencesSectionProps) => {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-green-100/30">
+      <section className="py-16 bg-sabana/10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -55,7 +55,7 @@ export const ExperiencesSection = ({ language }: ExperiencesSectionProps) => {
   };
 
   return (
-    <section className="py-16 bg-green-100/30">
+    <section className="py-16 bg-sabana/10">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-4">

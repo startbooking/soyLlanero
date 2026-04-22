@@ -43,7 +43,7 @@ const Experiences = () => {
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
               <Camera className="w-10 h-10 text-green-600" />
-              Experiencias Únicas
+              Experiencias Únicas XXXXX
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Vive aventuras inolvidables y descubre la auténtica cultura llanera con nuestras experiencias especializadas

@@ -105,7 +105,7 @@ const AccommodationCard = ({ item }: AccommodationCardProps) => {
 
         >
           <Eye className="w-4 h-4 mr-2" />
-          Ver Detalles XXXX
+          Ver Detalles
         </Button>
         </div>
       </CardContent>
