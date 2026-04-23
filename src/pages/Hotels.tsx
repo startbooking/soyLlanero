@@ -49,11 +49,15 @@ const AccommodationCard = ({ item }: AccommodationCardProps) => {
       onViewDetails(id);
     }
   };
- */
   const handleViewDetails = (business: Business) => {
+    console.log(business)
     navigate(`/hotel/${business.id}`, { state: { business } });
   };
-
+  */
+  const handleViewDetails = (business: Business) => {
+    // Enviamos el objeto business dentro del estado de la ruta
+    navigate(`/hotel/${business.id}`, { state: { hotel: business } });
+  };
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -101,7 +105,7 @@ const AccommodationCard = ({ item }: AccommodationCardProps) => {
           <Button 
           className="w-full bg-white-500 text-black-500 border border-black-500 hover:bg-sabana/50"
           // onClick={handleViewDetails}
-          onclick={() => handleViewDetails(item)}
+          onClick={() => handleViewDetails(item)}
 
         >
           <Eye className="w-4 h-4 mr-2" />
@@ -162,6 +166,8 @@ const Hotels = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
