@@ -68,7 +68,9 @@ const deleteData = async (endpoint: string) => {
 
 
 
-const fetchRooms = async (endpoint: string) => {
+
+
+/* const fetchRooms = async (endpoint: string) => {
   try {
     // Consumo del endpoint dinámico por ID de hotel
     const response = await fetch(getDataUrl(endpoint));
@@ -79,7 +81,10 @@ const fetchRooms = async (endpoint: string) => {
     console.error("Fetch Error:", err);
   } finally {
   }
-};
+}; */
+
+
+
 
 export const dataService = {
   // Configuración de la aplic/autación
@@ -121,9 +126,16 @@ export const dataService = {
   deleteHotel: (id: string) => deleteData(`/hotels/${id}`),
 
   // Tipos de habitaciones
+  // getRoomTypes: () => fetchData('/room-types'),
+
+// Tipos de habitaciones
   getRoomTypes: () => fetchData('/room-types'),
-  getRoomTypesByHotel: (hotelId: string) => fetchData(`/room-types/${hotelId}`),
-  // getRoomTypesByHotel: (hotelId: string) => fetchData(`/hotel/${hotelId}/room-types`),
+  
+  /**
+   * Obtiene los tipos de habitaciones asociados a un hotel específico
+   * @param {string} hotelId - El ID del hotel
+   */
+  getRoomTypesByHotel: (hotelId: string) => fetchData(`/hotel/${hotelId}/room-types`),
   createRoomType: (roomType: any) => postData('/room-types', roomType),
   updateRoomType: (id: string, roomType: any) => putData(`/room-types/${id}`, roomType),
   deleteRoomType: (id: string) => deleteData(`/room-types/${id}`),

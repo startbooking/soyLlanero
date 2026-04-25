@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,17 +14,9 @@ import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { RoomCard } from "@/components/RoomCard";
-import {
-  MapPin,
-  Star,
-  Wifi,
-  Car,
-  Utensils,
-  Dumbbell,
-  Phone,
-  Mail,
-  Globe,
-  ArrowLeft,
+import { 
+  MapPin, Star, Wifi, Car, Utensils, Dumbbell, 
+  Phone, Mail, Globe, ArrowLeft, Clock 
 } from "lucide-react";
 import { dataService } from "@/services/dataService";
 
@@ -33,26 +25,21 @@ const HotelDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  
   const [rooms, setRooms] = useState([]);
   const [loadingRooms, setLoadingRooms] = useState(true);
-  const [error, setError] = useState(null);
+  
+  // Obtenemos el objeto hotel que viene desde la navegación (lista de hoteles)
   const hotel = location.state?.hotel;
 
-  // console.log(hotel);
-
+  // Mapeo mejorado de iconos con normalización de texto
   const getAmenityIcon = (amenity: string) => {
-    switch (amenity) {
-      case "Wifi":
-        return <Wifi className="w-4 h-4" />;
-      case "Parking":
-        return <Car className="w-4 h-4" />;
-      case "Restaurante":
-        return <Utensils className="w-4 h-4" />;
-      case "Gimnasio":
-        return <Dumbbell className="w-4 h-4" />;
-      default:
-        return null;
-    }
+    const a = amenity.toLowerCase();
+    if (a.includes("wifi")) return <Wifi className="w-4 h-4" />;
+    if (a.includes("park") || a.includes("estacionamiento")) return <Car className="w-4 h-4" />;
+    if (a.includes("restaurante")) return <Utensils className="w-4 h-4" />;
+    if (a.includes("gym") || a.includes("gimnasio")) return <Dumbbell className="w-4 h-4" />;
+    return null;
   };
 
   useEffect(() => {
@@ -60,64 +47,59 @@ const HotelDetail = () => {
       if (!id) return;
       try {
         setLoadingRooms(true);
-        // Usamos la función del dataService que ya maneja los headers y la URL base
         const data = await dataService.getRoomTypesByHotel(id);
         setRooms(data);
       } catch (err) {
         console.error("Error al cargar habitaciones:", err);
-        setError("No se pudieron cargar las habitaciones disponibles.");
       } finally {
         setLoadingRooms(false);
       }
     };
 
     loadRooms();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
-
-  console.log(rooms)
-
-  useEffect(() => {
-    // Desplaza al usuario al inicio (x: 0, y: 0)
-    window.scrollTo(0, 0);
-  }, []); // El array vacío asegura que solo ocurra al montar el componente
+  // Redirección de seguridad si se accede directamente sin estado
+  if (!hotel) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Button onClick={() => navigate("/hotels")}>Regresar a Hoteles</Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-      />
-      <Header
-        activeSection="businesses"
-        onSectionChange={() => { }}
-        language={currentLanguage}
-      />
+    <div className="min-h-screen bg-slate-50">
+      <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
+      <Header activeSection="businesses" onSectionChange={() => { }} language={currentLanguage} />
 
-      <main className="pt-24">
-        <div className="container mx-auto px-4 py-8">
+      <main className="pt-24 pb-12">
+        <div className="container mx-auto px-4 lg:px-16 py-8">
+          
           <Button
             variant="outline"
             onClick={() => navigate("/hotels")}
-            className="mb-6 fixed top-36 left-10 z-50"
+            className="mb-8 border-[#D9E4C5] text-green-800 hover:bg-[#D9E4C5] transition-all"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver a Hoteles
           </Button>
 
-          {/* Primera fila: Slider de imágenes e información del hotel */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Slider de imágenes */}
+          {/* Información Principal del Hotel */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+            
+            {/* Galería de Imágenes */}
             <div className="w-full">
-              <Carousel className="w-full">
+              <Carousel className="w-full shadow-lg rounded-2xl overflow-hidden">
                 <CarouselContent>
-                  {hotel?.images && hotel.images.length > 0 ? (
+                  {hotel?.images?.length > 0 ? (
                     hotel.images.map((image, index) => (
                       <CarouselItem key={index}>
-                        <div className="relative h-96 rounded-lg overflow-hidden">
+                        <div className="relative h-[400px]">
                           <img
                             src={`/images/businnesses/${image}`}
-                            alt={`${hotel.name} - Imagen ${index + 1}`}
+                            alt={hotel.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -125,130 +107,89 @@ const HotelDetail = () => {
                     ))
                   ) : (
                     <CarouselItem>
-                      <div className="relative h-96 rounded-lg overflow-hidden flex items-center justify-center bg-gray-100">
-                        <p className="text-gray-500">
-                          No hay imágenes disponibles
-                        </p>
+                      <div className="h-[400px] flex items-center justify-center bg-slate-100">
+                        <p className="text-slate-400 italic">No hay fotos disponibles</p>
                       </div>
                     </CarouselItem>
                   )}
                 </CarouselContent>
-                <CarouselPrevious className="w-12 h-12 mx-16" />
-                <CarouselNext className="w-12 h-12 mx-16" />
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
               </Carousel>
             </div>
 
-            {/* Información del hotel */}
+            {/* Detalles Técnicos y Contacto */}
             <div className="space-y-6">
               <div>
-                <h1 className="text-3xl font-bold text-black mb-2">
-                  {hotel.name}
-                </h1>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center text-muted-foreground">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    {hotel.location}
-                  </div>
-                  <div className="flex items-center bg-white border rounded-full px-3 py-1">
-                    <Star className="w-4 h-4 text-gray-600 fill-current mr-1" />
-                    <span className="font-medium text-black">
-                      {hotel.rating}
-                    </span>
-                  </div>
+                <div className="flex justify-between items-start mb-2">
+                  <h1 className="text-4xl font-black text-slate-900 tracking-tight">{hotel.name}</h1>
+                  <Badge className="bg-green-100 text-green-800 border-green-200 gap-1">
+                    <Star className="w-3 h-3 fill-current" /> {hotel.rating}
+                  </Badge>
                 </div>
-                <p className="text-muted-foreground text-lg leading-relaxed">
-                  {hotel.long_description}
-                </p>
-                <p className="text-muted-foreground text-md leading-relaxed">
-                  {hotel.description}
-                </p>
+                
+                <div className="flex items-center text-green-700 font-medium mb-4 text-sm">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  {hotel.location}
+                </div>
+
+                <div className="prose prose-slate max-w-none">
+                  <p className="text-slate-600 leading-relaxed">{hotel.long_description || hotel.description}</p>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2 text-black">Servicios</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {hotel.amenities.map((amenity, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="flex items-center gap-1 text-black border-gray-300"
-                      >
-                        {getAmenityIcon(amenity)}
-                        {amenity}
-                      </Badge>
-                    ))}
-                  </div>
+              <div className="space-y-4 pt-4 border-t border-slate-200">
+                <h3 className="font-bold text-slate-800">Servicios Incluidos</h3>
+                <div className="flex flex-wrap gap-2">
+                  {hotel.amenities?.map((amenity, index) => (
+                    <Badge key={index} variant="secondary" className="bg-[#F7F9F2] text-green-900 border-[#D9E4C5] px-3 py-1 flex gap-2">
+                      {getAmenityIcon(amenity)}
+                      {amenity}
+                    </Badge>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-primary" />
-                    <span className="text-black">{hotel.phone}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 text-sm">
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <Phone className="w-4 h-4 text-green-700" /> {hotel.phone}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-primary" />
-                    <span className="text-black">{hotel.email}</span>
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <Mail className="w-4 h-4 text-green-700" /> {hotel.email}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-primary" />
-                    <span className="text-black">{hotel.website_url}</span>
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <Clock className="w-4 h-4 text-green-700" />
+                    <span>In: {hotel.check_in} | Out: {hotel.check_out}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-primary" />
-                    <span className="text-black">{hotel.address}</span>
-                  </div>
-                </div>
-
-                <div className="bg-white border rounded-lg p-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium text-black">Check-in:</span>
-                      <div className="text-black">{hotel.check_in}</div>
-                    </div>
-                    <div>
-                      <span className="font-medium text-black">Check-out:</span>
-                      <div className="text-black">{hotel.check_out}</div>
-                    </div>
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <MapPin className="w-4 h-4 text-green-700" /> {hotel.address}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Segunda fila: Habitaciones desde */}
-          <div className="mb-8">
-            <Card className="bg-white border border-gray-200">
-              <CardContent className="p-6">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-black mb-2">
-                    Habitaciones desde
-                  </h2>
-                  <div className="text-4xl font-bold text-primary mb-2">
-                    {hotel.price}
-                  </div>
-                  <p className="text-muted-foreground">por noche</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Sección de Habitaciones Disponibles */}
+          <div className="mt-16">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-black text-slate-900">Habitaciones Disponibles</h2>
+              <div className="bg-white border-[#D9E4C5] border-2 px-4 py-2 rounded-full">
+                <span className="text-sm text-slate-500 mr-2">Desde</span>
+                <span className="text-xl font-black text-green-800">{hotel.price}</span>
+              </div>
+            </div>
 
-          {/* Tercera fila: Tipos de habitaciones */}
-          <div>
-            <h2 className="text-2xl font-bold text-black mb-6">
-              Tipos de Habitaciones
-            </h2>
-            <div className="space-y-6">
-              {hotel?.rooms && hotel.rooms.length > 0 ? (
-                hotel.rooms.map((room, index) => (
-                  <RoomCard key={room.id} room={room} />
+            <div className="space-y-8">
+              {loadingRooms ? (
+                <div className="text-center py-20 animate-pulse">Cargando habitaciones...</div>
+              ) : rooms.length > 0 ? (
+                rooms.map((room) => (
+                  // PASO DE DATOS: Enviamos tanto 'room' como 'hotel'
+                  <RoomCard key={room.id} room={room} hotel={hotel} />
                 ))
               ) : (
-                <div className="relative h-96 rounded-lg overflow-hidden flex items-center justify-center bg-gray-100">
-                  <p className="text-gray-500">
-                    No hay Habitaciones disponibles
-                  </p>
-                </div>
+                <Card className="p-20 text-center bg-slate-50 border-dashed border-2">
+                  <p className="text-slate-400">Lo sentimos, no hay habitaciones disponibles por el momento.</p>
+                </Card>
               )}
             </div>
           </div>

@@ -104,12 +104,11 @@ const AccommodationCard = ({ item }: AccommodationCardProps) => {
           </Button> */}
           <Button 
           className="w-full bg-white-500 text-black-500 border border-black-500 hover:bg-sabana/50"
-          // onClick={handleViewDetails}
           onClick={() => handleViewDetails(item)}
 
         >
           <Eye className="w-4 h-4 mr-2" />
-          Ver Detalles XXXX
+          Ver Detalles
         </Button>
         </div>
       </CardContent>
@@ -129,7 +128,7 @@ const Hotels = () => {
     fetchFn: dataService.getBusinesses
   });
 
-  console.log(featuredBusinesses);
+  // console.log(featuredBusinesses);
 
   // Función para agrupar los negocios por type_category_id
   const groupedAccommodations = useMemo(() => {

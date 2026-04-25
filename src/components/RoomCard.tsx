@@ -1,181 +1,136 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Bed, Dumbbell, Maximize, Users, Wifi } from "lucide-react";
-import { AmenityIcon } from "./AmenityIcon";
-import { RoomDetailModal } from "./RoomDetailModal";
+import { Bed, Maximize, Users, Wifi, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Business } from "@/interface/interface";
 
 interface Room {
-  amenities: string;
+  amenities: string[]; // Actualizado a array según los cambios previos
   bed_type: string;
   business_id: string;
-  created_at: string;
   description: string;
   has_tax: string;
   id: number;
   image: string;
-  images: string;
-  is_available: string;
+  is_available: number;
   max_occupancy: string;
   name: string;
   price_per_night: string;
   room_size: string;
   tax_percentage: string;
-  total_rooms: string;
-  updated_at: string;
-/*   price: string;
-  capacity: number;
-  available: boolean;
-  taxes?: number;
-  taxPercentage?: number; */
 }
 
 interface RoomCardProps {
   room: Room;
+  hotel: Business;
 }
 
 const getRoomAmenityIcon = (amenity: string) => {
-  const lowerAmenity = amenity.toLowerCase();
-  if (lowerAmenity.includes("wifi")) return <Wifi className="w-4 h-4 text-muted-foreground" />;
-  if (lowerAmenity.includes("cama")) return <Bed className="w-4 h-4 text-muted-foreground" />;
+  const lower = amenity.toLowerCase();
+  if (lower.includes("wifi")) return <Wifi className="w-4 h-4 text-green-700" />;
+  if (lower.includes("cama")) return <Bed className="w-4 h-4 text-green-700" />;
   return null;
 };
 
-export const RoomCard = ({ room }: RoomCardProps) => {
-  // console.log(room)
+export const RoomCard = ({ room, hotel }: RoomCardProps) => {
   const navigate = useNavigate();
   const { id: hotelId } = useParams();
+  
+  // Normalización de disponibilidad
+  const isAvailable = Number(room.is_available) === 1;
 
-  const handleReserve = (roomId: number) => {
-    navigate(`/hotel/${hotelId}/reservation/${roomId}`);
+  const handleReserve = () => {
+    // CORRECCIÓN CRÍTICA: Se separa el string de la URL del objeto de opciones
+    navigate(`/hotel/${hotelId}/reservation/${room.id}`, { 
+      state: { 
+        room, 
+        hotel 
+      } 
+    });
   };
 
-
-
   return (
-    <Card className={`${!room.is_available ? 'opacity-60' : ''}`}>
-        {/* 
+    <Card className={`overflow-hidden border-2 transition-all duration-300 hover:shadow-xl ${!isAvailable ? 'opacity-70 bg-slate-50' : 'border-[#D9E4C5]'}`}>
       <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/3">
-          <img 
-            src={room.image} 
+        
+        {/* Lado Izquierdo: Imagen con Overlay de disponibilidad */}
+        <div className="relative w-full md:w-2/5 lg:w-1/3 h-56 md:h-auto overflow-hidden">
+          <img
+            src={`/images/rooms/${room.image || 'noimage.jpg'}`}
             alt={room.name}
-            className="w-full h-48 object-cover rounded-l-lg"
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           />
+          {!isAvailable && (
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
+              <Badge variant="destructive" className="text-sm py-1 px-4 uppercase font-bold">
+                No Disponible
+              </Badge>
+            </div>
+          )}
         </div>
-        <div className="md:w-2/3 p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h3 className="text-xl font-semibold">{room.name}</h3>
-              <div className="flex items-center text-muted-foreground mt-1">
-                <Users className="w-4 h-4 mr-1" />
-                Hasta {room.capacity} huéspedes
+
+        {/* Lado Derecho: Contenido */}
+        <CardContent className="p-6 flex-grow flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">{room.name}</h3>
+                <p className="text-slate-500 text-sm line-clamp-2 mt-1">{room.description}</p>
+              </div>
+              <Badge variant="outline" className="bg-[#F7F9F2] text-green-800 border-[#D9E4C5]">
+                {room.room_size}
+              </Badge>
+            </div>
+
+            {/* Características en Grid */}
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-2 text-slate-700">
+                <Bed className="w-4 h-4 text-green-700" />
+                <span>{room.bed_type}</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-700">
+                <Users className="w-4 h-4 text-green-700" />
+                <span>Hasta {room.max_occupancy} pers.</span>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-xl font-bold text-primary">{room.price}</span>
-              <p className="text-sm text-muted-foreground">por noche</p>
-              {room.taxes && (
-                <p className="text-xs text-muted-foreground">
-                  +${room.taxes.toLocaleString()} impuestos ({room.taxPercentage}%)
-                </p>
-              )}
+
+            {/* Amenities Render */}
+            <div className="flex flex-wrap gap-2">
+              {room.amenities?.slice(0, 4).map((amenity, idx) => (
+                <Badge key={idx} variant="secondary" className="bg-white border text-[11px] font-normal py-0.5">
+                  {getRoomAmenityIcon(amenity)}
+                  <span className="ml-1">{amenity}</span>
+                </Badge>
+              ))}
             </div>
           </div>
-          
-          <div className="flex flex-wrap gap-2 mb-4">
-            {room.amenities.map((amenity, index) => (
-              <Badge key={index} variant="outline" className="flex items-center gap-1">
-                <AmenityIcon amenity={amenity} />
-                {amenity}
-              </Badge>
-            ))}
-          </div>
-          
-          <div className="flex gap-2">
-            <RoomDetailModal room={room} onReserve={handleReserve}>
-              <Button variant="outline" className="flex-1">
-                Ver Detalles
-              </Button>
-            </RoomDetailModal>
-            
+
+          {/* Precio y Acción */}
+          <div className="flex items-center justify-between mt-8 pt-4 border-t border-slate-100">
+            <div>
+              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Precio por noche</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-green-800">{room.price_per_night}</span>
+                {room.has_tax === "1" && (
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    + {room.tax_percentage}% IVA
+                  </span>
+                )}
+              </div>
+            </div>
+
             <Button 
-              className="flex-1" 
-              disabled={!room.available}
-              onClick={() => handleReserve(room.id)}
+              onClick={handleReserve}
+              disabled={!isAvailable}
+              className="bg-green-700 hover:bg-green-800 text-white shadow-md active:scale-95 transition-all"
             >
-              {room.available ? "Reservar ahora" : "No disponible"}
+              Reservar ahora
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
-        </div>
+        </CardContent>
       </div>
-        */}
-        <Card className="flex flex-col md:flex-row shadow-lg hover:shadow-xl transition-shadow duration-300">
-            {/* Imagen de la Habitación */}
-            <img
-              // Se asume que las imágenes de las habitaciones están bajo un subdirectorio 'rooms'
-              src={`/images/businnesses/rooms/${room.image}`}
-              alt={room.name}
-              className="w-full md:w-1/3 h-48 md:h-auto object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
-            />
-        
-            {/* Contenido de la Habitación */}
-            <CardContent className="p-6 flex-grow flex flex-col justify-between">
-              <div>
-                <h3 className="text-2xl font-bold mb-2 text-primary">{room.name}</h3>
-                <p className="text-muted-foreground mb-3 line-clamp-2">{room.description}</p>
-        
-                {/* Detalles clave */}
-                <div className="flex flex-wrap gap-4 text-sm mb-4">
-                  <div className="flex items-center gap-1 text-foreground">
-                    <Bed className="w-4 h-4 text-primary" />
-                    <span>{room.bed_type}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-foreground">
-                    <Maximize className="w-4 h-4 text-primary" />
-                    <span>{room.room_size}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-foreground">
-                    <Dumbbell className="w-4 h-4 text-primary" />
-                    <span>Capacidad: {room.max_occupancy} pers.</span>
-                  </div>
-                </div>
-        
-                {/* Amenities de la Habitación */}
-                <div className="flex flex-wrap gap-2">
-                  {room.amenities.slice(0, 4).map((amenity, index) => (
-                    <Badge key={index} variant="outline" className="flex items-center gap-1 text-xs">
-                      {getRoomAmenityIcon(amenity)}
-                      {amenity}
-                    </Badge>
-                  ))}
-                  {room.amenities.length > 4 && <Badge variant="outline" className="text-xs">+{room.amenities.length - 4} más</Badge>}
-                </div>
-              </div>
-        
-              {/* Precio y Reserva */}
-              <div className="flex items-center justify-between mt-4 border-t pt-4">
-                <div>
-                  <span className="text-sm text-muted-foreground block">Precio por noche</span>
-                  <span className="text-2xl font-extrabold text-primary">{room.price_per_night}</span>
-                  {room.has_tax && <span className="text-xs text-muted-foreground ml-2">(Impuestos: {room.tax_percentage}%)</span>}
-                </div>
-                {/* <Button size="lg" disabled={!room.is_available}>
-                  {room.is_available ? 'Reservar Ahora' : 'No Disponible'}
-                </Button> */}
-                <Button 
-                  size="lg"
-                  disabled={!room.is_available}
-                  onClick={() => handleReserve(room.id)}
-                >
-                  {room.is_available ? "Reservar ahora" : "No disponible"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-      
     </Card>
   );
 };
