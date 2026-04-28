@@ -67,7 +67,7 @@ export const ReservationDetailSidebar = ({
         </div>
 
         <CardContent className="p-6 space-y-5">
-          {/* Bloque de Información de Estancia */}
+          {/* Bloque de Información de Estadia */}
           <div className="grid grid-cols-2 gap-4 pb-4 border-b border-slate-100">
             <div className="space-y-1">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Huéspedes</span>
@@ -77,7 +77,7 @@ export const ReservationDetailSidebar = ({
               </div>
             </div>
             <div className="space-y-1 text-right">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Estancia</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Estadia</span>
               <p className="text-sm font-semibold text-slate-700">{calculations.nights} Noches</p>
             </div>
           </div>
@@ -89,7 +89,7 @@ export const ReservationDetailSidebar = ({
               <span className="font-medium text-slate-700">{room.price_per_night}</span>
             </div>
             <div className="flex justify-between text-sm text-slate-500">
-              <span>Subtotal estancia</span>
+              <span>Subtotal Estadia</span>
               <span className="font-medium text-slate-700">${calculations.subtotal.toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-sm text-red-400 font-medium italic">

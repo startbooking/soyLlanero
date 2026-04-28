@@ -55,14 +55,14 @@ export const ReservationDetailSidebar = ({
         </div>
 
         <CardContent className="p-5 space-y-4">
-          {/* Info de Estancia */}
+          {/* Info de Estadia */}
           <div className="flex justify-between items-center py-2 border-b border-slate-50">
             <div className="text-left">
               <p className="text-[10px] font-bold text-slate-400 uppercase">Huéspedes</p>
               <p className="text-sm font-semibold">{guests.adults} Ad. {Number(guests.children) > 0 ? `/ ${guests.children} Niñ.` : ''}</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-bold text-slate-400 uppercase">Estancia</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Estadia</p>
               <p className="text-sm font-semibold">{calculations.nights} Noches</p>
             </div>
           </div>
@@ -112,8 +112,8 @@ export const ReservationDetailSidebar = ({
           </div>
 
           <div className="bg-sabana/5 p-3 rounded-lg flex items-start gap-2 mt-4">
-            <Info className="w-4 h-4 text-sabana shrink-0 mt-0.5" />
-            <p className="text-[12px] text-sabana/90 leading-relaxed italic">
+            <Info className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+            <p className="text-[12px] leading-relaxed italic text-red-500">
               Tarifa garantizada para las fechas seleccionadas. No incluye consumos adicionales ni propinas.
             </p>
           </div>

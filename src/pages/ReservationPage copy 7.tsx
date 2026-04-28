@@ -39,7 +39,7 @@ const ReservationPage = () => {
   const [numAdults, setNumAdults] = useState("1");
   const [numChildren, setNumChildren] = useState("0");
   const [formData, setFormData] = useState({
-    firstName: "", lastName: "", email: "", phone: "", identification: "", specialRequests: "", documentType: "", nationality: ""
+    firstName: "", lastName: "", email: "", phone: "", identification: "", specialRequests: "", documentType:"", nationality:""
   });
 
   // Redirección si no hay datos
@@ -369,8 +369,8 @@ const ReservationPage = () => {
                         <Button className="flex-1 bg-sabana text-white hover:bg-sabana/90 font-bold" onClick={onNext}>
                           Continuar al Resumen
                         </Button> */}
-                        <Button variant="outline" className="flex-1  border-sabana" onClick={() => setStep(1)}>Volver</Button>
-                        <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
+                        <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Volver</Button>
+                    <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
                       </div>
                     </CardContent>
                   </Card>

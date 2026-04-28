@@ -13,7 +13,7 @@ export const ReservationSummary = ({ data, onPay }: any) => (
     <CardContent className="pt-6 space-y-6">
       <div className="grid grid-cols-2 gap-8 text-sm border-b pb-6">
         <div className="space-y-2">
-          <h4 className="font-bold text-slate-400 uppercase text-[10px] tracking-widest">Estancia</h4>
+          <h4 className="font-bold text-slate-400 uppercase text-[10px] tracking-widest">Estadia</h4>
           <p><strong>Check-in:</strong> {format(data.checkInDate, "dd/MM/yyyy")}</p>
           <p><strong>Check-out:</strong> {format(data.checkOutDate, "dd/MM/yyyy")}</p>
           <p><strong>Noches:</strong> {data.totals.nights}</p>
@@ -27,7 +27,7 @@ export const ReservationSummary = ({ data, onPay }: any) => (
 
       <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
         <div className="flex justify-between text-sm">
-          <span>Subtotal stancia</span>
+          <span>Subtotal Estadia</span>
           <span>${data.totals.subtotal?.toLocaleString()}</span>
         </div>
         <div className="flex justify-between text-sm text-slate-500">
