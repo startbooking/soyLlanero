@@ -84,7 +84,7 @@ const AccommodationCard = ({ item }: { item: BusinessAccommodation }) => {
             const lower = amenity.toLowerCase();
             const Icon = Object.entries(AMENITY_ICONS).find(([key]) => lower.includes(key))?.[1];
             return (
-              <Badge key={idx} variant="secondary" className="font-normal text-[10px] py-0 px-2">
+              <Badge key={idx} variant="primary" className="font-normal text-[10px] py-0 px-2">
                 {Icon && <Icon className="w-3 h-3 mr-1" />}
                 {amenity}
               </Badge>

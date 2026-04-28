@@ -46,24 +46,22 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
   const formattedPhone = formatPhoneNumber(appConfig?.company_phone);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 text-slate-700 h-10 flex items-center">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 text-slate-700 h-8 flex items-center">
       <div className="container mx-auto px-4 flex justify-between items-center">
-        
         {/* Contact Info */}
         <div className="flex items-center gap-4 md:gap-6 text-xs font-medium">
           {appConfig?.company_phone && (
-            <a 
-              className="flex items-center gap-2 hover:text-green-600 transition-colors" 
+            <a
+              className="flex items-center gap-2 hover:text-green-600 transition-colors"
               href={`tel:${appConfig.company_phone}`}
             >
               <Phone className="w-4 h-4" />
               <span className="hidden md:inline">{formattedPhone}</span>
             </a>
           )}
-          
           {appConfig?.company_email && (
-            <a 
-              className="flex items-center gap-2 hover:text-green-600 transition-colors" 
+            <a
+              className="flex items-center gap-2 hover:text-green-600 transition-colors"
               href={`mailto:${appConfig.company_email}`}
             >
               <Mail className="w-4 h-4" />
@@ -71,7 +69,6 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
             </a>
           )}
         </div>
-
         {/* Actions (Social & Language) */}
         <div className="flex items-center gap-2">
           {/* Social Media Loop */}
