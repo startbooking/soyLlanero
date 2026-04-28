@@ -48,7 +48,6 @@ export const DateGuestForm = ({
             <CalendarIcon className="w-5 h-5" /> 1. Fechas y Huéspedes
           </CardTitle>
         </CardHeader>
-        
         <CardContent className="space-y-6">
           {/* SECCIÓN DE FECHAS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -70,7 +69,6 @@ export const DateGuestForm = ({
               />
             </div>
           </div>
-
           {/* SECCIÓN DE HUÉSPEDES */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -88,7 +86,6 @@ export const DateGuestForm = ({
                 </SelectContent>
               </Select>
             </div>
-            
             <div className="space-y-2">
               <Label className="text-slate-600 font-medium">Niños</Label>
               <Select value={numChildren} onValueChange={setNumChildren}>
@@ -105,7 +102,6 @@ export const DateGuestForm = ({
               </Select>
             </div>
           </div>
-
           <Button
             onClick={onCheck}
             disabled={loading || !checkIn || !checkOut}
@@ -119,7 +115,7 @@ export const DateGuestForm = ({
             <div className="mt-8 pt-8 border-t border-dashed border-slate-200">
               <h3 className="text-md font-bold text-red-600 mb-4 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5" /> 
-                Lo sentimos, no hay cupo. Mira estas opciones:
+                Lo sentimos, no hay disponibilidad de Habitaciones. Mira estas opciones:
               </h3>
               <div className="space-y-4">
                 {alternatives.map((alt) => (

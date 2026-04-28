@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, CreditCard, User, AlertCircle, ArrowLeft, Users } from "lucide-react";
+import { CalendarIcon, CreditCard, User, AlertCircle, ArrowLeft, Users, ShieldAlert, Navigation, MapPin, Mail, Clock, MessageSquare } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,35 +18,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { RoomCard } from "@/components/RoomCard";
 import { dataService } from "@/services/dataService";
+import { ReservationDetailSidebar } from "@/components/reservation/ReservationDetailSidebar";
 import { DatePicker } from "@/components/DatePicker";
-
-// --- Sub-componente: Selector de Fecha ---
-/* const DatePicker = ({ 
-  date, setDate, placeholder, minDate 
-}: { 
-  date?: Date, setDate: (d?: Date) => void, placeholder: string, minDate?: Date 
-}) => (
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button
-        variant="outline"
-        className={`w-full justify-start text-left font-normal border-sabana/30 ${!date && "text-muted-foreground"}`}
-      >
-        <CalendarIcon className="mr-2 h-4 w-4 text-sabana" />
-        {date ? format(date, "PPP", { locale: es }) : <span>{placeholder}</span>}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className="w-auto p-0" align="start">
-      <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-        disabled={(d) => d < (minDate || new Date())}
-        initialFocus
-      />
-    </PopoverContent>
-  </Popover>
-); */
+import { Textarea } from "@/components/ui/textarea";
 
 const ReservationPage = () => {
   const navigate = useNavigate();
@@ -65,7 +39,7 @@ const ReservationPage = () => {
   const [numAdults, setNumAdults] = useState("1");
   const [numChildren, setNumChildren] = useState("0");
   const [formData, setFormData] = useState({
-    firstName: "", lastName: "", email: "", phone: "", identification: "", specialRequests: ""
+    firstName: "", lastName: "", email: "", phone: "", identification: "", specialRequests: "", documentType:"", nationality:""
   });
 
   // Redirección si no hay datos
@@ -83,16 +57,40 @@ const ReservationPage = () => {
     }
   }, [checkInDate]);
 
+  const handleWazeClick = () => {
+    const url = `https://waze.com/ul?q=${encodeURIComponent(hotel.address)}`;
+    window.open(url, '_blank');
+  };
+
   // Cálculos Financieros
   const calculations = useMemo(() => {
-    if (!checkInDate || !checkOutDate) return { nights: 0, subtotal: 0, taxes: 0, total: 0 };
-    
-    const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
-    const price = parseInt(room?.price_per_night?.replace(/[^\d]/g, "")) || 0;
-    const subtotal = nights * price;
-    const taxes = room?.has_tax === "1" ? subtotal * (parseFloat(room.tax_percentage) / 100) : 0;
-    
-    return { nights, subtotal, taxes, total: subtotal + taxes };
+    if (!checkInDate || !checkOutDate)
+      return { nights: 0, subtotal: 0, taxes: 0, total: 0 };
+
+    const diffTime = Math.abs(checkOutDate.getTime() - checkInDate.getTime());
+    const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 2. Limpiar valor unitario (Remover $, puntos o comas)
+    const unitValue = parseFloat(room.price_per_night.replace(/[^\d.]/g, "")) || 0;
+
+    // 3. Cálculos Base
+    const subtotal = nights * unitValue;
+
+    // 4. Impuestos (Manejo preciso de decimales)
+    const taxPercentage = parseFloat(room.tax_percentage) || 0;
+    const taxes = subtotal * (taxPercentage / 100);
+
+    // 5. Total final
+    const total = subtotal + taxes;
+
+    return {
+      nights,
+      unitValue,
+      subtotal,
+      taxes,
+      total
+    };
+    // return { nights, subtotal, taxes, total: subtotal + taxes };
   }, [checkInDate, checkOutDate, room]);
 
   const handleCheckAvailability = async () => {
@@ -104,17 +102,17 @@ const ReservationPage = () => {
     setIsValidating(true);
     const totalGuests = parseInt(numAdults) + parseInt(numChildren);
 
-    console.log(hotel.id)
-
     try {
       const response = await dataService.checkAvailability({
         hotel_id: hotel.id,
         room_id: room.id,
         check_in: format(checkInDate, "yyyy-MM-dd"),
         check_out: format(checkOutDate, "yyyy-MM-dd"),
-        adults: numAdults, 
-        children: numChildren 
+        adults: numAdults,
+        children: numChildren
       });
+
+      console.log(response);
 
       if (response.available) {
         setStep(2);
@@ -133,8 +131,8 @@ const ReservationPage = () => {
 
   const handlePayment = () => {
     navigate("/payment", {
-      state: { 
-        hotel, room, checkInDate, checkOutDate, 
+      state: {
+        hotel, room, checkInDate, checkOutDate,
         total: calculations.total, formData,
         guests: { adults: numAdults, children: numChildren }
       }
@@ -175,10 +173,10 @@ const ReservationPage = () => {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-slate-600">Fecha de Salida</Label>
-                      <DatePicker 
-                        date={checkOutDate} 
-                        setDate={setCheckOutDate} 
-                        placeholder="¿Cuándo sales?" 
+                      <DatePicker
+                        date={checkOutDate}
+                        setDate={setCheckOutDate}
+                        placeholder="¿Cuándo sales?"
                         minDate={checkInDate ? new Date(new Date(checkInDate).setDate(checkInDate.getDate() + 1)) : new Date()}
                       />
                     </div>
@@ -191,7 +189,7 @@ const ReservationPage = () => {
                         <SelectTrigger className="border-sabana/30"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {[...Array(parseInt(room.max_occupancy || "1"))].map((_, i) => (
-                            <SelectItem key={i+1} value={(i+1).toString()}>{i+1} Adulto{i > 0 ? 's' : ''}</SelectItem>
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1} Adulto{i > 0 ? 's' : ''}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -207,8 +205,8 @@ const ReservationPage = () => {
                     </div>
                   </div>
 
-                  <Button 
-                    onClick={handleCheckAvailability} 
+                  <Button
+                    onClick={handleCheckAvailability}
                     className="w-full bg-sabana hover:bg-sabana/90 h-12 text-white font-bold"
                     disabled={isValidating}
                   >
@@ -232,7 +230,7 @@ const ReservationPage = () => {
             {/* PASO 2: DATOS DEL CLIENTE */}
             {step === 2 && (
               <Card className="border-sabana/20 shadow-sm animate-in fade-in slide-in-from-right-4">
-                <CardHeader>
+                {/* <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sabana font-bold">
                     <User className="w-5 h-5" /> 2. Datos de Reserva
                   </CardTitle>
@@ -262,7 +260,161 @@ const ReservationPage = () => {
                     <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Volver</Button>
                     <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
                   </div>
-                </CardContent>
+                </CardContent> */}
+
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <Card className="border-sabana/20 shadow-sm">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-sabana font-bold">
+                        <User className="w-5 h-5" /> 2. Información del Huésped
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+
+                      {/* Fila: Nombre y Apellido */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Nombre</Label>
+                          <Input
+                            value={formData.firstName}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            placeholder="Ej: Carlos"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Apellido</Label>
+                          <Input
+                            value={formData.lastName}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            placeholder="Ej: Restrepo"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Fila: Documentación */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Tipo de Documento</Label>
+                          <Select
+                            value={formData.documentType}
+                            onValueChange={(v) => setFormData({ ...formData, documentType: v })}
+                          >
+                            <SelectTrigger className="border-sabana/30">
+                              <SelectValue placeholder="Seleccione..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="CC">Cédula de Ciudadanía</SelectItem>
+                              <SelectItem value="CE">Cédula de Extranjería</SelectItem>
+                              <SelectItem value="PP">Pasaporte</SelectItem>
+                              <SelectItem value="TI">Tarjeta de Identidad</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">N° Identificación</Label>
+                          <Input
+                            value={formData.identification}
+                            onChange={(e) => setFormData({ ...formData, identification: e.target.value })}
+                            placeholder="Documento"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Nacionalidad</Label>
+                          <Input
+                            value={formData.nationality}
+                            onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                            placeholder="Ej: Colombiano"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Fila: Contacto */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Correo Electrónico</Label>
+                          <Input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="ejemplo@correo.com"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Teléfono / WhatsApp</Label>
+                          <Input
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="+57 300..."
+                          />
+                        </div>
+                      </div>
+
+                      {/* Requerimientos Especiales */}
+                      <div className="space-y-2">
+                        <Label className="text-slate-600 flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4" /> Requerimientos Especiales
+                        </Label>
+                        <Textarea
+                          value={formData.specialRequests}
+                          onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
+                          placeholder="¿Alguna dieta especial, alergia o petición para tu llegada?"
+                          className="resize-none h-24 border-sabana/30"
+                        />
+                      </div>
+
+                      <div className="flex gap-4 pt-4 border-t">
+                        {/* <Button variant="outline" className="flex-1 border-sabana text-sabana" onClick={onBack}>
+                          Atrás
+                        </Button>
+                        <Button className="flex-1 bg-sabana text-white hover:bg-sabana/90 font-bold" onClick={onNext}>
+                          Continuar al Resumen
+                        </Button> */}
+                        <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Volver</Button>
+                    <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Información del Hotel y Políticas */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Datos del Hotel */}
+                    <Card className="border-slate-200 bg-slate-50/50">
+                      <CardContent className="p-4 space-y-3">
+                        <h4 className="font-bold text-sabana text-sm flex items-center gap-2">
+                          <MapPin className="w-4 h-4" /> Ubicación y Contacto
+                        </h4>
+                        <div className="space-y-1.5 text-xs text-slate-600">
+                          <p className="font-bold text-slate-800">{hotel.name}</p>
+                          <p>{hotel.address}</p>
+                          <p className="flex items-center gap-1"><Mail className="w-3 h-3" /> {hotel.email}</p>
+                          <div className="flex items-center gap-4 mt-2">
+                            <p className="flex items-center gap-1 font-medium"><Clock className="w-3 h-3" /> Check-in: {hotel.check_in || '15:00'}</p>
+                            <p className="flex items-center gap-1 font-medium"><Clock className="w-3 h-3" /> Check-out: {hotel.check_out || '11:00'}</p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={handleWazeClick}
+                          variant="secondary"
+                          className="w-full mt-2 bg-[#33ccff] hover:bg-[#2db8e6] text-white text-xs h-9"
+                        >
+                          <Navigation className="w-4 h-4 mr-2" /> Cómo llegar con Waze
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    {/* Políticas de Cancelación */}
+                    <Card className="border-red-100 bg-red-50/30">
+                      <CardContent className="p-4 space-y-3">
+                        <h4 className="font-bold text-red-600 text-sm flex items-center gap-2">
+                          <ShieldAlert className="w-4 h-4" /> Políticas de Cancelación
+                        </h4>
+                        <p className="text-[11px] leading-relaxed text-slate-600 italic">
+                          {hotel.cancellation_policy || "Este establecimiento permite cancelaciones gratuitas hasta 48 horas antes de la llegada. Después de este periodo, se cobrará la primera noche como penalidad."}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </Card>
             )}
 
@@ -315,28 +467,15 @@ const ReservationPage = () => {
 
           {/* Sidebar: Mini Resumen */}
           <aside className="lg:col-span-1">
-            <Card className="sticky top-28 border-sabana/10 overflow-hidden shadow-md">
-              <div className="relative h-40">
-                <img src={`/images/rooms/${room.image}`} className="w-full h-full object-cover" alt={room.name} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="font-bold leading-tight">{room.name}</h3>
-                  <p className="text-xs opacity-80">{hotel.name}</p>
-                </div>
-              </div>
-              <CardContent className="p-5">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <Users className="w-3 h-3" />
-                    <span>Capacidad: {room.max_occupancy} personas</span>
-                  </div>
-                  <div className="flex justify-between items-baseline border-t pt-3">
-                    <span className="text-xs font-bold text-slate-400 uppercase">Tarifa/Noche</span>
-                    <span className="text-lg font-bold text-sabana">{room.price_per_night}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ReservationDetailSidebar
+              room={room}
+              hotel={hotel}
+              calculations={calculations}
+              guests={{
+                adults: numAdults,
+                children: numChildren
+              }}
+            />
           </aside>
         </div>
       </main>

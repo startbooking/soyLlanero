@@ -23,8 +23,6 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REQUEST_TIMEOUT);
 
-  // console.log(options)
-
   try {
     const response = await fetch(url, {
       ...options,
