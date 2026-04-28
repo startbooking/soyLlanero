@@ -48,11 +48,6 @@ export const AdventureCard = ({
           className="w-full h-[30vh] group-hover:scale-110 transition-transform duration-300"
           onError={(e) => (e.currentTarget.src = 'placeholder.svg')} // Fallback en caso de error de imagen
         />
-       {/*  <img
-          src={`/images/businnesses/${image}`} // Asumiendo que 'image' es una URL accesible
-          alt={name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-        /> */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <Badge className="border border-black/50 rounded-md absolute top-4 right-4 bg-bl/50 text-black-foreground hover:bg-primary/40">
           {category}

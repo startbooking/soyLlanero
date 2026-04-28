@@ -32,7 +32,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
     },
   ];
 
-  console.log(appStats)
+  // console.log(appStats)
 
   return (
     <>

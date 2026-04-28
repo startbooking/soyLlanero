@@ -32,7 +32,7 @@ export const BusinessCard = ({
     } else if (is_sponsor) {
       navigate(`/sponsor/${id}`);
     } else {
-      navigate(`/business/${id}`);
+      navigate(`/hotel/${id}`);
     }
   };
 
@@ -126,7 +126,7 @@ export const BusinessCard = ({
         )} */}
         
         <Button 
-          className="w-full bg-white-500 text-black-500 border border-black-500 hover:bg-primary/50"
+          className="w-full bg-sabana text-black-500 border border-black-500 hover:bg-sabana/50"
           onClick={handleViewDetails}
         >
           <Eye className="w-4 h-4 mr-2" />

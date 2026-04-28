@@ -98,19 +98,19 @@ const Events = () => {
                   <p className="text-muted-foreground mb-4 text-sm line-clamp-2">{event.description}</p>
                   <div className="space-y-2">
                     <Button
-                      className="w-full"
+                      className="w-full bg-sabana"
                       onClick={() => setSelectedEvent(event)}
                     >
                       Más información
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="outline"
                       className="w-full text-primary border-primary"
                       onClick={() => openWaze(event.location)}
                     >
                       <Navigation />
                       Ir con Waze
-                    </Button>
+                    </Button> */}
                   </div>
                 </CardContent>
               </Card>

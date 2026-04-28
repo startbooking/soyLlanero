@@ -24,136 +24,100 @@ interface TopBarProps {
 
 export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
   const { appConfig } = useAppConfig();
+
   const languages = [
     { code: "es", name: "Español", flag: "🇪🇸" },
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "fr", name: "Français", flag: "🇫🇷" },
   ];
 
-  const openSocialMedia = (url: string) => {
+  // Configuración de redes sociales para evitar repetición
+  const socialPlatforms = [
+    { id: 'facebook', icon: Facebook, url: appConfig?.facebook_url },
+    { id: 'instagram', icon: Instagram, url: appConfig?.instagram_url },
+    { id: 'youtube', icon: Youtube, url: appConfig?.youtube_url },
+    { id: 'linkedin', icon: Linkedin, url: appConfig?.linkedin_url },
+  ];
+
+  const handleSocialClick = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const rawPhone = appConfig?.company_phone;
-  const formattedPhone = formatPhoneNumber(rawPhone);
-  return (
-    <div className="bg-white/50 backdrop-blur-md text-black-700 px-1 md:px-4 text-xs fixed top-0 left-0 right-0 z-50 hover:bg-green/20">
-      <div className="px-2 md:px-5 mx-auto flex justify-between items-center">
-        {/* Información de contacto - Solo iconos en móvil */}
-        <div className="flex items-center gap-2 md:gap-6">
-          <div>
-            <a className="flex items-center gap-2 flex" href={`tel:${appConfig?.company_phone}`}>
-              <Phone className="w-5 h-5" />
-              <span className="hidden md:inline">
-                {formattedPhone}
-              </span>
-            </a>
-          </div>
-          <div>
-            <a  className="flex items-center gap-2" href={`mail:${appConfig?.company_email}`}>
+  const formattedPhone = formatPhoneNumber(appConfig?.company_phone);
 
-            <Mail className="w-5 h-5" />
-            <span className="hidden md:inline">
-              {appConfig?.company_email}
-            </span>
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 text-slate-700 h-10 flex items-center">
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        
+        {/* Contact Info */}
+        <div className="flex items-center gap-4 md:gap-6 text-xs font-medium">
+          {appConfig?.company_phone && (
+            <a 
+              className="flex items-center gap-2 hover:text-green-600 transition-colors" 
+              href={`tel:${appConfig.company_phone}`}
+            >
+              <Phone className="w-4 h-4" />
+              <span className="hidden md:inline">{formattedPhone}</span>
             </a>
-          </div>
+          )}
+          
+          {appConfig?.company_email && (
+            <a 
+              className="flex items-center gap-2 hover:text-green-600 transition-colors" 
+              href={`mailto:${appConfig.company_email}`}
+            >
+              <Mail className="w-4 h-4" />
+              <span className="hidden md:inline">{appConfig.company_email}</span>
+            </a>
+          )}
         </div>
 
-        {/* Redes sociales e idiomas - Sin WhatsApp */}
-        <div className="flex items-center gap-2 md:gap-4">
-          <div className="flex items-center gap-1">
-            {appConfig?.facebook_url && (
+        {/* Actions (Social & Language) */}
+        <div className="flex items-center gap-2">
+          {/* Social Media Loop */}
+          <div className="hidden sm:flex items-center border-r pr-2 mr-2 gap-1">
+            {socialPlatforms.map((platform) => platform.url && (
               <Button
+                key={platform.id}
                 variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-2 text-black hover:bg-black/20 sr-only"
-                
-                onClick={() =>
-                  openSocialMedia(
-                    appConfig?.facebook_url
-                  )
-                }
+                size="icon"
+                className="h-7 w-7 hover:bg-slate-100"
+                onClick={() => handleSocialClick(platform.url!)}
               >
-                <Facebook className="w-5 h-5" />
+                <platform.icon className="w-4 h-4" />
               </Button>
-            )}
-            {appConfig?.instagram_url && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20 sr-only"
-                onClick={() =>
-                  openSocialMedia(
-                    appConfig?.instagram_url
-                  )
-                }
-              >
-                <Instagram className="w-5 h-5" />
-              </Button>
-            )}
-            {appConfig?.youtube_url && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20 sr-only"
-                onClick={() =>
-                  openSocialMedia(
-                    appConfig?.youtube_url
-                  )
-                }
-              >
-                <Youtube className="w-5 h-5" />
-              </Button>
-            )}
-            {appConfig?.linkedin_url && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 text-black hover:bg-black/20 sr-only"
-                onClick={() =>
-                  openSocialMedia(
-                    appConfig?.linkedin_url
-                  )
-                }
-              >
-                <Linkedin className="w-5 h-5" />
-              </Button>
-            )}
+            ))}
           </div>
 
-          {/* Selector de idioma */}
+          {/* Language Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                size="lg"
-                className="h-8 p-2 text-black hover:bg-black/20 sr-only"
-                aria-label="Abrir menú de opciones"
+                size="sm"
+                className="h-7 px-2 gap-2 hover:bg-slate-100"
               >
-                <Languages className="w-5 h-5 mr-1" />
-                <span className="hidden md:inline sr-only">
-                  {
-                    languages.find((lang) => lang.code === currentLanguage)
-                      ?.flag
-                  }
+                <Languages className="w-4 h-4" />
+                <span className="text-xs uppercase font-bold">
+                  {languages.find(l => l.code === currentLanguage)?.flag}
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {languages.map((language) => (
+            <DropdownMenuContent align="end" className="min-w-[120px]">
+              {languages.map((lang) => (
                 <DropdownMenuItem
-                  key={language.code}
-                  onClick={() => onLanguageChange(language.code)}
-                  className="h-8 p-2 cursor-pointer sr-only"
+                  key={lang.code}
+                  onClick={() => onLanguageChange(lang.code)}
+                  className="flex items-center gap-2 cursor-pointer text-xs"
                 >
-                  <span className="mr-2">{language.flag}</span>
-                  {language.name}
+                  <span>{lang.flag}</span>
+                  {lang.name}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
       </div>
     </div>
   );

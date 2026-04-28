@@ -1,106 +1,129 @@
-
-import { useState, useEffect, useCallback } from "react";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAppConfig } from "@/contexts/AppConfigContext";
 
 export const ImageSlider = () => {
-  const { appImagesSlider } = useAppConfig();
-  const [currentImage, setCurrentImage] = useState(0);
+  const { appImagesSlider = [] } = useAppConfig();
+  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const images = appImagesSlider || [];
-  const totalImages = images.length;
+  const total = appImagesSlider.length;
 
-  const goToPrevious = () => {
-    setCurrentImage((prev) => (prev - 1 + totalImages) % totalImages);
+  const handleNext = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const handlePrev = () => {
+    setCurrent((prev) => (prev - 1 + total) % total);
   };
 
-  const goToNext = useCallback(() => {
-    setCurrentImage((prev) => (prev + 1) % totalImages);
-  }, [totalImages]);
-
+  // Gestión del temporizador con pausa
   useEffect(() => {
-    if (totalImages === 0) return; // No iniciar el temporizador si no hay imágenes
+    if (total <= 1 || isPaused) return;
 
-    const timer = setInterval(() => {
-      goToNext();
-    }, 5000);
+    timerRef.current = setInterval(handleNext, 5000);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [total, handleNext, isPaused]);
 
-    return () => clearInterval(timer);
-  }, [totalImages, goToNext]);
-
-  if (totalImages === 0) {
-    return <div className="h-60 flex items-center justify-center text-4xl text-gray-500">No hay imágenes disponibles.</div>;
+  if (total === 0) {
+    return (
+      <div className="h-60 flex items-center justify-center bg-muted rounded-lg text-muted-foreground italic">
+        No hay imágenes disponibles.
+      </div>
+    );
   }
 
   return (
-    <div className="relative h-[75vh] overflow-hidden rounded-lg">
-      <div className="relative w-full h-full">
-        {images.map((image, index) => (
+    <section 
+      className="relative h-[60vh] md:h-[75vh] overflow-hidden rounded-xl shadow-2xl group"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      aria-roledescription="carousel"
+    >
+      {/* Slides */}
+      <div className="relative w-full h-full" aria-live="polite">
+        {appImagesSlider.map((slide, index) => (
           <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImage ? "opacity-100" : "opacity-0"
-              }`}
+            key={slide.id || index}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              index === current ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-105"
+            }`}
+            aria-hidden={index !== current}
           >
             <img
-              src={image.slide_image_url}
-              alt={image.slide_title}
-              fetchpriority="high"
-              loading="eager"
-              className="w-full h-full object-cover object-center"
+              src={slide.slide_image_url}
+              alt={slide.slide_title || "Imagen de slider"}
+              className="w-full h-full object-cover select-none"
+              fetchpriority={index === 0 ? "high" : "low"}
             />
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute bottom-8 left-8 text-white">
-              <h3 className="text-4xl font-bold mb-2">{image.slide_title}</h3>
-              <p className="text-2xl opacity-90">{image.slide_subtitle}</p>
+            
+            {/* Overlay Gradiente para legibilidad */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            
+            {/* Contenido Textual */}
+            <div className="absolute bottom-12 left-6 md:left-12 right-6 text-white max-w-3xl">
+              <h3 className="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-lg tracking-tight">
+                {slide.slide_title}
+              </h3>
+              <p className="text-lg md:text-2xl text-white/90 drop-shadow-md font-light">
+                {slide.slide_subtitle}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Controles de navegación */}
-      <Button
-        variant="secondary"
-        size="icon"
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-0 h-11 w-11 sm:h-10 sm:w-10"
-        onClick={goToPrevious}
-        aria-label="Ver imagen anterior"
-      >
-        <ChevronLeft className="w-6 h-6" />
-        <span className="sr-only"></span>
-      </Button>
+      {/* Navegación - Solo visible si hay más de 1 imagen */}
+      {total > 1 && (
+        <>
+          <div className="absolute inset-y-0 left-4 z-20 flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-black/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full h-12 w-12 transition-all opacity-0 group-hover:opacity-100"
+              onClick={handlePrev}
+            >
+              <ChevronLeft className="w-8 h-8" />
+              <span className="sr-only">Anterior</span>
+            </Button>
+          </div>
 
-      <Button
-        variant="secondary"
-        size="icon"
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-0 h-11 w-11 sm:h-10 sm:w-10"
-        onClick={goToNext}
-        aria-label="Ver siguiente imagen"
-      >
-        <ChevronRight className="w-6 h-6" />
-        <span className="sr-only"></span>
-      </Button>
+          <div className="absolute inset-y-0 right-4 z-20 flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-black/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full h-12 w-12 transition-all opacity-0 group-hover:opacity-100"
+              onClick={handleNext}
+            >
+              <ChevronRight className="w-8 h-8" />
+              <span className="sr-only">Siguiente</span>
+            </Button>
+          </div>
 
-      {/* Indicadores */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            className="group p-3 transition-all" // p-3 aumenta el área de clic para el dedo
-            onClick={() => setCurrentImage(index)}
-            aria-label={`Ir a la imagen ${index + 1}`}
-          >
-            <div
-              className={`w-3 h-3 rounded-full transition-all ${index === currentImage
-                  ? "bg-white scale-125 shadow-md"
-                  : "bg-white/50 group-hover:bg-white/70"
-                }`}
-            />
-            <span className="sr-only">Imagen {index + 1}</span>
-          </button>
-        ))}
-      </div>
-    </div>
+          {/* Indicadores (Dots) */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-3 px-4 py-2 rounded-full backdrop-blur-sm bg-black/10">
+            {appImagesSlider.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrent(index)}
+                className="relative h-2 transition-all duration-300"
+                style={{ width: index === current ? "24px" : "8px" }}
+                aria-label={`Ir a slide ${index + 1}`}
+              >
+                <div
+                  className={`absolute inset-0 rounded-full transition-colors ${
+                    index === current ? "bg-white" : "bg-white/40 hover:bg-white/60"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </section>
   );
 };

@@ -35,7 +35,7 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
   // Refactorización: La función ahora acepta el objeto Business completo
   // y lo pasa en el estado de navegación.
   const handleViewDetails = (business: Business) => {
-    navigate(`/featured-business/${business.id}`, { state: { business } });
+    navigate(`/hotel/${business.id}`, { state: { hotel: business } });
   };
 
   if (isLoading) {

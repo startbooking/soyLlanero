@@ -18,10 +18,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { RoomCard } from "@/components/RoomCard";
 import { dataService } from "@/services/dataService";
-import { DatePicker } from "@/components/DatePicker";
 
 // --- Sub-componente: Selector de Fecha ---
-/* const DatePicker = ({ 
+const DatePicker = ({ 
   date, setDate, placeholder, minDate 
 }: { 
   date?: Date, setDate: (d?: Date) => void, placeholder: string, minDate?: Date 
@@ -46,7 +45,7 @@ import { DatePicker } from "@/components/DatePicker";
       />
     </PopoverContent>
   </Popover>
-); */
+);
 
 const ReservationPage = () => {
   const navigate = useNavigate();
@@ -104,16 +103,12 @@ const ReservationPage = () => {
     setIsValidating(true);
     const totalGuests = parseInt(numAdults) + parseInt(numChildren);
 
-    console.log(hotel.id)
-
     try {
       const response = await dataService.checkAvailability({
-        hotel_id: hotel.id,
         room_id: room.id,
         check_in: format(checkInDate, "yyyy-MM-dd"),
         check_out: format(checkOutDate, "yyyy-MM-dd"),
-        adults: numAdults, 
-        children: numChildren 
+        guests: totalGuests
       });
 
       if (response.available) {

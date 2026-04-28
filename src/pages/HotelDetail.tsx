@@ -60,6 +60,8 @@ const HotelDetail = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
+  // console.log(rooms)
+
   // Redirección de seguridad si se accede directamente sin estado
   if (!hotel) {
     return (
@@ -80,7 +82,7 @@ const HotelDetail = () => {
           <Button
             variant="outline"
             onClick={() => navigate("/hotels")}
-            className="mb-8 border-[#D9E4C5] text-green-800 hover:bg-[#D9E4C5] transition-all"
+            className="mb-8 border-[#D9E4C5] text-sabana/80 hover:bg-[#D9E4C5] transition-all"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver a Hoteles
@@ -123,12 +125,12 @@ const HotelDetail = () => {
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <h1 className="text-4xl font-black text-slate-900 tracking-tight">{hotel.name}</h1>
-                  <Badge className="bg-green-100 text-green-800 border-green-200 gap-1">
+                  <Badge className="bg-sabana/10 text-sabana/80 border-sabana/20 gap-1">
                     <Star className="w-3 h-3 fill-current" /> {hotel.rating}
                   </Badge>
                 </div>
                 
-                <div className="flex items-center text-green-700 font-medium mb-4 text-sm">
+                <div className="flex items-center text-sabana/70 font-medium mb-4 text-sm">
                   <MapPin className="w-4 h-4 mr-1" />
                   {hotel.location}
                 </div>
@@ -142,7 +144,7 @@ const HotelDetail = () => {
                 <h3 className="font-bold text-slate-800">Servicios Incluidos</h3>
                 <div className="flex flex-wrap gap-2">
                   {hotel.amenities?.map((amenity, index) => (
-                    <Badge key={index} variant="secondary" className="bg-[#F7F9F2] text-green-900 border-[#D9E4C5] px-3 py-1 flex gap-2">
+                    <Badge key={index} variant="secondary" className="bg-[#F7F9F2] text-sabana/90 border-[#D9E4C5] px-3 py-1 flex gap-2">
                       {getAmenityIcon(amenity)}
                       {amenity}
                     </Badge>
@@ -151,17 +153,17 @@ const HotelDetail = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 text-sm">
                   <div className="flex items-center gap-2 text-slate-700">
-                    <Phone className="w-4 h-4 text-green-700" /> {hotel.phone}
+                    <Phone className="w-4 h-4 text-sabana/70" /> {hotel.phone}
                   </div>
                   <div className="flex items-center gap-2 text-slate-700">
-                    <Mail className="w-4 h-4 text-green-700" /> {hotel.email}
+                    <Mail className="w-4 h-4 text-sabana/70" /> {hotel.email}
                   </div>
                   <div className="flex items-center gap-2 text-slate-700">
-                    <Clock className="w-4 h-4 text-green-700" />
+                    <Clock className="w-4 h-4 text-sabana/70" />
                     <span>In: {hotel.check_in} | Out: {hotel.check_out}</span>
                   </div>
                   <div className="flex items-center gap-2 text-slate-700">
-                    <MapPin className="w-4 h-4 text-green-700" /> {hotel.address}
+                    <MapPin className="w-4 h-4 text-sabana/70" /> {hotel.address}
                   </div>
                 </div>
               </div>
@@ -171,10 +173,10 @@ const HotelDetail = () => {
           {/* Sección de Habitaciones Disponibles */}
           <div className="mt-16">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-black text-slate-900">Habitaciones Disponibles</h2>
-              <div className="bg-white border-[#D9E4C5] border-2 px-4 py-2 rounded-full">
+              <h2 className="text-3xl font-black text-slate-900">Habitaciones Disponibles </h2>
+              <div className="bg-white border-[#D9E4C5] border-2 px-4 py-2 rounded-sm">
                 <span className="text-sm text-slate-500 mr-2">Desde</span>
-                <span className="text-xl font-black text-green-800">{hotel.price}</span>
+                <span className="text-xl font-black text-sabana/80">{hotel.price}</span>
               </div>
             </div>
 
