@@ -15,6 +15,34 @@ interface AvailabilityResponse {
   remaining_units?: number;
 }
 
+interface WompiPaymentParams {
+  referencia: string;
+  total: number;
+  hotel_id: number | string;
+  habitacion_id: number | string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  identification: string;
+  checkInDate: string;
+  checkOutDate: string;
+  guests: number;
+  children: number;
+  subtotal: number;
+  taxes: number;
+}
+
+interface WompiSignatureResponse {
+  status: 'success' | 'error';
+  data: {
+    signature: string;
+    publicKey: string;
+    referencia: string;
+    env: 'sandbox' | 'production';
+  };
+}
+
 /**
  * Función núcleo para peticiones con Timeout y manejo de errores
  */
@@ -53,7 +81,6 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 // --- Servicio de Datos ---
 export const dataService = {
-
   // --- Reservas y Disponibilidad ---
   checkAvailability: (params: AvailabilityParams) =>
     request<AvailabilityResponse>(`/hotel/${params.hotel_id}/check-availability`, {
@@ -63,6 +90,22 @@ export const dataService = {
 
   getRoomTypesByHotel: (hotelId: number | string) =>
     request<any[]>(`/hotel/${hotelId}/room-types`),
+
+  // --- Módulo de Pagos Wompi ---
+  /**
+   * Registra la reserva como PENDIENTE en MySQL y obtiene la firma de Wompi
+   */
+  prepareWompiPayment: (params: WompiPaymentParams) =>
+    request<WompiSignatureResponse>('/wompi/prepare-payment', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    }),
+
+  /**
+   * Consulta el estado de una transacción después del checkout (opcional)
+   */
+  getWompiTransactionStatus: (id: string) =>
+    request(`/wompi/status/${id}`),
 
   // --- Negocios (Businesses) ---
   getBusinesses: () => request<any[]>('/businesses'),

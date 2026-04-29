@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, CreditCard, User, AlertCircle, ArrowLeft, Users, ShieldAlert, Navigation, MapPin, Mail, Clock, MessageSquare } from "lucide-react";
+import { CalendarIcon, CreditCard, User, AlertCircle, ArrowLeft, Users, ShieldAlert, Navigation, MapPin, Mail, Clock, MessageSquare, Badge, Receipt } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,9 @@ const ReservationPage = () => {
   const [room] = useState(state?.room);
   const [hotel] = useState(state?.hotel);
 
+  // console.log(room)
+
+
   const [step, setStep] = useState(1);
   const [isValidating, setIsValidating] = useState(false);
   const [alternatives, setAlternatives] = useState([]);
@@ -40,6 +43,20 @@ const ReservationPage = () => {
   const [numChildren, setNumChildren] = useState("0");
   const [formData, setFormData] = useState({
     firstName: "", lastName: "", email: "", phone: "", identification: "", specialRequests: "", documentType: "", nationality: ""
+  });
+
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 2
+    }).format(value);
+  };
+
+  const formatter = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
   });
 
   // Redirección si no hay datos
@@ -62,36 +79,6 @@ const ReservationPage = () => {
     window.open(url, '_blank');
   };
 
-  // Cálculos Financieros
-  const calculations = useMemo(() => {
-    if (!checkInDate || !checkOutDate)
-      return { nights: 0, subtotal: 0, taxes: 0, total: 0 };
-
-    const diffTime = Math.abs(checkOutDate.getTime() - checkInDate.getTime());
-    const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    // 2. Limpiar valor unitario (Remover $, puntos o comas)
-    const unitValue = parseFloat(room.price_per_night.replace(/[^\d.]/g, "")) || 0;
-
-    // 3. Cálculos Base
-    const subtotal = nights * unitValue;
-
-    // 4. Impuestos (Manejo preciso de decimales)
-    const taxPercentage = parseFloat(room.tax_percentage) || 0;
-    const taxes = subtotal * (taxPercentage / 100);
-
-    // 5. Total final
-    const total = subtotal + taxes;
-
-    return {
-      nights,
-      unitValue,
-      subtotal,
-      taxes,
-      total
-    };
-    // return { nights, subtotal, taxes, total: subtotal + taxes };
-  }, [checkInDate, checkOutDate, room]);
 
   const handleCheckAvailability = async () => {
     if (!checkInDate || !checkOutDate) {
@@ -112,8 +99,6 @@ const ReservationPage = () => {
         children: numChildren
       });
 
-      console.log(response);
-
       if (response.available) {
         setStep(2);
         toast({ title: "¡Disponible!", description: "Puedes proceder con tu reserva." });
@@ -129,15 +114,68 @@ const ReservationPage = () => {
     }
   };
 
-  const handlePayment = () => {
-    navigate("/payment", {
-      state: {
-        hotel, room, checkInDate, checkOutDate,
-        total: calculations.total, formData,
-        guests: { adults: numAdults, children: numChildren }
-      }
-    });
-  };
+  const handlePayment = async () => {
+  const montoCentavos = 5000000; // $50.000 COP
+  const referencia = `REF_${Math.floor(Math.random() * 1000000)}`;
+
+  // 1. Pedir la firma a tu backend
+  const response = await fetch('tu-api.com/generate-signature', {
+    method: 'POST',
+    body: JSON.stringify({ referencia, monto: montoCentavos })
+  });
+  const { signature } = await response.json();
+
+  // 2. Abrir el Widget
+  const checkout = new WidgetCheckout({
+    currency: 'COP',
+    amountInCents: montoCentavos,
+    publicKey: import.meta.env.VITE_WOMPI_PUBLIC_KEY,
+    signature: { integrity: signature }, // Firma generada en el paso 1
+    reference: referencia,
+    redirectUrl: 'https://tu-app.com/confirmacion', // Opcional
+  });
+
+  checkout.open((result) => {
+    const { transaction } = result;
+    if (transaction.status === 'APPROVED') {
+       // Actualizar UI, pero NO confiar solo en esto para tu DB
+       console.log("¡Pago exitoso!");
+    }
+  });
+};
+
+  const unitValue = useMemo(() => {
+    if (!room?.price_per_night) return 0;
+    // Elimina cualquier cosa que no sea un número
+    console.log(room.price_per_night)
+    const cleanValue = parseInt(room.price_per_night.toString().replace(/[^0-9.]/g, ''), 10);
+    if (isNaN(cleanValue)) {
+      console.error("El valor de la reserva no es un número válido");
+      return 0;
+    }
+    return cleanValue;
+  }, [room]);
+
+
+  const calculations = useMemo(() => {
+    if (!checkInDate || !checkOutDate || !room?.price_per_night)
+      return { nights: 0, subtotal: 0, taxes: 0, total: 0 };
+
+    const diffTime = checkOutDate.getTime() - checkInDate.getTime();
+    const nights = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+    // Limpieza robusta del precio (quita $, puntos, espacios)
+    const rawPrice = room.price_per_night.toString().replace(/[^\d]/g, "");
+
+    // 4. Operaciones matemáticas puras
+    const subtotal = nights * unitValue;
+    const taxPercentage = parseFloat(room.tax_percentage) || 0;
+    const taxes = Math.round(subtotal * (taxPercentage / 100));
+    const total = subtotal + taxes;
+
+
+    return { nights, unitValue, subtotal, taxes, total };
+  }, [checkInDate, checkOutDate, room]);
 
   if (!room || !hotel) return null;
 
@@ -145,7 +183,6 @@ const ReservationPage = () => {
     <div className="min-h-screen bg-slate-50">
       <TopBar currentLanguage="es" onLanguageChange={() => { }} />
       <Header activeSection="businesses" onSectionChange={() => { }} language="es" />
-
       <main className="pt-28 pb-12 container mx-auto px-4">
         {/* Step Indicator */}
         <div className="flex justify-center mb-10 gap-3">
@@ -230,38 +267,6 @@ const ReservationPage = () => {
             {/* PASO 2: DATOS DEL CLIENTE */}
             {step === 2 && (
               <Card className="border-sabana/20 shadow-sm animate-in fade-in slide-in-from-right-4">
-                {/* <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-sabana font-bold">
-                    <User className="w-5 h-5" /> 2. Datos de Reserva
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Nombre</Label>
-                      <Input placeholder="Ej: Juan" onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Apellido</Label>
-                      <Input placeholder="Ej: Pérez" onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Email</Label>
-                      <Input type="email" placeholder="juan@correo.com" onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Teléfono</Label>
-                      <Input placeholder="300 123 4567" onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
-                    </div>
-                  </div>
-                  <div className="flex gap-4 mt-8">
-                    <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Volver</Button>
-                    <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
-                  </div>
-                </CardContent> */}
-
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                   <Card className="border-sabana/20 shadow-sm">
                     <CardHeader>
@@ -363,13 +368,7 @@ const ReservationPage = () => {
                       </div>
 
                       <div className="flex gap-4 pt-4 border-t">
-                        {/* <Button variant="outline" className="flex-1 border-sabana text-sabana" onClick={onBack}>
-                          Atrás
-                        </Button>
-                        <Button className="flex-1 bg-sabana text-white hover:bg-sabana/90 font-bold" onClick={onNext}>
-                          Continuar al Resumen
-                        </Button> */}
-                        <Button variant="outline" className="flex-1  border-sabana" onClick={() => setStep(1)}>Volver</Button>
+                        <Button variant="outline" className="flex-1 border-sabana" onClick={() => setStep(1)}>Volver</Button>
                         <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
                       </div>
                     </CardContent>
@@ -420,45 +419,89 @@ const ReservationPage = () => {
 
             {/* PASO 3: RESUMEN Y PAGO */}
             {step === 3 && (
-              <Card className="border-sabana border-2 shadow-xl animate-in zoom-in-95">
-                <CardHeader className="bg-sabana/5">
-                  <CardTitle className="text-sabana">Revisión Final</CardTitle>
+              <Card className="border-sabana border-2 shadow-xl animate-in zoom-in-95 overflow-hidden">
+                <CardHeader className="bg-sabana/5 border-b border-sabana/10">
+                  <CardTitle className="text-sabana flex items-center gap-2">
+                    <Receipt className="w-5 h-5" /> Revisión Final de tu Reserva
+                  </CardTitle>
                 </CardHeader>
+
                 <CardContent className="pt-6 space-y-6">
-                  <div className="grid grid-cols-2 gap-6 text-sm text-slate-600">
-                    <div className="space-y-1">
-                      <p className="uppercase text-[10px] font-bold text-slate-400">Estancia</p>
-                      <p><strong>Check-in:</strong> {format(checkInDate!, "dd/MM/yyyy")}</p>
-                      <p><strong>Check-out:</strong> {format(checkOutDate!, "dd/MM/yyyy")}</p>
-                      <p><strong>Noches:</strong> {calculations.nights}</p>
+                  {/* Resumen de Datos en Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm border-b pb-6">
+                    {/* Columna 1: Estancia */}
+                    <div className="space-y-2">
+                      <p className="uppercase text-[10px] font-black text-slate-400 tracking-wider">Estancia</p>
+                      <div className="text-slate-700 space-y-1">
+                        <p className="flex justify-between md:block"><strong>Check-in:</strong> {checkInDate ? format(checkInDate, "dd/MM/yyyy") : "---"}</p>
+                        <p className="flex justify-between md:block"><strong>Check-out:</strong> {checkOutDate ? format(checkOutDate, "dd/MM/yyyy") : "---"}</p>
+                        <p className="text-sabana font-bold">{calculations.nights} {calculations.nights === 1 ? 'Noche' : 'Noches'}</p>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <p className="uppercase text-[10px] font-bold text-slate-400">Titular</p>
-                      <p><strong>Nombre:</strong> {formData.firstName} {formData.lastName}</p>
-                      <p><strong>Huéspedes:</strong> {numAdults} Ad. {numChildren} Niñ.</p>
+
+                    {/* Columna 2: Titular */}
+                    <div className="space-y-2">
+                      <p className="uppercase text-[10px] font-black text-slate-400 tracking-wider">Titular y Huéspedes</p>
+                      <div className="text-slate-700 space-y-1">
+                        <p className="truncate"><strong>Nombre:</strong> {formData.firstName} {formData.lastName}</p>
+                        <p><strong>Doc:</strong> {formData.documentType} {formData.identification}</p>
+                        <p><strong>Huéspedes:</strong> {numAdults} Ad. {parseInt(numChildren) > 0 ? `+ ${numChildren} Niñ.` : ''}</p>
+                      </div>
+                    </div>
+
+                    {/* Columna 3: Requerimientos Especiales (NUEVO) */}
+                    <div className="space-y-2">
+                      <p className="uppercase text-[10px] font-black text-slate-400 tracking-wider">Peticiones Especiales</p>
+                      <div className="text-slate-600 italic text-xs bg-slate-50 p-2 rounded border border-slate-100 min-h-[60px]">
+                        {formData.specialRequests ? (
+                          <p>"{formData.specialRequests}"</p>
+                        ) : (
+                          <p className="text-slate-400">Sin requerimientos adicionales indicados.</p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  {/* Desglose Económico Refactorizado */}
                   <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span>Subtotal ({calculations.nights} noches)</span>
-                      <span className="font-medium">${calculations.subtotal.toLocaleString()}</span>
+                    <div className="flex justify-between text-sm text-slate-600">
+                      <span>Subtotal por alojamiento</span>
+                      <span className="font-semibold">{formatCurrency(calculations.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-slate-500">
-                      <span>Impuestos y cargos</span>
-                      <span>${calculations.taxes.toLocaleString()}</span>
+                      <span className="flex items-center gap-1">Impuestos y cargos gubernamentales <Badge variant="outline" className="text-[9px] py-0 h-4">19%</Badge></span>
+                      <span className="font-semibold">+ {formatCurrency(calculations.taxes)}</span>
                     </div>
-                    <div className="flex justify-between text-xl font-black text-sabana border-t pt-3">
-                      <span>TOTAL</span>
-                      <span>${calculations.total.toLocaleString()}</span>
+
+                    <div className="flex justify-between items-center border-t border-slate-300 pt-4 mt-2">
+                      <div>
+                        <span className="text-xl font-black text-sabana block">TOTAL A PAGAR</span>
+                        <span className="text-[10px] text-slate-400 uppercase">Valores en Pesos Colombianos (COP)</span>
+                      </div>
+                      <span className="text-3xl font-black text-sabana tracking-tighter">
+                        {formatCurrency(calculations.total)}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <Button onClick={handlePayment} className="w-full bg-sabana hover:bg-sabana/90 h-14 text-lg font-black text-white shadow-lg">
-                      <CreditCard className="mr-2 w-5 h-5" /> Pagar con Wompi
+                  {/* Botones de Acción */}
+                  <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-4">
+                    <Button
+                      variant="ghost"
+                      className="text-slate-500 hover:text-sabana"
+                      onClick={() => setStep(2)}
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Editar mis datos
                     </Button>
-                    <Button variant="link" className="text-slate-400" onClick={() => setStep(2)}>Editar mis datos</Button>
+
+                    <Button
+                      onClick={handlePayment}
+                      size="lg"
+                      className="w-full sm:w-auto bg-sabana hover:bg-sabana/90 font-black text-white shadow-xl shadow-sabana/20 px-8"
+                    >
+                      <CreditCard className="mr-2 w-5 h-5" />
+                      PROCEDER AL PAGO SEGURO
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
