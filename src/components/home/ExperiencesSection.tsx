@@ -1,8 +1,4 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Users, Eye, Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCachedData } from "@/hooks/useCachedData";
 import { dataService } from "@/services/dataService";
@@ -10,6 +6,7 @@ import { AdventureCard } from "../common/AdventureCard";
 import { Experience } from "@/interface/interface";
 import { useMemo } from "react";
 import { shuffleArray } from "@/utils/arrayUtils";
+import { Button } from "@/components/ui/button";
 
 interface ExperiencesSectionProps {
   language: string;
@@ -23,82 +20,59 @@ export const ExperiencesSection = ({ language }: ExperiencesSectionProps) => {
     fetchFn: dataService.getExperiences
   });
 
-  const experienceToShow = featuredExperiences && featuredExperiences.length > 0 ? featuredExperiences : [];
-  const shuffledItems = useMemo(() => shuffleArray(experienceToShow), [experienceToShow]);
-  const serviceToShowSlide = shuffleArray(shuffledItems).slice(0, 3);
-  
-  
-  // const serviceToShowSlide = experienceToShow.slice(0,3)
+  // Optimizamos la aleatoriedad en un solo paso memorizado
+  const serviceToShowSlide = useMemo(() => {
+    if (!featuredExperiences || featuredExperiences.length === 0) return [];
+    // Mezclamos el array original (copiado) y tomamos 3 elementos
+    return shuffleArray([...featuredExperiences]).slice(0, 3);
+  }, [featuredExperiences]);
+
+  const handleCardClick = (experience: Experience) => {
+    // Enviamos el objeto completo en el state para evitar re-fetch
+    navigate(`/experiences/${experience.id}`, { state: { experience } });
+  };
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-sabana/10">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Experiencias Únicas
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Vive aventuras inolvidables y descubre la auténtica cultura llanera con nuestras experiencias especializadas
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
+      <section className="py-20 bg-sabana/5">
+        <div className="container mx-auto px-4 flex flex-col items-center">
+          <Loader2 className="w-10 h-10 animate-spin text-sabana mb-4" />
+          <p className="text-slate-500 font-medium animate-pulse">Preparando aventuras...</p>
         </div>
       </section>
     );
   }
 
-  const handleCardClick = (id: string) => {
-    navigate(`/experiences/${id}`);
-  };
-
   return (
-    <section className="py-16 bg-sabana/10">
+    <section className="py-20 bg-sabana/5">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">
             Experiencias Únicas
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Vive aventuras inolvidables y descubre la auténtica cultura llanera con nuestras experiencias especializadas
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Vive aventuras inolvidables y descubre la auténtica cultura llanera con nuestras experiencias especializadas.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {serviceToShowSlide?.map((experience) => (
-            <div 
-                  key={experience.id} 
-                  onClick={() => handleCardClick(experience.id)} // Manejador de click
-                  className="cursor-pointer transition-shadow duration-300 hover:shadow-xl rounded-lg"
-              >
-                <AdventureCard 
-                  // ... todas las props de AdventureCard se pasan aquí
-                  key = {experience.id}
-                  id={experience.id}
-                  image={experience.image}
-                  name={experience.name}
-                  price={experience.price}
-                  category={experience.category}
-                  rating={experience.rating}
-                  difficulty={experience.difficulty}
-                  location={experience.location}
-                  duration={experience.duration}
-                  max_people={experience.max_people}
-                  experience={experience}
-                />
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {serviceToShowSlide.map((experience) => (
+            <AdventureCard 
+              key={experience.id}
+              experience={experience} // Enviamos el registro completo
+              onAction={() => handleCardClick(experience)}
+            />
           ))}
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-14">
           <Button 
             variant="outline" 
-            className="border-black-500 text-black-600 hover:bg-primary/50"
+            className="border-slate-300 text-slate-700 hover:bg-sabana hover:text-slate-900 hover:border-sabana font-bold px-8 py-6 rounded-xl transition-all"
             onClick={() => navigate('/experiences')}
           >
             Ver Todas las Experiencias
+            <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
         </div>
       </div>

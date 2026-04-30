@@ -20,7 +20,7 @@ export interface Business {
   description: string;
   is_sponsor: boolean;
   is_vip:number;
-  price?: string;
+  price?: number;
   taxes?: number;
   tax_percentage?: number;
   review_count?:number;

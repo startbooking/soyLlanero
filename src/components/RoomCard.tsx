@@ -18,7 +18,7 @@ interface Room {
   bed_type: string;
   business_id: string;
   description: string;
-  has_tax: string;
+  has_tax: number;
   id: number;
   image: string;
   is_available: number;
@@ -41,6 +41,13 @@ export const RoomCard = ({ room, hotel }: RoomCardProps) => {
 
   const isAvailable = Number(room.is_available) === 1;
 
+const formatCurrency = (val: number) => 
+    new Intl.NumberFormat('es-CO', { 
+      style: 'currency', 
+      currency: 'COP', 
+      minimumFractionDigits: 2
+    }).format(val || 0);
+  
   const handleReserve = () => {
     navigate(`/hotel/${hotelId}/reservation/${room.id}`, {
       state: { room, hotel }
@@ -139,10 +146,10 @@ export const RoomCard = ({ room, hotel }: RoomCardProps) => {
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest block">Tarifa por noche</span>
               <div className="flex items-center gap-2">
                 <span className="text-3xl font-black text-sabana/90 tracking-tighter">
-                  {room.price_per_night}
+                  {formatCurrency(room.price_per_night)}
                 </span>
-                {room.has_tax === "1" && (
-                  <Badge variant="outline" className="text-[9px] h-5 border-green-100 text-sabana/70 bg-green-50">
+                {room.has_tax === 1 && (
+                  <Badge variant="outline" className="text-[11px] h-5 border-green-100 text-sabana/70 bg-green-50">
                     + {room.tax_percentage}% IVA
                   </Badge>
                 )}

@@ -42,10 +42,10 @@ export const AffiliationSection = ({ language }: AffiliationSectionProps) => {
         ? "Publier des Nouvelles"
         : "Publicar Noticia",
       description: language === "en"
-        ? "Share relevant news about tourism in Villavicencio. Keep the community informed about important updates."
+        ? "Share relevant news about tourism in Villavicencio and Meta. Keep the community informed about important updates."
         : language === "fr"
-        ? "Partagez des nouvelles pertinentes sur le tourisme à Villavicencio. Tenez la communauté informée des mises à jour importantes."
-        : "Comparte noticias relevantes sobre el turismo en Villavicencio. Mantén a la comunidad informada sobre actualizaciones importantes.",
+        ? "Partagez des nouvelles pertinentes sur le tourisme à Villavicencio et Meta. Tenez la communauté informée des mises à jour importantes."
+        : "Comparte noticias relevantes sobre el turismo en Villavicencio y el Meta. Mantén a la comunidad informada sobre actualizaciones importantes.",
       buttonText: language === "en"
         ? "Publish News"
         : language === "fr"
@@ -86,10 +86,10 @@ export const AffiliationSection = ({ language }: AffiliationSectionProps) => {
         </h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           {language === "en"
-            ? "Be part of the growth of tourism in Villavicencio. Affiliate as a provider or share relevant content with our community."
+            ? "Be part of the growth of tourism in Villavicencio and Meta. Affiliate as a provider or share relevant content with our community."
             : language === "fr"
-            ? "Faites partie de la croissance du tourisme à Villavicencio. Affiliez-vous en tant que fournisseur ou partagez du contenu pertinent avec notre communauté."
-            : "Sé parte del crecimiento del turismo en Villavicencio. Afíliate como proveedor o comparte contenido relevante con nuestra comunidad."}
+            ? "Faites partie de la croissance du tourisme à Villavicencio et Meta. Affiliez-vous en tant que fournisseur ou partagez du contenu pertinent avec notre communauté."
+            : "Sé parte del crecimiento del turismo en Villavicencio y el Meta. Afíliate como proveedor o comparte contenido relevante con nuestra comunidad."}
         </p>
       </div>
 
@@ -127,10 +127,10 @@ export const AffiliationSection = ({ language }: AffiliationSectionProps) => {
           <Users className="w-5 h-5 text-black mr-2" />
           <span className="text-sm text-muted-foreground">
             {language === "en"
-              ? "Join over 200+ tourism providers in Villavicencio"
+              ? "Join over 200+ tourism providers in Villavicencio and Meta"
               : language === "fr"
-              ? "Rejoignez plus de 200+ fournisseurs touristiques à Villavicencio"
-              : "Únete a más de 200+ proveedores turísticos en Villavicencio"}
+              ? "Joignez-vous à plus de 200 fournisseurs de services touristiques à Villavicencio et Meta"
+              : "Únete a más de 200+ proveedores turísticos en Villavicencio y el Meta"}
           </span>
         </div>
       </div>

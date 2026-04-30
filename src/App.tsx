@@ -77,15 +77,13 @@ import RegisterBusiness from "./pages/business/RegisterBusiness";
 import PromoteServices from "./pages/business/PromoteServices";
 import BusinessStatistics from "./pages/business/BusinessStatistics";
 import BusinessSupport from "./pages/business/BusinessSupport";
-
+import ConfirmationSuccess from "./components/payment/ConfirmationSuccess";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-
   const { appConfig, isLoading } = useAppConfig();
   const [currentLanguage, setCurrentLanguage] = useState("es");
-
 
   // Show loading while checking maintenance mode
   if (isLoading) {
@@ -162,22 +160,18 @@ const AppRoutes = () => {
       <Route path="/admin/change-password" element={<ChangePassword />} />
       <Route path="/admin/technical-support" element={<TechnicalSupport />} />
       <Route path="/admin/user-manual" element={<UserManual />} />
-      <Route
-        path="/admin/configuration-manual"
-        element={<ConfigurationManual />}
+      <Route path="/admin/configuration-manual" element={<ConfigurationManual />}
       />
       <Route path="/admin/app-config" element={<AppConfig />} />
       <Route path="/tourist/dashboard" element={<TouristDashboard />} />
       <Route path="/guest/dashboard" element={<GuestDashboard />} />
       <Route path="/system-manual" element={<SystemManual />} />
 
-
       {/* Business Routes */}
       <Route path="/business/register" element={<RegisterBusiness />} />
       <Route path="/business/promote" element={<PromoteServices />} />
       <Route path="/business/statistics" element={<BusinessStatistics />} />
       <Route path="/business/support" element={<BusinessSupport />} />
-
 
       {/* Form Routes */}
       <Route path="/forms/restaurant" element={<RestaurantForm />} />
@@ -186,9 +180,7 @@ const AppRoutes = () => {
       <Route path="/forms/activity" element={<ActivityForm />} />
       <Route path="/forms/tour" element={<TourForm />} />
       <Route path="/forms/event" element={<EventForm />} />
-      <Route
-        path="/forms/point-of-interest"
-        element={<PointOfInterestForm />}
+      <Route path="/forms/point-of-interest" element={<PointOfInterestForm />}
       />
       <Route path="/forms/other-service" element={<OtherServiceForm />} />
 
@@ -200,6 +192,10 @@ const AppRoutes = () => {
       <Route path="/reservation-policies" element={<ReservationPolicies />} />
       <Route path="/cancellation-policies" element={<CancellationPolicies />} />
       <Route path="/habeas-data" element={<HabeasData />} />
+
+
+      {/* Confirmacion Pago */}
+      <Route path="/confirmation-success" element={<ConfirmationSuccess />} />
 
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />

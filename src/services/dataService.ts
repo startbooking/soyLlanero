@@ -51,6 +51,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REQUEST_TIMEOUT);
 
+/*   console.log(url);
+  console.log(endpoint); */
+
   try {
     const response = await fetch(url, {
       ...options,
@@ -96,7 +99,7 @@ export const dataService = {
    * Registra la reserva como PENDIENTE en MySQL y obtiene la firma de Wompi
    */
   prepareWompiPayment: (params: WompiPaymentParams) =>
-    request<WompiSignatureResponse>('/wompi/prepare-payment', {
+    request<WompiSignatureResponse>('/prepare-payment', {
       method: 'POST',
       body: JSON.stringify(params),
     }),

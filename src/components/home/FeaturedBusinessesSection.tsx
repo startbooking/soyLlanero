@@ -7,6 +7,7 @@ import { useAppConfig } from "@/contexts/AppConfigContext";
 import { Business } from "@/interface/interface";
 import { shuffleArray } from '@/utils/arrayUtils';
 import { useMemo } from "react";
+
 interface FeaturedBusinessesSectionProps {
   language: string;
 }
@@ -20,20 +21,18 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
     fetchFn: dataService.getBusinesses
   });
 
-  const businessesToShow = featuredBusinesses && featuredBusinesses.length > 0 ? featuredBusinesses : [];
-  
-  const vipBusinesses = businessesToShow.filter(
-    (business) => business.is_vip === 1
-  );
+  // Memorizamos la lógica de filtrado y aleatoriedad para evitar cálculos en cada render
+  const businessesToShowSlide = useMemo(() => {
+    if (!featuredBusinesses || featuredBusinesses.length === 0) return [];
+    
+    const vipBusinesses = featuredBusinesses.filter(
+      (business) => business.is_vip === 1
+    );
 
+    // Mezclamos y tomamos los primeros 3
+    return shuffleArray([...vipBusinesses]).slice(0, 3);
+  }, [featuredBusinesses]);
 
-  const shuffledItems = useMemo(() => shuffleArray(vipBusinesses), [vipBusinesses]);
-  const businessesToShowSlide = shuffleArray(shuffledItems).slice(0, 3);
-  // console.log(businessesToShowSlide);
-
-
-  // Refactorización: La función ahora acepta el objeto Business completo
-  // y lo pasa en el estado de navegación.
   const handleViewDetails = (business: Business) => {
     navigate(`/hotel/${business.id}`, { state: { hotel: business } });
   };
@@ -41,18 +40,9 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
   if (isLoading) {
     return (
       <section className="py-10 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              {appTexts?.featured_businesses_title || 'Clientes VIP - Sponsors'}
-            </h2>
-            <p className="text-md text-muted-foreground max-w-2xl mx-auto">
-              {appTexts?.featured_businesses_subtitle || 'Experiencias Excepcionaes de nuestros Socios'}
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
+        <div className="container mx-auto px-4 flex flex-col items-center justify-center min-h-[300px]">
+          <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground animate-pulse">Cargando experiencias...</p>
         </div>
       </section>
     );
@@ -62,11 +52,11 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
     <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+          <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">
             {appTexts?.featured_businesses_title || 'Clientes VIP - Sponsors'}
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {appTexts?.featured_businesses_subtitle || 'Experiencias Excepcionaes de nuestros Socios'}
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            {appTexts?.featured_businesses_subtitle || 'Experiencias Excepcionales de nuestros Socios'}
           </p>
         </div>
 
@@ -74,21 +64,7 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
           {businessesToShowSlide.map((business) => (
             <BusinessCard
               key={business.id}
-              id={business.id}
-              name={business.name}
-              phone={business.phone}
-              email={business.email}
-              category={business.categoria}
-              address={business.address}
-              rating={business.rating}
-              image={business.image}
-              amenities={business.amenities}
-              specialties={business.specialties}
-              description={business.description}
-              is_sponsor={business.is_sponsor}
-              price={business.price}
-              taxes={business.taxes}
-              tax_percentage={business.tax_percentage}
+              business={business} // Enviamos el registro completo
               onViewDetails={() => handleViewDetails(business)}
             />
           ))}

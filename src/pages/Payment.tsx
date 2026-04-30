@@ -287,7 +287,7 @@ const handleWompiPayment = async () => {
                 />
 
                 {/* Botón de acción principal inyectado aquí o manejado por PriceBreakdown */}
-                <div className="p-6 pt-0">
+                {/* <div className="p-6 pt-0">
                   <Button
                     onClick={handleWompiPayment}
                     disabled={isProcessing}
@@ -305,7 +305,7 @@ const handleWompiPayment = async () => {
                     Al confirmar, serás redirigido a la pasarela de pagos Wompi
                     (Bancolombia).
                   </p>
-                </div>
+                </div> */}
               </Card>
             </aside>
           </div>
