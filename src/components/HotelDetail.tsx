@@ -11,6 +11,7 @@ import {
 import { RoomCard } from "./RoomCard";
 import { AmenityIcon } from "./AmenityIcon";
 import { ContactInfo } from "./ContactInfo";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface Room {
   id: number;
@@ -128,7 +129,7 @@ export const HotelDetail = ({ hotel, onClose }: HotelDetailProps) => {
                   <p className="text-muted-foreground text-lg">{hotel.description}</p>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary">Desde {hotel.price}/noche</span>
+                    <span className="text-2xl font-bold text-primary">Desde Xxxxx {formatCurrency(hotel.price)}/noche</span>
                     <Button onClick={handleNavigation} className="flex items-center gap-2">
                       <Navigation className="w-4 h-4" />
                       {isMobile ? "Abrir en Waze" : "Ver en Google Maps"}

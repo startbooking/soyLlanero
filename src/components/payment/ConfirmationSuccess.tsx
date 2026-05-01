@@ -10,6 +10,7 @@ import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const ConfirmationSuccess = () => {
   const location = useLocation();
@@ -30,12 +31,12 @@ const ConfirmationSuccess = () => {
     window.scrollTo(0, 0);
   }, [location.state, navigate]);
 
-  const formatCurrency = (val: number) => 
+  /* const formatCurrency = (val: number) => 
     new Intl.NumberFormat('es-CO', { 
       style: 'currency', 
       currency: 'COP', 
       minimumFractionDigits: 2
-    }).format(val || 0);
+    }).format(val || 0); */
 
   if (!location.state) return (
     <div className="h-screen flex items-center justify-center">

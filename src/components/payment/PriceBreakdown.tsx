@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard } from "lucide-react";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface PriceProps {
   subtotal: number;
@@ -22,15 +23,15 @@ export const PriceBreakdown = ({ subtotal, taxes, total, onPayment }: PriceProps
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Subtotal habitación</span>
-          <span>${subtotal.toLocaleString()}</span>
+          <span>${formatCurrency(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Impuestos (19%)</span>
-          <span>${taxes.toLocaleString()}</span>
+          <span>${formatCurrency(taxes)}</span>
         </div>
         <div className="flex justify-between font-bold text-xl pt-3 border-t">
           <span>Total</span>
-          <span className="text-primary">${total.toLocaleString()}</span>
+          <span className="text-primary">${formatCurrency(total)}</span>
         </div>
       </div>
 

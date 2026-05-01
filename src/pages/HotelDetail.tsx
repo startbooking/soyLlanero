@@ -19,6 +19,7 @@ import {
   Phone, Mail, Globe, ArrowLeft, Clock 
 } from "lucide-react";
 import { dataService } from "@/services/dataService";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const HotelDetail = () => {
   const [currentLanguage, setCurrentLanguage] = useState("es");
@@ -42,13 +43,6 @@ const HotelDetail = () => {
     return null;
   };
 
-const formatCurrency = (val: number) => 
-    new Intl.NumberFormat('es-CO', { 
-      style: 'currency', 
-      currency: 'COP', 
-      minimumFractionDigits: 0 
-    }).format(val || 0);
-
   useEffect(() => {
     const loadRooms = async () => {
       if (!id) return;
@@ -66,8 +60,6 @@ const formatCurrency = (val: number) =>
     loadRooms();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
-
-  // console.log(rooms)
 
   // Redirección de seguridad si se accede directamente sin estado
   if (!hotel) {
@@ -131,16 +123,24 @@ const formatCurrency = (val: number) =>
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between items-start mb-2">
-                  <h1 className="text-4xl font-black text-slate-900 tracking-tight">{hotel.name}</h1>
-                  <Badge className="bg-sabana/10 text-sabana/80 border-sabana/20 gap-1">
+                  <h1 className="text-4xl font-black text-slate-900 tracking-tight">{hotel.name} </h1>
+                  <Badge className="bg-turismo/20 flex items-center text-black/70 mb-4">
+                  RNT {hotel.rnt}
+                </Badge>
+                  <Badge className="bg-sabana/10 text-sabana/80 border-sabana/20 gap-1 hover:bg-sabana/40">
                     <Star className="w-3 h-3 fill-current" /> {hotel.rating}
                   </Badge>
                 </div>
                 
-                <div className="flex items-center text-sabana/70 font-medium mb-4 text-sm">
+                <div className="flex items-center text-sabana font-medium mb-4 text-sm">
                   <MapPin className="w-4 h-4 mr-1" />
-                  {hotel.location}
+                  {hotel.address}
                 </div>
+                <div className="flex items-center text-sabana font-medium mb-4 text-sm">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  {hotel.city}
+                </div>
+                
 
                 <div className="prose prose-slate max-w-none">
                   <p className="text-slate-600 leading-relaxed">{hotel.long_description || hotel.description}</p>
@@ -169,9 +169,9 @@ const formatCurrency = (val: number) =>
                     <Clock className="w-4 h-4 text-sabana/70" />
                     <span>In: {hotel.check_in} | Out: {hotel.check_out}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-700">
+                  {/* <div className="flex items-center gap-2 text-slate-700">
                     <MapPin className="w-4 h-4 text-sabana/70" /> {hotel.address}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -183,7 +183,7 @@ const formatCurrency = (val: number) =>
               <h2 className="text-3xl font-black text-slate-900">Habitaciones Disponibles </h2>
               <div className="bg-white border-[#D9E4C5] border-2 px-4 py-2 rounded-sm">
                 <span className="text-sm text-slate-500 mr-2">Desde</span>
-                <span className="text-xl font-black text-sabana/80">{hotel.price}</span>
+                <span className="text-xl font-black text-sabana/80">{formatCurrency(hotel.price)}</span>
               </div>
             </div>
 

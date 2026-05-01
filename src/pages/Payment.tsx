@@ -4,7 +4,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   ArrowLeft, ShieldCheck, CreditCard, Loader2,
-  User, Mail, Phone, Fingerprint, Calendar
+  User, Mail, Phone, Fingerprint, Calendar,
+  MapPin
 } from "lucide-react";
 
 import { TopBar } from "@/components/TopBar";
@@ -16,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { dataService } from "@/services/dataService";
 import { PriceBreakdown } from "@/components/payment/PriceBreakdown";
 import { ReservationSummary } from "@/components/payment/ReservationSummary";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 // Declaración para el objeto global de Wompi
 declare const WidgetCheckout: any;
@@ -25,41 +27,60 @@ const PaymentPage = () => {
   const { state } = useLocation();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
+  const location = useLocation();
 
-  // 1. Extracción y Validación de datos del State
+
+  console.log(location)
+
   const {
+    formData,
     hotel,
     room,
     checkInDate,
     checkOutDate,
-    total,
-    formData,
-    guests
-  } = state || {};
+    guests,
+    values,
+  } = location.state || {};
 
-  // console.log(guests)
+  /*  useEffect(() => {
+     // Si el usuario llega aquí sin datos (ej. refresh), redirigir
+     if (!state || !hotel || !room || !formData) {
+       navigate("/", { replace: true });
+     }
+     window.scrollTo(0, 0);
+   }, [state, navigate, hotel, room, formData]);
+ 
+   if (!state) return null; */
 
   useEffect(() => {
-    // Si el usuario llega aquí sin datos (ej. refresh), redirigir
-    if (!state || !hotel || !room || !formData) {
+    if (!location.state || !hotel || !room) {
       navigate("/", { replace: true });
     }
     window.scrollTo(0, 0);
-  }, [state, navigate, hotel, room, formData]);
+  }, [location.state, navigate, hotel, room]);
 
-  if (!state) return null;
+  if (!location.state) return null;
+
+  const { firstName, lastName, email, phone, identification } = formData
+  const { adults, children } = guests;
+  const { total, subtotal, taxes } = values;
 
   // 2. Lógica de Pago con Wompi
-  const handleWompiPayment = async () => {
+  const handleWompiPaymentOld = async () => {
     setIsProcessing(true);
 
     // El monto para Wompi debe estar en centavos (Ej: $100.000 -> 10000000)
     const amountInCents = Math.round(total * 100);
     const reference = `RES-${Date.now()}-${formData.identification.slice(-4)}`;
+    console.log(amountInCents);
 
     try {
       // Solicitar firma de integridad al backend (Seguridad obligatoria de Wompi)
-      const { signature, publicKey } = await dataService.generatePaymentSignature(reference, amountInCents);
+      const { signature, publicKey } = await dataService.prepareWompiPayment(reference, amountInCents);
+      // const { signature, publicKey } = await dataService.generatePaymentSignature(reference, amountInCents);
+
+      console.log(signature)
+      console.log(publicKey)
 
       const checkout = new WidgetCheckout({
         currency: 'COP',
@@ -107,6 +128,66 @@ const PaymentPage = () => {
     }
   };
 
+  const handleWompiPayment = async () => {
+    setIsProcessing(true);
+
+    const payload: WompiPaymentParams = {
+      referencia: `RES-${Date.now()}`,
+      total,
+      hotel_id: hotel.id,
+      habitacion_id: room.id,
+      firstName,
+      lastName,
+      email,
+      phone,
+      identification,
+      checkInDate,
+      checkOutDate,
+      adults,
+      children,
+      subtotal,
+      taxes
+    };
+
+    console.log(payload)
+
+    try {
+      // 1. Llamada al dataService refactorizado
+      const response = await dataService.prepareWompiPayment(payload);
+
+      if (response.status === 'success') {
+        const { signature, publicKey, referencia } = response.data;
+
+        // 2. Abrir Widget con los datos del servidor
+        const checkout = new (window as any).WidgetCheckout({
+          currency: 'COP',
+          amountInCents: Math.round(total * 100),
+          publicKey: publicKey,
+          signature: { integrity: signature },
+          reference: referencia,
+          customerEmail: email,
+          fullName: `${firstName} ${lastName}`
+        });
+
+        checkout.open((res: any) => {
+          if (res.transaction.status === 'APPROVED') {
+            navigate("/confirmation-success", { state: { transaction: res.transaction } });
+          }
+        });
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "No se pudo iniciar el pago",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+
+
   return (
     <div className="min-h-screen bg-slate-50">
       <TopBar currentLanguage="es" onLanguageChange={() => { }} />
@@ -121,120 +202,128 @@ const PaymentPage = () => {
           <ArrowLeft className="w-4 h-4 mr-2" /> Volver a datos
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Columna Izquierda: Detalles del Cliente y Reserva */}
-          <div className="lg:col-span-2 space-y-6">
-            <h1 className="text-3xl font-black text-slate-900 italic uppercase tracking-tighter">
+        <div className="space-y-8">
+          {/* TÍTULO: Ocupa el ancho total (100%) */}
+          <div className="w-full bg-white py-6 px-4 rounded-xl shadow-sm border border-slate-100 text-center">
+            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
               Confirmar y Pagar
             </h1>
-
-            {/* Resumen de Datos Personales */}
-            <Card className="border-none shadow-sm overflow-hidden">
-              <CardHeader className="bg-slate-900 py-4">
-                <CardTitle className="text-white text-sm uppercase font-bold flex items-center gap-2">
-                  <User className="w-4 h-4 text-sabana" /> Información del Titular
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InfoItem icon={<User />} label="Nombre completo" value={`${formData.firstName} ${formData.lastName}`} />
-                <InfoItem icon={<Fingerprint />} label="Identificación" value={`${formData.documentType} ${formData.identification}`} />
-                <InfoItem icon={<Mail />} label="Correo electrónico" value={formData.email} />
-                <InfoItem icon={<Phone />} label="Teléfono" value={formData.phone} />
-              </CardContent>
-            </Card>
-
-            {/* Resumen de Estancia */}
-            <Card className="border-none shadow-sm overflow-hidden">
-              {/* <CardHeader className="bg-slate-100 py-4 border-b">
-                <CardTitle className="text-slate-700 text-sm uppercase font-bold flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-sabana" /> Detalles de la Estancia
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="flex flex-wrap gap-8">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">Hotel</p>
-                    <p className="font-bold text-slate-800">{hotel.name}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">Habitación</p>
-                    <p className="font-bold text-slate-800">{room.name}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">Check-in / Out</p>
-                    <p className="font-bold text-slate-800">
-                      {format(checkInDate, "dd MMM")} - {format(checkOutDate, "dd MMM, yyyy")}
-                    </p>
-                  </div>
-                </div>
-              </CardContent> */}
-              <ReservationSummary
-                reservationData={{
-                  hotel,
-                  room,
-                  checkInDate,
-                  checkOutDate,
-                  guests,
-                }}
-              />
-            </Card>
-
-            {/* Seguridad */}
-            <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl">
-              <ShieldCheck className="w-8 h-8 text-blue-600" />
-              <div>
-                <p className="text-sm font-bold text-blue-900">Transacción Segura</p>
-                <p className="text-xs text-blue-700">Tu pago se procesa a través de Wompi (Bancolombia) con cifrado SSL de grado bancario.</p>
-              </div>
-            </div>
+            <p className="text-slate-500 text-sm">Verifica los datos de tu reserva antes de finalizar</p>
           </div>
 
-          {/* Columna Derecha: Liquidación Final */}
-          <aside className="lg:col-span-1">
-            <Card className="border-2 border-sabana shadow-xl sticky top-28 overflow-hidden">
-              <div className="bg-sabana p-4 text-center">
-                <span className="text-[10px] font-black uppercase text-slate-900">Total a Pagar</span>
-              </div>
-              <CardContent className="p-6 space-y-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Subtotal Alojamiento</span>
-                    <span className="font-bold text-slate-800">${(total / (1 + (parseFloat(room.tax_percentage) / 100))).toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Impuestos ({room.tax_percentage}%)</span>
-                    <span className="font-bold text-slate-800">${(total - (total / (1 + (parseFloat(room.tax_percentage) / 100)))).toLocaleString()}</span>
-                  </div>
-                  <div className="pt-4 border-t border-dashed flex justify-between items-end">
-                    <span className="text-lg font-black text-slate-900 uppercase italic">Total COP</span>
-                    <span className="text-3xl font-black text-sabana tracking-tighter">
-                      ${total.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
+          {/* CONTENEDOR PRINCIPAL: Grid de 3 columnas en LG */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                <Button
-                  onClick={handleWompiPayment}
-                  disabled={isProcessing}
-                  className="w-full bg-slate-900 hover:bg-sabana hover:text-slate-900 h-16 text-lg font-black transition-all shadow-lg group"
-                >
-                  {isProcessing ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 group-hover:scale-110 transition-transform" />
-                      PAGAR AHORA
-                    </>
-                  )}
-                </Button>
+            {/* COLUMNA IZQUIERDA: Detalles de la Reserva (Ocupa 2/3) */}
+            <div className="lg:col-span-2 space-y-6">
 
-                <p className="text-[10px] text-center text-slate-400 leading-relaxed uppercase font-medium">
-                  Al hacer clic en "Pagar Ahora", serás redirigido a la pasarela segura de Wompi.
-                </p>
-              </CardContent>
-            </Card>
-          </aside>
+              {/* Resumen de Estancia */}
+              <Card className="border-none shadow-sm overflow-hidden">
+                <CardHeader className="bg-sabana border-b">
+                  <CardTitle className="text-slate-700 text-sm uppercase font-bold flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-success" /> Detalles de la Estancia
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    <img
+                      src={`/images/rooms/${room.image || 'default-room.jpg'}`}
+                      alt={room.name}
+                      className="w-60 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{hotel.name}</h3>
+                      <p className="text-muted-foreground">{room.name}</p>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                        <MapPin className="w-3 h-3" />
+                        {hotel.address}
+                      </div>
+                      <div className="space-y-1 mt-4">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase">Habitación</p>
+                        <p className="font-bold text-slate-800">{room.name}</p>
+                      </div>
+                      <div className="space-y-1 mt-4">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase">Check-in / Out</p>
+                        <p className="font-bold text-slate-800">
+                          {format(checkInDate, "dd MMM")} - {format(checkOutDate, "dd MMM, yyyy")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-8">
+                    {/* <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Hotel</p>
+                      <p className="font-bold text-slate-800">{hotel.name}</p>
+                    </div> */}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Resumen de Datos Personales */}
+              <Card className="border-none shadow-sm overflow-hidden">
+                <CardHeader className="bg-sabana py-4">
+                  <CardTitle className="text-slate-700 text-sm uppercase font-bold flex items-center gap-2">
+                    <User className="w-4 h-4 text-slate-700" /> Información del Titular
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <InfoItem icon={<User />} label="Nombre completo" value={`${formData.firstName} ${formData.lastName}`} />
+                  <InfoItem icon={<Fingerprint />} label="Identificación" value={`${formData.documentType} ${formData.identification}`} />
+                  <InfoItem icon={<Mail />} label="Correo electrónico" value={formData.email} />
+                  <InfoItem icon={<Phone />} label="Teléfono" value={formData.phone} />
+                </CardContent>
+              </Card>
+
+              {/* Seguridad */}
+
+            </div>
+
+            {/* COLUMNA DERECHA: Detalle del Pago (Ocupa 1/3) */}
+            <div className="lg:col-span-1">
+              <Card className="sticky top-24 border-none shadow-lg overflow-hidden">
+                <CardHeader className="bg-slate-50 border-b">
+                  <CardTitle className="text-slate-800 text-lg font-black uppercase">Resumen del Pago</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Subtotal Alojamiento</span>
+                      <span className="font-bold text-slate-800">{formatCurrency(total / (1 + (parseFloat(room.tax_percentage) / 100)))}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Impuestos ({room.tax_percentage}%)</span>
+                      <span className="font-bold text-slate-800">{formatCurrency(total - (total / (1 + (parseFloat(room.tax_percentage) / 100))))}</span>
+                    </div>
+                    <div className="pt-4 border-t border-dashed flex justify-between items-end">
+                      <span className="text-lg font-black text-slate-900 uppercase italic">Total COP</span>
+                      <span className="text-3xl font-black text-sabana tracking-tighter">
+                        {formatCurrency(total)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    className="w-full bg-sabana hover:bg-sabana/90 text-white font-bold py-6 mt-4"
+                    onClick={handleWompiPayment}
+                  >
+                    PAGAR AHORA
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+          </div>
         </div>
+        <div className="w-full bg-blue-50 py-8 px-4 rounded-xl shadow-sm border border-blue-100 mt-10 flex flex-col items-center justify-center text-center">
+          <ShieldCheck className="w-10 h-10 text-blue-600 mb-3" />
+          <div className="space-y-1">
+            <p className="text-base font-bold text-blue-900">Transacción Segura</p>
+            <p className="text-xs text-blue-700 max-w-lx mx-auto">
+              Tu pago se procesa a través de Wompi con cifrado SSL de grado bancario.
+            </p>
+          </div>
+        </div>
+
       </main>
       <Footer />
     </div>

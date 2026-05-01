@@ -33,13 +33,6 @@ export const ReservationDetailSidebar = ({
   calculations, 
   guests 
 }: SidebarProps) => {
-/*   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 2
-    }).format(value);
-  }; */
   return (
     <aside className="lg:col-span-1">
       <Card className="sticky top-28 border-sabana/20 overflow-hidden shadow-lg bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">

@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { useCachedData } from "@/hooks/useCachedData";
 import { Business } from "@/interface/interface";
 import { dataService } from "@/services/dataService";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 // --- Configuración y Constantes ---
 const CATEGORIES = [
@@ -18,7 +19,7 @@ const CATEGORIES = [
   { id: 2, value: "glamping", label: "Glamping" },
   { id: 3, value: "cabanas", label: "Cabañas" },
   { id: 4, value: "fincas", label: "Fincas" },
-  { id: 5, value: "hostales", label: "Hostales" },
+  // { id: 5, value: "hostales", label: "Hostales" },
 ];
 
 const AMENITY_ICONS: Record<string, any> = {
@@ -36,6 +37,7 @@ interface BusinessAccommodation extends Business {
   type_category_id: number;
   location?: string;
   price: string;
+  city: string;
 }
 
 // --- Sub-componente: AccommodationCard ---
@@ -58,9 +60,21 @@ const AccommodationCard = ({ item }: { item: BusinessAccommodation }) => {
           loading="lazy"
           onError={(e) => (e.currentTarget.src = '/placeholder-hotel.jpg')}
         />
+        {/* <div className="absolute top-3 right-3 flex items-center bg-white/95 backdrop-blur shadow-sm rounded-sm px-2.5 py-1">
+          RNT <span className="ml-1 text-xs font-bold">{item.rnt}</span>
+        </div>
         <div className="absolute top-3 right-3 flex items-center bg-white/95 backdrop-blur shadow-sm rounded-sm px-2.5 py-1">
           <Star className="w-3.5 h-3.5 text-yellow-500 fill-current" />
           <span className="ml-1 text-xs font-bold">{displayRating}</span>
+        </div> */}
+        <div className="absolute top-3 left-3 flex items-center bg-white/95 backdrop-blur shadow-sm rounded-sm px-2.5 py-1">
+          <span className="text-xs font-bold text-slate-700">RNT {item.rnt}</span>
+        </div>
+
+        {/* RATING - Posicionado a la DERECHA (top-3 right-3) */}
+        <div className="absolute top-3 right-3 flex items-center bg-white/95 backdrop-blur shadow-sm rounded-sm px-2.5 py-1">
+          <Star className="w-3.5 h-3.5 text-yellow-500 fill-current mr-1" />
+          <span className="text-xs font-bold text-slate-700">{displayRating}</span>
         </div>
       </div>
 
@@ -71,6 +85,9 @@ const AccommodationCard = ({ item }: { item: BusinessAccommodation }) => {
         <div className="flex items-center text-muted-foreground text-sm">
           <MapPin className="w-4 h-4 mr-1 text-sabana" />
           <span className="truncate">{displayLocation}</span>
+        </div>
+        <div className="flex items-center text-muted-foreground text-sm">
+          <span className="truncate">{item.city}</span>
         </div>
       </CardHeader>
 
@@ -94,9 +111,9 @@ const AccommodationCard = ({ item }: { item: BusinessAccommodation }) => {
 
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground uppercase font-semibold">Desde</span>
+            <span className="text-xs text-muted-foreground uppercase font-semibold">Desde </span>
             <span className="text-lg font-extrabold text-sabana">
-              {item.price || "Consultar"}
+              {formatCurrency(item.price) || "Consultar"}
             </span>
           </div>
           <Button

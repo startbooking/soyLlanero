@@ -21,6 +21,7 @@ import { dataService } from "@/services/dataService";
 import { ReservationDetailSidebar } from "@/components/reservation/ReservationDetailSidebar";
 import { DatePicker } from "@/components/DatePicker";
 import { Textarea } from "@/components/ui/textarea";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const ReservationPage = () => {
   const navigate = useNavigate();
@@ -90,7 +91,6 @@ const ReservationPage = () => {
       taxes,
       total
     };
-    // return { nights, subtotal, taxes, total: subtotal + taxes };
   }, [checkInDate, checkOutDate, room]);
 
   const handleCheckAvailability = async () => {
@@ -133,7 +133,10 @@ const ReservationPage = () => {
     navigate("/payment", {
       state: {
         hotel, room, checkInDate, checkOutDate,
+        values:calculations,
         total: calculations.total, formData,
+        subtotal:calculations.subtotal,
+        tax:calculations.taxes,
         guests: { adults: numAdults, children: numChildren }
       }
     });
@@ -230,38 +233,6 @@ const ReservationPage = () => {
             {/* PASO 2: DATOS DEL CLIENTE */}
             {step === 2 && (
               <Card className="border-sabana/20 shadow-sm animate-in fade-in slide-in-from-right-4">
-                {/* <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-sabana font-bold">
-                    <User className="w-5 h-5" /> 2. Datos de Reserva
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Nombre</Label>
-                      <Input placeholder="Ej: Juan" onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Apellido</Label>
-                      <Input placeholder="Ej: Pérez" onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Email</Label>
-                      <Input type="email" placeholder="juan@correo.com" onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Teléfono</Label>
-                      <Input placeholder="300 123 4567" onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
-                    </div>
-                  </div>
-                  <div className="flex gap-4 mt-8">
-                    <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Volver</Button>
-                    <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
-                  </div>
-                </CardContent> */}
-
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                   <Card className="border-sabana/20 shadow-sm">
                     <CardHeader>
@@ -363,12 +334,6 @@ const ReservationPage = () => {
                       </div>
 
                       <div className="flex gap-4 pt-4 border-t">
-                        {/* <Button variant="outline" className="flex-1 border-sabana text-sabana" onClick={onBack}>
-                          Atrás
-                        </Button>
-                        <Button className="flex-1 bg-sabana text-white hover:bg-sabana/90 font-bold" onClick={onNext}>
-                          Continuar al Resumen
-                        </Button> */}
                         <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Volver</Button>
                         <Button className="flex-1 bg-sabana text-white font-bold" onClick={() => setStep(3)}>Revisar Resumen</Button>
                       </div>
@@ -453,15 +418,15 @@ const ReservationPage = () => {
                     <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
                       <div className="flex justify-between text-sm">
                         <span>Subtotal ({calculations.nights} noches)</span>
-                        <span className="font-medium">${calculations.subtotal.toLocaleString()}</span>
+                        <span className="font-medium">{formatCurrency(calculations.subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm text-slate-500">
                         <span>Impuestos y cargos</span>
-                        <span>${calculations.taxes.toLocaleString()}</span>
+                        <span>{formatCurrency(calculations.taxes)}</span>
                       </div>
                       <div className="flex justify-between text-xl font-black text-sabana border-t pt-3">
                         <span>TOTAL</span>
-                        <span>${calculations.total.toLocaleString()}</span>
+                        <span>{formatCurrency(calculations.total)}</span>
                       </div>
                     </div>
                     
@@ -474,48 +439,6 @@ const ReservationPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-                {/*               <Card className="border-sabana border-2 shadow-xl animate-in zoom-in-95">
-                <CardHeader className="bg-sabana/5">
-                  <CardTitle className="text-sabana">Revisión Final</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-6 space-y-6">
-                  <div className="grid grid-cols-2 gap-6 text-sm text-slate-600">
-                    <div className="space-y-1">
-                      <p className="uppercase text-[10px] font-bold text-slate-400">Estancia</p>
-                      <p><strong>Check-in:</strong> {format(checkInDate!, "dd/MM/yyyy")}</p>
-                      <p><strong>Check-out:</strong> {format(checkOutDate!, "dd/MM/yyyy")}</p>
-                      <p><strong>Noches:</strong> {calculations.nights}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="uppercase text-[10px] font-bold text-slate-400">Titular</p>
-                      <p><strong>Nombre:</strong> {formData.firstName} {formData.lastName}</p>
-                      <p><strong>Huéspedes:</strong> {numAdults} Ad. {numChildren} Niñ.</p>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span>Subtotal ({calculations.nights} noches)</span>
-                      <span className="font-medium">${calculations.subtotal.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-sm text-slate-500">
-                      <span>Impuestos y cargos</span>
-                      <span>${calculations.taxes.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xl font-black text-sabana border-t pt-3">
-                      <span>TOTAL</span>
-                      <span>${calculations.total.toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <Button onClick={handlePayment} className="w-full bg-sabana hover:bg-sabana/90 h-14 text-lg font-black text-white shadow-lg">
-                      <CreditCard className="mr-2 w-5 h-5" /> Pagar con Wompi
-                    </Button>
-                    <Button variant="link" className="text-slate-400" onClick={() => setStep(2)}>Editar mis datos</Button>
-                  </div>
-                </CardContent>
-              </Card> */}
               </>
             )}
           </div>

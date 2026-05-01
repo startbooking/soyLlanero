@@ -109,7 +109,7 @@ export const Footer = () => {
     <>
       <footer className="bg-gradient-to-br from-primary/5 to-accent/5 border-t border-border mt-16">
         <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Información de la app */}
             <div className="space-y-4">
               <LogoSection onHomeClick={handleHomeClick} />
@@ -145,52 +145,7 @@ export const Footer = () => {
               </div>
             </div>
             {/* Para empresas */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">Para empresas</h4>
-              <div className="space-y-2">
-                <Link
-                  to="/afiliacion"
-                  className="block text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Registrar empresa
-                </Link>
-                {/* <Link to="/business-owner/dashboard" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Panel de control
-                </Link>
-                 */}
-                {/* <Link to="/login" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Panel de control
-                </Link> */}
-                <Link
-                  className="block text-sm text-muted-foreground hover:text-primary transition-colors" // Clases mejoradas
-                  // La función handleLoginClick debería manejar internamente la lógica de:
-                  // 1. Mostrar el modal
-                  // 2. Opcionalmente, prevenir la navegación predeterminada si el Link tiene un "to" o "href"
-                  onClick={handleLoginClick}
-                >
-                  {/* <LogIn className="w-4 h-4" /> */}
-                  <span className="hidden sm:inline">Panel de control</span>
-                </Link>
-                <Link
-                  to="/business/promote"
-                  className="block text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Promocionar servicios
-                </Link>
-                <Link
-                  to="/business/statistics"
-                  className="block text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Estadísticas
-                </Link>
-                <Link
-                  to="/business/support"
-                  className="block text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Soporte técnico
-                </Link>
-              </div>
-            </div>
+            {/*  */}
 
             {/* Contacto */}
             <div className="space-y-4">
@@ -252,7 +207,7 @@ export const Footer = () => {
                 href="https://sactel.cloud"
                 className="hover:text-primary transition-colors"
               >
-                2025 Todos los derechos reservados.
+                2026 Todos los derechos reservados.
               </a>
             </div>
           </div>

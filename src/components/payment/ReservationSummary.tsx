@@ -2,22 +2,17 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarDays, Users, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import DateDisplay from "../DateDisplay";
 
 export const ReservationSummary = ({ reservationData }: { reservationData: any }) => {
   const { hotel, room, checkInDate, checkOutDate, guests } = reservationData;
 
   // Formateo de fechas consistente con tu imagen
-  const formatDate = (date: any) => {
-    if (!date) return "---";
-    const d = new Date(date);
-    return format(d, "dd MMM, yyyy", { locale: es });
-  };
 
   return (
     <Card className="overflow-hidden border-slate-200 shadow-sm bg-white">
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
-          
           {/* LADO IZQUIERDO: Imagen con Texto Superpuesto */}
           <div className="relative w-full md:w-2/5 h-48 md:h-auto overflow-hidden">
             <img
@@ -47,13 +42,13 @@ export const ReservationSummary = ({ reservationData }: { reservationData: any }
               {/* Check-in */}
               <div className="space-y-1">
                 <p className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Check-in</p>
-                <p className="text-sm font-bold text-slate-700">{formatDate(checkInDate)}</p>
+                <DateDisplay date={checkInDate} />
               </div>
 
               {/* Check-out */}
               <div className="space-y-1">
                 <p className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Check-out</p>
-                <p className="text-sm font-bold text-slate-700">{formatDate(checkOutDate)}</p>
+                <DateDisplay date={checkOutDate} />
               </div>
             </div>
 
