@@ -51,9 +51,6 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REQUEST_TIMEOUT);
 
-/*   console.log(url);
-  console.log(endpoint); */
-
   try {
     const response = await fetch(url, {
       ...options,
@@ -109,6 +106,35 @@ export const dataService = {
    */
   getWompiTransactionStatus: (id: string) =>
     request(`/wompi/status/${id}`),
+
+  generatePaymentSignatureOld: async (referencia: string, montoCentavos: number) => {
+    try {
+      const response = await fetch('generate-signature', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ referencia, monto: montoCentavos })
+      });
+      
+      if (!response.ok) throw new Error('Error al generar la firma de integridad');
+      return await response.json(); // Retorna { signature }
+    } catch (error) {
+      console.error("Signature Error:", error);
+      throw error;
+    }
+  },
+
+  generatePaymentSignature: (referencia: string, montoCentavos: number) => 
+    request(`/wompi/generate-signature`),
+
+
+  /**
+   * (Opcional) Consultar el estado real de una transacción en el backend
+   * después de que el widget cierra
+   */
+  verifyTransactionStatus: async (transactionId: string) => {
+    const response = await fetch(`/verify-payment/${transactionId}`);
+    return await response.json();
+  },
 
   // --- Negocios (Businesses) ---
   getBusinesses: () => request<any[]>('/businesses'),

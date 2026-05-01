@@ -1,5 +1,6 @@
 import { CalendarIcon, Users, Info } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface SummaryCalculations {
   nights: number;
@@ -32,13 +33,13 @@ export const ReservationDetailSidebar = ({
   calculations, 
   guests 
 }: SidebarProps) => {
-  const formatCurrency = (value: number) => {
+/*   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 2
     }).format(value);
-  };
+  }; */
   return (
     <aside className="lg:col-span-1">
       <Card className="sticky top-28 border-sabana/20 overflow-hidden shadow-lg bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -90,11 +91,11 @@ export const ReservationDetailSidebar = ({
             </div>
             <div className="flex justify-between text-sm text-slate-500">
               <span>Subtotal Estadia</span>
-              <span className="font-medium text-slate-700">${calculations.subtotal.toLocaleString()}</span>
+              <span className="font-medium text-slate-700">{formatCurrency(calculations.subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm text-red-400 font-medium italic">
               <span>Impuestos gubernamentales ({room.tax_percentage || 0}%)</span>
-              <span>+ ${calculations.taxes.toLocaleString()}</span>
+              <span>+ {formatCurrency(calculations.taxes)}</span>
             </div>
           </div>
 
@@ -103,7 +104,7 @@ export const ReservationDetailSidebar = ({
             <div className="flex justify-between items-center mb-1">
               <span className="text-sm font-bold text-slate-500">TOTAL A PAGAR</span>
               <span className="text-3xl font-black text-sabana tracking-tighter">
-                ${calculations.total.toLocaleString()}
+                {formatCurrency(calculations.total)}
               </span>
             </div>
             <div className="bg-slate-50 rounded-lg p-3 mt-4 border border-slate-100">

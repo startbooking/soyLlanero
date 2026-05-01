@@ -4,7 +4,7 @@ import { CalendarDays, Users, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const ReservationSummary = ({ reservationData }: { reservationData: any }) => {
-  const { hotel, room, checkInDate, checkOutDate, guests, children } = reservationData;
+  const { hotel, room, checkInDate, checkOutDate, guests } = reservationData;
 
   // Formateo de fechas consistente con tu imagen
   const formatDate = (date: any) => {
@@ -62,8 +62,8 @@ export const ReservationSummary = ({ reservationData }: { reservationData: any }
               <div className="flex items-center gap-3 text-slate-600">
                 <Users className="w-4 h-4 text-sky-500" />
                 <span className="text-sm font-medium">
-                  {guests} Adulto{parseInt(guests) !== 1 ? 's' : ''} 
-                  {parseInt(children) > 0 && ` • ${children} Niño${parseInt(children) !== 1 ? 's' : ''}`}
+                  {guests} Adulto{parseInt(guests.adults) !== 1 ? 's' : ''} 
+                  {parseInt(guests.children) > 0 && ` • ${guests.children} Niño${parseInt(guests.children) !== 1 ? 's' : ''}`}
                 </span>
               </div>
             </div>
