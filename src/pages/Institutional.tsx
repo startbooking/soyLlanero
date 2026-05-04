@@ -1,321 +1,209 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Users,
-  Building,
-  Target,
-  Award,
-  FileText,
-  Phone,
-  Mail,
-  MapPin,
-  Loader2,
+import { 
+  Users, Building, Target, Award, FileText, Phone, 
+  Mail, MapPin, Loader2, ShieldCheck, TrendingUp, Sparkles 
 } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { useCachedData } from "@/hooks/useCachedData";
-import { dataService } from "@/services/dataService";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useAppConfig } from "@/contexts/AppConfigContext";
 import { useNavigate } from "react-router-dom";
 
-
-/* interface AppConfig {
-  objectives: string[];
-  } */
-
-const toSafeArray = (data) => {
-  if (Array.isArray(data)) {
-    return data; // Si ya es un array, devolverlo tal cual.
+const toSafeArray = (data: any) => {
+  if (Array.isArray(data)) return data;
+  if (!data) return [];
+  try {
+    return typeof data === "string" ? JSON.parse(data) : [data];
+  } catch (e) {
+    return [];
   }
-  if (data === null || data === undefined) {
-    return []; // Si es null o undefined, devolver un array vacío.
-  }
-  // Si es cualquier otra cosa (ej: un string, un número), envolverlo en un array.
-  return JSON.parse(data);
 };
 
 const Institutional = () => {
   const [currentLanguage, setCurrentLanguage] = useState("es");
   const { appConfig } = useAppConfig();
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const teamMembers = [
-    {
-      name: "María González",
-      position: "Directora del Clúster de Turismo",
-      email: "maria.gonzalez@villavicencio.gov.co",
-      phone: "+57 8 123 4567",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b169",
-    },
-    {
-      name: "Carlos Rodríguez",
-      position: "Coordinador de Desarrollo Turístico",
-      email: "carlos.rodriguez@villavicencio.gov.co",
-      phone: "+57 8 234 5678",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-    },
-    {
-      name: "Ana Martínez",
-      position: "Especialista en Marketing Digital",
-      email: "ana.martinez@villavicencio.gov.co",
-      phone: "+57 8 345 6789",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-    },
-  ];
-
-  const achievements = [
-    {
-      year: "2024",
-      title: "Certificación de Destino Turístico Sostenible",
-      description:
-        "Villavicencio recibió la certificación como destino turístico sostenible por parte del Ministerio de Comercio.",
-    },
-    {
-      year: "2023",
-      title: "120+ Empresas Afiliadas",
-      description:
-        "Alcanzamos más de 120 empresas turísticas registradas en nuestra plataforma digital.",
-    },
-    {
-      year: "2023",
-      title: "Premio Nacional de Turismo Rural",
-      description:
-        "Reconocimiento por el desarrollo del turismo rural en los llanos orientales.",
-    },
-    {
-      year: "2022",
-      title: "Lanzamiento Oficial del Clúster",
-      description:
-        "Constitución oficial del Clúster de Turismo de Villavicencio con 85 empresas fundadoras.",
-    },
-  ];
-
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Desplaza la ventana al inicio (arriba izquierda)
-  }, []); // Se ejecuta cada vez que el ID o la ruta cambian
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-      />
-      <Header
-        activeSection="institutional"
-        onSectionChange={() => {}}
-        language={currentLanguage}
-      />
+    <div className="min-h-screen bg-slate-50/50">
+      <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
+      <Header activeSection="institutional" onSectionChange={() => {}} language={currentLanguage} />
 
-      <main className="pt-24">
-        <div className="container mx-auto px-4 py-8">
-          {/* Hero Section */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-              <Building className="w-10 h-10 text-primary" />
-              {appConfig?.app_name || "SACTel APP Turismo"}
+      <main className="pt-32 pb-20">
+        <div className="container mx-auto px-4">
+          
+          {/* 1. HERO SECTION DINÁMICO */}
+          <section className="text-center mb-20 animate-in fade-in zoom-in duration-700">
+            <Badge variant="outline" className="mb-4 border-sabana text-sabana font-bold px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
+              Institucionalidad y Progreso
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
+              {appConfig?.app_name || "Clúster de Turismo"} 
+              <span className="text-sabana"> Villavicencio</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              {appConfig?.app_description || "SACTel APP Turismo"}
+            <p className="text-lg text-slate-500 max-w-3xl mx-auto font-medium leading-relaxed">
+              {appConfig?.app_description || "Impulsando el desarrollo turístico de la Puerta al Llano."}
             </p>
-          </div>
+          </section>
 
-          {/* Misión, Visión y Objetivos */}
-          {isLoading ? (
-            <div className="flex justify-center mb-16">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          {/* 2. MISIÓN, VISIÓN Y OBJETIVOS (Cards Elevadas) */}
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+            <Card className="border-none shadow-xl shadow-slate-200/50 rounded-3xl bg-white overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
+              <div className="h-2 bg-sabana w-full" />
+              <CardHeader className="pt-8 text-center">
+                <div className="w-16 h-16 bg-sabana/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Target className="w-8 h-8 text-sabana" />
+                </div>
+                <CardTitle className="font-black text-2xl uppercase tracking-tighter">Misión</CardTitle>
+              </CardHeader>
+              <CardContent className="px-8 pb-8 text-center">
+                <p className="text-slate-500 leading-relaxed font-medium">
+                  {appConfig?.mision}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-xl shadow-slate-200/50 rounded-3xl bg-white overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
+              <div className="h-2 bg-blue-500 w-full" />
+              <CardHeader className="pt-8 text-center">
+                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Award className="w-8 h-8 text-blue-500" />
+                </div>
+                <CardTitle className="font-black text-2xl uppercase tracking-tighter">Visión</CardTitle>
+              </CardHeader>
+              <CardContent className="px-8 pb-8 text-center">
+                <p className="text-slate-500 leading-relaxed font-medium">
+                  {appConfig?.vision}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-xl shadow-slate-200/50 rounded-3xl bg-white overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
+              <div className="h-2 bg-orange-500 w-full" />
+              <CardHeader className="pt-8 text-center">
+                <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Sparkles className="w-8 h-8 text-orange-500" />
+                </div>
+                <CardTitle className="font-black text-2xl uppercase tracking-tighter">Objetivos</CardTitle>
+              </CardHeader>
+              <CardContent className="px-8 pb-8">
+                <div className="flex flex-col gap-3">
+                  {toSafeArray(appConfig?.objetivos).map((item, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <ShieldCheck className="w-5 h-5 text-sabana shrink-0 mt-0.5" />
+                      <p className="text-sm font-bold text-slate-600 leading-tight">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* 3. LOGROS (Timeline Estilizado) */}
+          <section className="mb-24">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase">
+                Hitos y <span className="text-sabana">Logros</span>
+              </h2>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                <Card className="text-center">
-                  <CardHeader>
-                    <Target className="w-12 h-12 text-primary mx-auto mb-4" />
-                    <CardTitle>Misión</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-justify">
-                      {appConfig?.mision}
-                    </p>
-                  </CardContent>
-                </Card>
+            
+            <div className="max-w-4xl mx-auto space-y-6">
+              {toSafeArray(appConfig?.achievements).map((achievement, index) => (
+                <div 
+                  key={index}
+                  className="relative pl-8 md:pl-0 flex flex-col md:flex-row gap-6 items-center group"
+                >
+                  <div className="hidden md:flex flex-1 justify-end text-right">
+                    <span className="text-4xl font-black text-slate-200 group-hover:text-sabana transition-colors">
+                      {achievement.year}
+                    </span>
+                  </div>
+                  
+                  <div className="hidden md:block w-px h-24 bg-slate-200 relative">
+                    <div className="absolute top-1/2 -left-1.5 w-3 h-3 rounded-full bg-sabana shadow-[0_0_10px_rgba(5,150,105,0.5)]" />
+                  </div>
 
-                <Card className="text-center">
-                  <CardHeader>
-                    <Award className="w-12 h-12 text-primary mx-auto mb-4" />
-                    <CardTitle>Visión</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-justify">
-                      {appConfig?.vision}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="text-center">
-                  <CardHeader>
-                    <Users className="w-12 h-12 text-primary mx-auto mb-4" />
-                    <CardTitle>Objetivos</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {toSafeArray(appConfig?.objetivos).map((item, index) => {
-                      if (typeof item === "string" && item.trim().length > 0) {
-                        return (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs text-justify text-muted-foreground rounded-sm"
-                          >
-                            {item}
-                          </Badge>
-                        );
-                      }
-                      return null;
-                    })}
-                  </CardContent>
-                </Card>
-              </div>
-            </>
-          )}
-
-          {/* Equipo de Trabajo */}
-          {/* <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Nuestro Equipo</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
-                      <img 
-                        src={member.image} 
-                        alt={member.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <CardTitle className="text-lg">{member.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{member.position}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <div className="flex items-center justify-center gap-2 text-sm">
-                      <Mail className="w-4 h-4" />
-                      <span>{member.email}</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-2 text-sm">
-                      <Phone className="w-4 h-4" />
-                      <span>{member.phone}</span>
-                    </div>
-                    <Button variant="outline" size="sm" className="mt-4">
-                      Contactar
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div> */}
-
-          {/* Logros y Reconocimientos */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
-              Logros y Reconocimientos
-            </h2>
-            <div className="space-y-6">
-              {toSafeArray(appConfig?.achievements).map(
-                (achievement, index) => (
-                  <Card
-                    key={index}
-                    className="hover:shadow-lg transition-shadow"
-                  >
+                  <Card className="flex-[3] border-none shadow-md rounded-2xl bg-white hover:shadow-lg transition-shadow">
                     <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <Badge className="bg-primary text-primary-foreground text-lg px-3 py-1">
-                          {achievement.year}
-                        </Badge>
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold mb-2 text-foreground">
-                            {achievement.title}
-                          </h3>
-                          <p className="text-muted-foreground">
-                            {achievement.description}
-                          </p>
-                        </div>
-                      </div>
+                      <Badge className="md:hidden mb-2 bg-sabana">{achievement.year}</Badge>
+                      <h3 className="text-xl font-black text-slate-800 mb-1 tracking-tight uppercase">
+                        {achievement.title}
+                      </h3>
+                      <p className="text-slate-500 font-medium text-sm leading-relaxed">
+                        {achievement.description}
+                      </p>
                     </CardContent>
                   </Card>
-                )
-              )}
+                </div>
+              ))}
             </div>
-          </div>
+          </section>
 
-          {/* Información de Contacto */}
-          <Card className="bg-gradient-to-br from-primary/5 to-accent/5">
-            <CardHeader>
-              <CardTitle className="text-center text-2xl">
-                Información de Contacto
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Building className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="font-medium">{appConfig.company_name}</p>
-                    </div>
+          {/* 4. CONTACTO (Card de Impacto) */}
+          <section className="max-w-5xl mx-auto">
+            <Card className="border-none shadow-2xl rounded-[2.5rem] bg-slate-900 text-white overflow-hidden relative">
+              {/* Decoración abstracta */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-sabana/10 blur-[100px] rounded-full -mr-32 -mt-32" />
+              
+              <CardContent className="p-10 md:p-16 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6 leading-none">
+                      ESTAMOS PARA <br /> <span className="text-sabana">SERVIRTE</span>
+                    </h2>
+                    <p className="text-slate-400 font-medium mb-8">
+                      ¿Tienes dudas sobre el clúster o quieres ser parte de nuestra red empresarial? Nuestro equipo está listo para asesorarte.
+                    </p>
+                    <Button 
+                      onClick={() => navigate("/contact")}
+                      className="bg-sabana hover:bg-sabana/90 text-white font-black py-6 px-8 rounded-2xl shadow-xl shadow-sabana/20 transition-all active:scale-95 text-lg uppercase tracking-widest"
+                    >
+                      Contactar ahora
+                    </Button>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium">Dirección</p>
-                      <p className="text-sm text-muted-foreground">
-                        {appConfig.company_address}
-                      </p>
+
+                  <div className="grid grid-cols-1 gap-6">
+                    <div className="flex items-center gap-4 bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
+                      <div className="w-12 h-12 bg-sabana rounded-xl flex items-center justify-center">
+                        <MapPin className="text-white w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-sabana uppercase tracking-widest">Dirección</p>
+                        <p className="font-bold">{appConfig.company_address}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
+                      <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                        <Phone className="text-white w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Teléfono / WhatsApp</p>
+                        <p className="font-bold">{appConfig.company_phone}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
+                      <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                        <Clock className="text-white w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Atención</p>
+                        <p className="font-bold text-sm leading-tight">{appConfig.horario_atencion}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="font-medium">Teléfono</p>
-                      <p className="text-sm text-muted-foreground">
-                        {appConfig.company_phone}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="font-medium">Email</p>
-                      <p className="text-sm text-muted-foreground">
-                        {appConfig.company_email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="font-medium">Horario de Atención</p>
-                      <p className="text-sm text-muted-foreground">
-                        {appConfig.horario_atencion}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-center mt-8">
-                <Button 
-                  className="bg-primary hover:bg-primary/90"
-                  onClick={() => navigate("/contact")}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Contactar Clúster
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </section>
         </div>
       </main>
 
@@ -323,5 +211,10 @@ const Institutional = () => {
     </div>
   );
 };
+
+// Icono Clock que faltaba
+const Clock = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+);
 
 export default Institutional;

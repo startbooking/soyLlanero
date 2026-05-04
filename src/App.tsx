@@ -73,12 +73,14 @@ import AffiliationPresentation from "./pages/AffiliationPresentation";
 import { useState } from "react";
 import ContactService from "./pages/ContactService";
 
+
 import RegisterBusiness from "./pages/business/RegisterBusiness";
 import PromoteServices from "./pages/business/PromoteServices";
 import BusinessStatistics from "./pages/business/BusinessStatistics";
 import BusinessSupport from "./pages/business/BusinessSupport";
 import ConfirmationSuccess from "./components/payment/ConfirmationSuccess";
 import { PendingReservationAlert } from "./components/reservation/PendingReservationAlert";
+import BusinessMap from "./pages/BusinessMap";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/maps" element={<BusinessMap />} />
       <Route path="/news" element={<News />} />
       <Route path="/institutional" element={<Institutional />} />
       <Route path="/explore-destinations" element={<ExploreDestinations />} />

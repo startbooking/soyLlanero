@@ -1,19 +1,25 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { 
+  MapPin, Phone, Mail, Clock, Send, 
+  MessageSquare, Navigation, ExternalLink 
+} from "lucide-react";
 import { CustomCaptcha } from "@/components/CustomCaptcha";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useAppConfig } from "@/contexts/AppConfigContext";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export const Contact = () => {
   const [currentLanguage, setCurrentLanguage] = useState("es");
   const { appConfig } = useAppConfig();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,11 +33,19 @@ export const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isCaptchaVerified) {
-      alert("Por favor completa la verificación");
+      toast.error("Por favor completa la verificación de seguridad");
       return;
     }
-    console.log("Formulario enviado:", formData);
-    alert("Mensaje enviado correctamente");
+
+    setIsSubmitting(true);
+    // Simulación de envío
+    setTimeout(() => {
+      console.log("Formulario enviado:", formData);
+      toast.success("¡Mensaje enviado correctamente! Nos contactaremos pronto.");
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      setIsCaptchaVerified(false);
+      setIsSubmitting(false);
+    }, 1500);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -42,163 +56,212 @@ export const Contact = () => {
   };
 
   const openWaze = () => {
-    const wazeUrl = "https://waze.com/ul?q=Carrera%2035%20%2315-30%20Villavicencio%20Meta";
-    window.open(wazeUrl, '_blank');
+    const address = encodeURIComponent(appConfig.company_address);
+    window.open(`https://waze.com/ul?q=${address}`, '_blank');
   };
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Desplaza la ventana al inicio (arriba izquierda)
-  }, []); // Se ejecuta cada vez que el ID o la ruta cambian
-
-
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50/50">
       <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
       <Header activeSection="contact" onSectionChange={() => {}} language={currentLanguage} />
       
-      <main className="pt-32 pb-16">
+      <main className="pt-32 pb-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-foreground mb-4">
-                Contáctanos
+            
+            {/* Cabecera de Página */}
+            <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <Badge className="mb-4 bg-sabana/10 text-sabana border-none font-bold px-4 py-1 uppercase tracking-widest text-[10px]">
+                Atención al Ciudadano
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tighter">
+                ¿CÓMO PODEMOS <span className="text-sabana">AYUDARTE?</span>
               </h1>
-              <p className="text-xl text-muted-foreground">
-                Estamos aquí para ayudarte con toda la información que necesites
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+                Estamos aquí para resolver tus dudas sobre el turismo en nuestra región y apoyarte en lo que necesites.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Formulario de contacto */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Envíanos un mensaje</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Input
-                        name="name"
-                        placeholder="Nombre completo"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <Input
-                        name="email"
-                        type="email"
-                        placeholder="Correo electrónico"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* Columna Izquierda: Formulario (7 columnas) */}
+              <div className="lg:col-span-7">
+                <Card className="border-none shadow-2xl shadow-slate-200/50 rounded-3xl overflow-hidden bg-white">
+                  <CardHeader className="p-8 border-b border-slate-50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-sabana/10 rounded-lg">
+                        <MessageSquare className="w-6 h-6 text-sabana" />
+                      </div>
+                      <CardTitle className="text-2xl font-black text-slate-800 uppercase tracking-tighter">
+                        Envíanos un mensaje
+                      </CardTitle>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Input
-                        name="phone"
-                        placeholder="Teléfono"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                      />
-                      <Input
-                        name="subject"
-                        placeholder="Asunto"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <Textarea
-                      name="message"
-                      placeholder="Tu mensaje"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      rows={6}
-                      required
-                    />
-
-                    <CustomCaptcha onVerified={setIsCaptchaVerified} />
-
-                    <Button type="submit" className="w-full" disabled={!isCaptchaVerified}>
-                      Enviar mensaje
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              {/* Información de contacto */}
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Información de contacto</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-primary mt-1" />
+                  <CardContent className="p-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Nombre completo</Label>
+                          <Input
+                            name="name"
+                            className="h-12 rounded-xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all"
+                            placeholder="Ej: Juan Pérez"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Correo electrónico</Label>
+                          <Input
+                            name="email"
+                            type="email"
+                            className="h-12 rounded-xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all"
+                            placeholder="juan@ejemplo.com"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Teléfono</Label>
+                          <Input
+                            name="phone"
+                            className="h-12 rounded-xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all"
+                            placeholder="+57 3..."
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Asunto</Label>
+                          <Input
+                            name="subject"
+                            className="h-12 rounded-xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all"
+                            placeholder="Motivo de tu consulta"
+                            value={formData.subject}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Tu mensaje</Label>
+                        <Textarea
+                          name="message"
+                          className="rounded-xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all min-h-[150px]"
+                          placeholder="Escribe aquí tu solicitud detallada..."
+                          value={formData.message}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+
+                      <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <CustomCaptcha onVerified={setIsCaptchaVerified} />
+                      </div>
+
+                      <Button 
+                        type="submit" 
+                        className="w-full h-14 bg-sabana hover:bg-sabana/90 text-white font-black rounded-xl shadow-lg shadow-sabana/20 transition-all active:scale-[0.98]" 
+                        disabled={!isCaptchaVerified || isSubmitting}
+                      >
+                        {isSubmitting ? "ENVIANDO..." : (
+                          <span className="flex items-center gap-2">
+                            <Send className="w-5 h-5" /> ENVIAR MENSAJE
+                          </span>
+                        )}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Columna Derecha: Info y Mapa (5 columnas) */}
+              <div className="lg:col-span-5 space-y-6">
+                
+                {/* Información de contacto */}
+                <Card className="border-none shadow-xl rounded-3xl bg-slate-900 text-white overflow-hidden">
+                  <CardHeader className="p-8 pb-4">
+                    <CardTitle className="text-xl font-black uppercase tracking-tighter text-sabana">
+                      Datos de Contacto
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8 pt-0 space-y-6">
+                    <div className="flex items-start gap-4 group">
+                      <div className="p-3 bg-white/10 rounded-xl group-hover:bg-sabana/20 transition-colors">
+                        <MapPin className="w-6 h-6 text-sabana" />
+                      </div>
                       <div>
-                        <p className="font-medium">Dirección</p>
-                        <p className="text-muted-foreground">
-                          {appConfig.company_address}
-                        </p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Dirección Física</p>
+                        <p className="font-bold leading-tight mt-1">{appConfig.company_address}</p>
                         <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="mt-2"
+                          variant="link" 
+                          className="h-auto p-0 text-sabana font-bold text-xs mt-2 hover:no-underline"
                           onClick={openWaze}
                         >
-                          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19.83 12.63c0-1.21-.31-2.4-.9-3.45l-7.86 7.86c1.05.59 2.24.9 3.45.9 4.02 0 7.29-3.27 7.29-7.29v1.98h-1.98zm-7.84-7.84c-1.21 0-2.4.31-3.45.9l7.86 7.86c-.59-1.05-.9-2.24-.9-3.45 0-4.02 3.27-7.29 7.29-7.29v1.98h1.98c0-1.21-.31-2.4-.9-3.45L12.01 4.8z"/>
-                          </svg>
-                          Abrir en Waze
+                          <Navigation className="w-3 h-3 mr-1" /> Cómo llegar con Waze
                         </Button>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-5 h-5 text-primary" />
+                    <div className="flex items-center gap-4 group">
+                      <div className="p-3 bg-white/10 rounded-xl group-hover:bg-blue-500/20 transition-colors">
+                        <Phone className="w-6 h-6 text-blue-400" />
+                      </div>
                       <div>
-                        <p className="font-medium">Teléfono</p>
-                        <p className="text-muted-foreground">{appConfig.company_movil}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Teléfono / WhatsApp</p>
+                        <p className="font-bold mt-1">{appConfig.company_movil}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-primary" />
+                    <div className="flex items-center gap-4 group">
+                      <div className="p-3 bg-white/10 rounded-xl group-hover:bg-orange-500/20 transition-colors">
+                        <Mail className="w-6 h-6 text-orange-400" />
+                      </div>
                       <div>
-                        <p className="font-medium">Email</p>
-                        <p className="text-muted-foreground">{appConfig.company_email}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Correo Electrónico</p>
+                        <p className="font-bold mt-1 text-sm md:text-base break-all">{appConfig.company_email}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3">
-                      <Clock className="w-5 h-5 text-primary mt-1" />
+                    <div className="flex items-start gap-4 group">
+                      <div className="p-3 bg-white/10 rounded-xl group-hover:bg-purple-500/20 transition-colors">
+                        <Clock className="w-6 h-6 text-purple-400" />
+                      </div>
                       <div>
-                        <p className="font-medium">Horarios de atención</p>
-                        <p className="text-muted-foreground">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Horarios de Atención</p>
+                        <p className="font-bold mt-1 leading-tight text-sm">
                           {appConfig.horario_atencion}
-                          {/* Lunes a Viernes: 8:00 AM - 6:00 PM<br />
-                          Sábados: 9:00 AM - 4:00 PM<br />
-                          Domingos: Cerrado */}
                         </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Ubicación</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">Mapa interactivo</p>
-                    </div>
-                  </CardContent>
+                {/* Mapa Interactivo */}
+                <Card className="border-none shadow-xl rounded-3xl overflow-hidden bg-white h-[350px]">
+                  <iframe
+                    title="Ubicación Clúster Villavicencio"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.255956037415!2d-73.633!3d4.15!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3e2ddf16c1110b%3A0x6a19f9a46328325a!2sVillavicencio%2C%20Meta!5e0!3m2!1ses!2sco!4v1700000000000!5m2!1ses!2sco"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
                 </Card>
               </div>
+
             </div>
           </div>
         </div>

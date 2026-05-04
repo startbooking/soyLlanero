@@ -168,7 +168,7 @@ export const createNavigationItems = (t: any): NavigationItem[] => [
     route: "/institutional",
     subItems: [
       { id: "about-us", label: "Quiénes Somos", icon: Users, route: "/institutional" },
-      { id: "interactive-map", label: "Mapa Interactivo", icon: Map, route: "/" },
+      { id: "interactive-map", label: "Mapa Interactivo", icon: Map, route: "/maps" },
       { id: "contact", label: "Contacto", icon: Phone, route: "/contact" }
     ]
   }
