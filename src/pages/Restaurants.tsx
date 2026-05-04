@@ -1,176 +1,174 @@
-
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, Clock, Phone, Utensils } from "lucide-react";
+import { MapPin, Star, Eye, Utensils, Clock, Phone, Map } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { useCachedData } from "@/hooks/useCachedData";
+import { Business } from "@/interface/interface";
+import { dataService } from "@/services/dataService";
+import { RestaurantMenuModal } from "@/components/restaurant/RestaurantMenuModal";
 
+// --- Sub-componente: RestaurantCard ---
+const RestaurantCard = ({ item }: { item: Business }) => {
+  const navigate = useNavigate();
+  // Validación de datos
+  const displayLocation = item.address || item.city || "Meta, Colombia";
+  const displayRating = item.rating ? parseFloat(item.rating).toFixed(1) : "N/A";
+
+  // const displayLocation = item.address || item.city || "Meta, Colombia";
+
+  // Función para abrir Waze
+  const handleWazeClick = () => {
+    // Si tienes coordenadas lat/lng en tu tabla business, úsalas. 
+    // De lo contrario, usamos la dirección.
+    const query = encodeURIComponent(`${item.name} ${displayLocation}`);
+    window.open(`https://waze.com/ul?q=${query}&navigate=yes`, "_blank");
+  };
+
+  const handleViewDetails = () => {
+    // Redirigir a detalle de negocio o restaurante según tu ruta
+    navigate(`/business/${item.id}`, { state: { business: item } });
+  };
+
+  const mockSpecialties = ["Mamona a la Llanera", "Cachama Ahumada", "Carne a la Perra"];
+
+  return (
+    <Card className="group hover:shadow-2xl transition-all duration-500 border-none shadow-sm overflow-hidden rounded-2xl bg-white">
+      <div className="relative h-56 overflow-hidden">
+        <img
+          src={`/images/businnesses/${item.image}`}
+          alt={item.name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          loading="lazy"
+          onError={(e) => (e.currentTarget.src = '/placeholder-restaurant.jpg')}
+        />
+        {/* Badge de Categoría Gastronómica */}
+        <Badge className="absolute top-4 left-4 bg-white/90 backdrop-blur text-sabana border-none font-bold shadow-sm">
+          <Utensils className="w-3 h-3 mr-1" />
+          Restaurante
+        </Badge>
+
+        {/* Rating */}
+        <div className="absolute top-4 right-4 flex items-center bg-sabana text-white rounded-full px-3 py-1 shadow-lg">
+          <Star className="w-3 h-3 fill-current mr-1" />
+          <span className="text-xs font-black">{displayRating}</span>
+        </div>
+      </div>
+
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-2xl font-black text-slate-800 tracking-tight group-hover:text-sabana transition-colors">
+            {item.name}
+          </CardTitle>
+        </div>
+        <div className="flex items-center text-slate-400 text-sm font-medium mt-1">
+          <MapPin className="w-4 h-4 mr-1 text-sabana" />
+          {displayLocation}
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <p className="text-slate-500 text-sm mb-6 line-clamp-2 leading-relaxed">
+          {item.description || "Descubre los sabores auténticos del Llano en este establecimiento seleccionado."}
+        </p>
+
+        <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Especialidad</span>
+            <span className="text-sm font-bold text-slate-700">Cocina Regional</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+
+          <div className="grid grid-cols-2 gap-2 pt-4 border-t border-slate-50 w-full">
+
+            {/* BOTÓN WAZE */}
+            <Button
+              variant="outline"
+              onClick={handleWazeClick}
+              className="border-slate-200 hover:bg-blue-50 hover:text-blue-600 text-slate-600 font-bold rounded-sm transition-all flex items-center justify-center gap-2"
+            >
+              <Map className="w-4 h-4" />
+              Waze
+            </Button>
+            <RestaurantMenuModal
+              restaurantName={item.name}
+              description={item.description}
+              specialties={mockSpecialties} // Aquí pasarías la data real de la tabla si existe
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// --- Componente Principal ---
 const Restaurants = () => {
   const [currentLanguage, setCurrentLanguage] = useState("es");
 
-  const restaurants = [
-    {
-      id: 1,
-      name: "Restaurante Los Llanos",
-      location: "Calle 37, Villavicencio",
-      description: "Auténtica cocina llanera con los mejores cortes de carne y platos típicos.",
-      rating: 4.6,
-      priceRange: "$$",
-      cuisine: "Llanera",
-      hours: "11:00 AM - 10:00 PM",
-      phone: "+57 8 123 4567",
-      specialties: ["Mamona", "Cachama", "Hayaca"],
-      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027"
-    },
-    {
-      id: 2,
-      name: "El Hato Restaurant",
-      location: "Centro Comercial Unicentro",
-      description: "Especialidad en carnes a la brasa y comida internacional.",
-      rating: 4.4,
-      priceRange: "$$$",
-      cuisine: "Internacional",
-      hours: "12:00 PM - 11:00 PM",
-      phone: "+57 8 234 5678",
-      specialties: ["Parrillada", "Pescados", "Pasta"],
-      image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716"
-    },
-    {
-      id: 3,
-      name: "La Casa del Joropo",
-      location: "Barrio La Grama",
-      description: "Ambiente típico llanero con música en vivo y platos tradicionales.",
-      rating: 4.8,
-      priceRange: "$$",
-      cuisine: "Tradicional",
-      hours: "6:00 PM - 2:00 AM",
-      phone: "+57 8 345 6789",
-      specialties: ["Lomo al trapo", "Guarapo", "Chicharrón"],
-      image: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb"
-    },
-    {
-      id: 4,
-      name: "Café del Llano",
-      location: "Plaza Los Libertadores",
-      description: "Cafetería artesanal con café de la región y postres caseros.",
-      rating: 4.5,
-      priceRange: "$",
-      cuisine: "Café",
-      hours: "6:00 AM - 6:00 PM",
-      phone: "+57 8 456 7890",
-      specialties: ["Café Especial", "Postres", "Desayunos"],
-      image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9"
-    },
-    {
-      id: 5,
-      name: "Mariscos del Río",
-      location: "Malecón del Río Guatiquía",
-      description: "Especialidad en pescados y mariscos frescos del río.",
-      rating: 4.3,
-      priceRange: "$$",
-      cuisine: "Mariscos",
-      hours: "11:00 AM - 9:00 PM",
-      phone: "+57 8 567 8901",
-      specialties: ["Mojarra frita", "Bagre", "Cazuela de mariscos"],
-      image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86"
-    }
-  ];
+  const { data: allBusinesses, isLoading } = useCachedData<Business[]>({
+    cacheKey: 'all-businesses',
+    fetchFn: dataService.getBusinesses
+  });
 
-  const getPriceRangeText = (range: string) => {
-    switch (range) {
-      case "$": return "Económico";
-      case "$$": return "Moderado";
-      case "$$$": return "Costoso";
-      default: return range;
-    }
-  };
+  // Filtrado estricto por category_id = 2
+  const restaurantList = useMemo(() => {
+    return allBusinesses?.filter(b => b.category_id === 2) || [];
+  }, [allBusinesses]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4 justify-center items-center min-h-screen bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sabana"></div>
+        <p className="text-slate-400 font-bold uppercase text-xs tracking-widest animate-pulse">Cocinando las mejores opciones...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50/50">
       <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
-      <Header activeSection="businesses" onSectionChange={() => {}} language={currentLanguage} />
-      
-      <main className="pt-24">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Restaurantes en Villavicencio
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Descubre los sabores auténticos de la gastronomía llanera
-            </p>
-          </div>
+      <Header activeSection="restaurants" onSectionChange={() => { }} language={currentLanguage} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {restaurants.map((restaurant) => (
-              <Card key={restaurant.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={restaurant.image} 
-                    alt={restaurant.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground">
-                    {restaurant.cuisine}
-                  </Badge>
-                  <div className="absolute top-4 left-4 flex items-center bg-white/90 rounded-full px-2 py-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                    <span className="ml-1 text-sm font-medium">{restaurant.rating}</span>
-                  </div>
-                </div>
-                
-                <CardHeader>
-                  <CardTitle className="text-foreground group-hover:text-primary transition-colors">
-                    {restaurant.name}
-                  </CardTitle>
-                  <div className="space-y-1">
-                    <div className="flex items-center text-muted-foreground">
-                      <MapPin className="w-4 h-4 mr-1" />
-                      {restaurant.location}
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {restaurant.hours}
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Phone className="w-4 h-4 mr-1" />
-                      {restaurant.phone}
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">{restaurant.description}</p>
-                  
-                  <div className="mb-4">
-                    <h4 className="text-sm font-semibold mb-2">Especialidades:</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {restaurant.specialties.map((specialty, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {specialty}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Utensils className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
-                        {getPriceRangeText(restaurant.priceRange)}
-                      </span>
-                    </div>
-                    <Button size="sm">Ver menú</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      <main className="pt-32 pb-20">
+        <div className="container mx-auto px-4">
+          <header className="text-center mb-16">
+            <Badge variant="outline" className="mb-4 border-sabana text-sabana font-bold px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
+              Gastronomía Llanera
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
+              Donde comer en el <span className="text-sabana">Meta</span>
+            </h1>
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed">
+              Desde la tradicional carne a la perra hasta propuestas internacionales.
+              Descubre los mejores restaurantes de Villavicencio y sus alrededores.
+            </p>
+          </header>
+
+          {restaurantList.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+              {restaurantList.map((item) => (
+                <RestaurantCard key={item.id} item={item} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-24 bg-white rounded-3xl border-2 border-dashed border-slate-200 max-w-4xl mx-auto">
+              <Utensils className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+              <p className="text-slate-400 font-bold text-xl">
+                Estamos actualizando nuestra guía gastronómica.
+              </p>
+              <p className="text-slate-300 text-sm mt-2">Vuelve pronto para descubrir nuevos sabores.</p>
+            </div>
+          )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

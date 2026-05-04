@@ -158,7 +158,7 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                   </Button> */}
                   
                   <Button 
-                    variant="outline" 
+                    variant="secondary" 
                     onClick={handleNavigation}
                     className="w-full"
                   >

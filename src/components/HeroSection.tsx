@@ -113,7 +113,7 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-sabana transition-colors">
                     {feature.title}
-                  </h3>
+                  </h3> 
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {feature.description}
                   </p>

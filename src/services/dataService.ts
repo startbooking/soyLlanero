@@ -79,6 +79,26 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 }
 
+const deleteData = async (endpoint: string) => {
+  try {
+    const response = await fetch(getDataUrl(endpoint), {
+      method: 'DELETE',
+      headers: API_CONFIG.DEFAULT_HEADERS,
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error(`Error deleting data from ${endpoint}:`, error);
+    throw error;
+  }
+};
+
+const handleResponse = async (response: Response) => {
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+};
+
 // --- Servicio de Datos ---
 export const dataService = {
   // --- Reservas y Disponibilidad ---
@@ -181,6 +201,12 @@ export const dataService = {
   // --- Pagos ---
   processPayment: (data: any) => request('/payments/process', { method: 'POST', body: JSON.stringify(data) }),
   getPaymentStatus: (id: string) => request(`/payments/status/${id}`),
+
+  getPointsOfInterest: () => request('/points'),
+  getPointOfInterestById: (id: string) => request(`/points/${id}`),
+  createPointOfInterest: (poi: any) => request('/points', poi),
+  updatePointOfInterest: (id: string, poi: any) => request(`/points/${id}`, poi),
+  deletePointOfInterest: (id: string) => deleteData(`/points/${id}`),
 
   // --- Utilidades ---
   getStatistics: () => request('/businesses/stats'),

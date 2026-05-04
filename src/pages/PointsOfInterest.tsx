@@ -78,7 +78,7 @@ const PointsOfInterest = () => {
                     {point.opening_hours}
                   </div>
 
-                  <Button className="w-full"
+                  <Button className="w-full bg-sabana"
                     onClick={() => setSelectedPoint(point)}
                   >
 

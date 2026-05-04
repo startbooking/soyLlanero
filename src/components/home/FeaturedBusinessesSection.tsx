@@ -33,8 +33,20 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
     return shuffleArray([...vipBusinesses]).slice(0, 3);
   }, [featuredBusinesses]);
 
+  // console.log(businessesToShowSlide)
+
   const handleViewDetails = (business: Business) => {
-    navigate(`/hotel/${business.id}`, { state: { hotel: business } });
+    switch (business.category_id) {
+      case 1:
+        navigate(`/hotel/${business.id}`, { state: { hotel: business } });
+        break;
+      case 2:
+        //  navigate(`/business/${business.id}`, { state: { business: business } });
+        break;
+    
+      default:
+        break;
+    }
   };
 
   if (isLoading) {
