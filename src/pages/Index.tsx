@@ -10,12 +10,16 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { HomeContent } from "@/components/home/HomeContent";
 import { useTranslations } from "@/utils/translations";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [currentLanguage, setCurrentLanguage] = useState("es");
   const navigate = useNavigate();
   const t = useTranslations(currentLanguage);
+  const { toast } = useToast();
+
 
   const handleSectionChange = (section: string) => {
     if (section === "contact") {

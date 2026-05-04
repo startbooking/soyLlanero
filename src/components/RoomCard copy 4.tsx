@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Bed, Maximize, Users, Wifi, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Business } from "@/interface/interface";
-import { formatCurrency } from "@/utils/formatCurrency";
 
 // --- Constantes y Utilidades ---
 const ROOM_AMENITIES: Record<string, any> = {
@@ -33,34 +32,26 @@ interface Room {
 interface RoomCardProps {
   room: Room;
   hotel: Business;
-  onAction?: () => void; // Prop opcional para manejar el click desde fuera
-  actionLabel?: string;  // Prop opcional para cambiar el texto del botón
 }
 
 // --- Componente ---
-export const RoomCard = ({ room, hotel, onAction, actionLabel }: RoomCardProps) => {
+export const RoomCard = ({ room, hotel }: RoomCardProps) => {
   const navigate = useNavigate();
   const { id: hotelId } = useParams();
 
   const isAvailable = Number(room.is_available) === 1;
+
+const formatCurrency = (val: number) => 
+    new Intl.NumberFormat('es-CO', { 
+      style: 'currency', 
+      currency: 'COP', 
+      minimumFractionDigits: 2
+    }).format(val || 0);
   
   const handleReserve = () => {
     navigate(`/hotel/${hotelId}/reservation/${room.id}`, {
       state: { room, hotel }
     });
-  };
-
-  const handleButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Evita burbujeo si la card tiene otros eventos
-    
-    if (onAction) {
-      onAction(); // Si existe la prop, ejecuta la lógica de "Alternativa"
-    } else {
-      // Si no existe, navega normalmente
-      navigate(`/hotel/${hotelId}/reservation/${room.id}`, {
-        state: { room, hotel }
-      });
-    }
   };
 
   return (
@@ -165,7 +156,7 @@ export const RoomCard = ({ room, hotel, onAction, actionLabel }: RoomCardProps) 
               </div>
             </div>
 
-            {/* <Button
+            <Button
               onClick={handleReserve}
               disabled={!isAvailable}
               size="lg"
@@ -175,19 +166,6 @@ export const RoomCard = ({ room, hotel, onAction, actionLabel }: RoomCardProps) 
                 }`}
             >
               Reservar
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button> */}
-            <Button
-              onClick={handleButtonClick}
-              disabled={!isAvailable && !onAction} // Si hay onAction, permitimos el click aunque no haya cupo en fechas anteriores
-              size="lg"
-              className={`rounded-sm px-8 font-bold transition-all ${
-                (isAvailable || onAction)
-                  ? 'bg-sabana hover:bg-sabana/80 shadow-sabana/10 shadow-xl'
-                  : 'bg-slate-300 cursor-not-allowed'
-              }`}
-            >
-              {actionLabel || 'Reservar'}
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>

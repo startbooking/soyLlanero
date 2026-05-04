@@ -1,54 +1,51 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { ShieldAlert, RefreshCw, Home } from "lucide-react";
+// components/payment/PaymentError.tsx
+import { AlertCircle, RefreshCw, PhoneCall, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ReservationSummaryCard } from "@/components/payment/ReservationSummaryCard";
-import { TopBar } from "@/components/TopBar";
+import { useNavigate } from "react-router-dom";
 
-const PaymentError = () => {
-  const { state } = useLocation();
+export const PaymentError = ({ errorDetails }: { errorDetails?: string }) => {
   const navigate = useNavigate();
 
-  if (!state) {
-    navigate("/");
-    return null;
-  }
-
-  const { reservation, errorDetail } = state;
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      <TopBar currentLanguage="es" onLanguageChange={() => {}} />
-      <main className="pt-28 pb-20 container max-w-3xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ShieldAlert className="w-12 h-12 text-red-600" />
-          </div>
-          <h1 className="text-3xl font-black text-slate-900">Pago Rechazado</h1>
-          <div className="mt-4 p-4 bg-red-50 border border-red-100 rounded-xl inline-block">
-            <p className="text-red-700 font-medium">Motivo: {errorDetail}</p>
-          </div>
-        </div>
+    <div className="max-w-md mx-auto py-12 px-6 text-center">
+      <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <AlertCircle className="w-12 h-12 text-red-600" />
+      </div>
+      
+      <h1 className="text-3xl font-black text-slate-900 mb-2">Pago Rechazado</h1>
+      <p className="text-slate-500 mb-8">
+        Lo sentimos, no pudimos procesar tu transacción. No se ha realizado ningún cargo y la reserva no está confirmada.
+      </p>
 
-        <ReservationSummaryCard data={reservation} />
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-8 text-left text-sm">
+        <p className="font-bold text-slate-700 mb-1">¿Qué pudo pasar?</p>
+        <ul className="list-disc list-inside text-slate-600 space-y-1">
+          <li>Fondos insuficientes o límite excedido.</li>
+          <li>La tarjeta no está habilitada para compras web.</li>
+          <li>Tiempo de espera de la sesión agotado.</li>
+        </ul>
+      </div>
 
-        <div className="mt-8 space-y-4">
-          <Button 
-            onClick={() => navigate(-1)} 
-            className="w-full bg-slate-900 hover:bg-slate-800 py-7 text-lg font-bold"
-          >
-            <RefreshCw className="w-5 h-5 mr-2" /> Intentar con otro medio de pago
-          </Button>
-          <Button 
-            onClick={() => navigate("/")} 
-            variant="ghost" 
-            className="w-full text-slate-400"
-          >
-            Cancelar y volver al inicio
-          </Button>
-        </div>
-      </main>
+      <div className="flex flex-col gap-3">
+        <Button 
+          onClick={() => navigate(-1)} 
+          className="bg-sabana hover:bg-sabana/90 h-12 font-bold"
+        >
+          <RefreshCw className="w-4 h-4 mr-2" /> Reintentar Pago
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/hotels")}
+          className="h-12 border-slate-300"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" /> Ver otros hoteles
+        </Button>
+      </div>
+
+      <p className="mt-8 text-xs text-slate-400 flex items-center justify-center gap-2">
+        <PhoneCall className="w-3 h-3" /> ¿Necesitas ayuda? Contacta a soporte
+      </p>
     </div>
   );
 };
-
-export default PaymentError;

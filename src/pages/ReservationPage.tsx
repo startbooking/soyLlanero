@@ -28,7 +28,8 @@ const ReservationPage = () => {
   const { state } = useLocation();
   const { toast } = useToast();
 
-  const [room] = useState(state?.room);
+  // const [room] = useState(state?.room);
+  const [room, setRoom] = useState(state?.room);
   const [hotel] = useState(state?.hotel);
 
   const [step, setStep] = useState(1);
@@ -42,6 +43,39 @@ const ReservationPage = () => {
   const [formData, setFormData] = useState({
     firstName: "", lastName: "", email: "", phone: "", identification: "", specialRequests: "", documentType: "", nationality: ""
   });
+
+  const handleSelectAlternative = (alternativeRoom) => {
+    // 1. Actualizamos la habitación principal con la alternativa
+    setRoom(alternativeRoom);
+
+    // 2. Limpiamos la lista de alternativas para cerrar la sección de error
+    setAlternatives([]);
+
+    // 3. Opcional: Reiniciar al paso 1 para que el usuario confirme fechas con el nuevo precio
+    setStep(1);
+
+    // 4. Feedback visual al usuario
+    toast({
+      title: "Habitación actualizada",
+      description: `Ahora estás reservando la  ${alternativeRoom.name}`,
+    });
+
+    // 5. Scroll suave al inicio para ver el resumen actualizado
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSelectAlternativeOld = (newRoom) => {
+    console.log(newRoom)
+    setRoom(newRoom);          // Actualizamos la habitación a reservar
+    setAlternatives([]);       // Limpiamos las sugerencias
+    setStep(1);                // Regresamos al paso 1 (opcional, pero recomendado)
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll arriba para ver el cambio
+
+    toast({
+      title: "Habitación cambiada",
+      description: `Ahora estás reservando: ${newRoom.name}`
+    });
+  };
 
   // Redirección si no hay datos
   useEffect(() => {
@@ -133,10 +167,10 @@ const ReservationPage = () => {
     navigate("/payment", {
       state: {
         hotel, room, checkInDate, checkOutDate,
-        values:calculations,
+        values: calculations,
         total: calculations.total, formData,
-        subtotal:calculations.subtotal,
-        tax:calculations.taxes,
+        subtotal: calculations.subtotal,
+        tax: calculations.taxes,
         guests: { adults: numAdults, children: numChildren }
       }
     });
@@ -216,13 +250,42 @@ const ReservationPage = () => {
                     {isValidating ? "Consultando disponibilidad..." : "Verificar Disponibilidad"}
                   </Button>
 
-                  {alternatives.length > 0 && (
+                  {/* {alternatives.length > 0 && (
                     <div className="mt-8 pt-8 border-t border-dashed">
-                      <h3 className="text-md font-bold text-red-600 mb-4 flex items-center gap-2">
+                      <h3 className="text-xl text-center font-bold text-red-600 mb-4 flex items-center gap-2">
                         <AlertCircle className="w-5 h-5" /> No hay cupo en esas fechas, pero mira estas opciones:
                       </h3>
                       <div className="space-y-4">
                         {alternatives.map((alt) => <RoomCard key={alt.id} room={alt} hotel={hotel} />)}
+                      </div>
+                    </div>
+                  )} */}
+                  {alternatives.length > 0 && (
+                    <div className="mt-8 pt-8 border-t border-dashed border-red-200 bg-red-50/30 p-4 rounded-xl">
+                      <h3 className="text-xl text-center font-bold text-red-600 mb-6 flex items-center justify-center gap-2">
+                        <AlertCircle className="w-6 h-6" />
+                        Lo sentimos, no hay disponibilidad. Prueba estas opciones:
+                      </h3>
+
+                      <div className="space-y-6">
+                        {alternatives.map((alt) => (
+                          <div key={alt.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
+                            <RoomCard
+                              room={alt}
+                              hotel={hotel}
+                              onAction={() => handleSelectAlternative(alt)}
+                              actionLabel="Reservar esta ahora"
+                            />
+                            {/* <div className="p-4 bg-slate-50 border-t">
+                              <Button
+                                onClick={() => handleSelectAlternative(alt)} // <--- El evento click corregido
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-11"
+                              >
+                                Reservar esta habitación ahora
+                              </Button>
+                            </div> */}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -391,7 +454,7 @@ const ReservationPage = () => {
                     <CardTitle className="text-sabana">Revisión Final</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm border-b pb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm border-b pb-6">
                       <div className="space-y-1">
                         <p className="uppercase text-[10px] font-bold text-slate-400">Estancia</p>
                         <p><strong>Check-in:</strong> {format(checkInDate!, "dd/MM/yyyy")}</p>
@@ -404,15 +467,15 @@ const ReservationPage = () => {
                         <p><strong>Huéspedes:</strong> {numAdults} Ad. {numChildren} Niñ.</p>
                       </div>
                       <div className="space-y-2">
-                      <p className="uppercase text-[10px] font-black text-slate-400 tracking-wider">Peticiones Especiales</p>
-                      <div className="text-slate-600 italic text-xs bg-slate-50 p-2 rounded border border-slate-100 min-h-[60px]">
-                        {formData.specialRequests ? (
-                          <p>"{formData.specialRequests}"</p>
-                        ) : (
-                          <p className="text-slate-400">Sin requerimientos adicionales indicados.</p>
-                        )}
+                        <p className="uppercase text-[10px] font-black text-slate-400 tracking-wider">Peticiones Especiales</p>
+                        <div className="text-slate-600 italic text-xs bg-slate-50 p-2 rounded border border-slate-100 min-h-[60px]">
+                          {formData.specialRequests ? (
+                            <p>"{formData.specialRequests}"</p>
+                          ) : (
+                            <p className="text-slate-400">Sin requerimientos adicionales indicados.</p>
+                          )}
+                        </div>
                       </div>
-                    </div>
                     </div>
 
                     <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
@@ -429,7 +492,7 @@ const ReservationPage = () => {
                         <span>{formatCurrency(calculations.total)}</span>
                       </div>
                     </div>
-                    
+
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                       <Button variant="secondary" onClick={() => setStep(2)}>Editar mis datos</Button>

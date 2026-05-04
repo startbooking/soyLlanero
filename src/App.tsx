@@ -78,6 +78,7 @@ import PromoteServices from "./pages/business/PromoteServices";
 import BusinessStatistics from "./pages/business/BusinessStatistics";
 import BusinessSupport from "./pages/business/BusinessSupport";
 import ConfirmationSuccess from "./components/payment/ConfirmationSuccess";
+import { PendingReservationAlert } from "./components/reservation/PendingReservationAlert";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +105,8 @@ const AppRoutes = () => {
 
   // Normal routes
   return (
+    <>
+    <PendingReservationAlert />
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/contact" element={<Contact />} />
@@ -200,6 +203,7 @@ const AppRoutes = () => {
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 };
 

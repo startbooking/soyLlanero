@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { dataService } from "@/services/dataService";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { generateReservationEmail, generateFailedTransactionEmail } from "@/services/emailTemplates";
+import { generateFailedTransactionEmail } from "@/services/emailTemplates";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -69,11 +69,19 @@ const PaymentPage = () => {
       taxes
     };
 
+    // console.log(payload);
+
     try {
       // 1. Obtener firma y llaves del backend
       const response = await dataService.prepareWompiPayment(payload);
+
+      // console.log(response);
+
       if (response.status === 'success') {
         const { signature, publicKey, referencia } = response.data;
+
+        // console.log(signature, publicKey, referencia);
+
         // 2. Configurar el objeto para las páginas de respuesta
         const reservationState = {
           hotel,
@@ -110,31 +118,17 @@ const PaymentPage = () => {
           const { transaction } = res;
 
           if (transaction.status === 'APPROVED') {
-            try {
-              const emailHtml = generateReservationEmail(reservationState);
-              // Aquí llamarías a tu servicio de backend para enviar el email
-              // await dataService.sendEmail({ to: email, html: emailHtml, subject: "Confirmación de Reserva" });
-              console.log("Correo de éxito generado");
-            } catch (e) {
-              console.error("Error generando email de confirmación", e);
-            }
             navigate("/confirmation-success", {
               state: { ...reservationState, transactionId: transaction.id },
               replace: true
             });
           } else {
-            try {
-              const failedEmailHtml = generateFailedTransactionEmail({
-                hotel,
-                room,
-                formData,
-                errorCode: transaction.status_message || "Transacción declinada por el banco"
-              });
-              // await dataService.sendEmail({ to: email, html: failedEmailHtml, subject: "Reserva No Confirmada" });
-              console.log("Correo de fallo generado");
-            } catch (e) {
-              console.error("Error generando email de fallo", e);
-            }
+            const failedEmail = generateFailedTransactionEmail({
+              hotel: state.hotel,
+              room: state.room,
+              formData: state.formData,
+              errorCode: "TRANS_REJECTED_004" // Código que devuelva la pasarela
+            });
             navigate("/payment-error", {
               state: {
                 reservation: reservationState,
@@ -155,35 +149,6 @@ const PaymentPage = () => {
       setIsProcessing(false);
     }
   };
-
-  const handlePayLater = () => {
-    try {
-      // Estructuramos el objeto que queremos recuperar luego
-      const pendingReservation = {
-        ...location.state,
-        savedAt: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // Expira en 24h
-      };
-
-      // Guardamos en el caché del navegador (localStorage)
-      localStorage.setItem("pending_reservation", JSON.stringify(pendingReservation));
-
-      toast({
-        title: "Reserva guardada",
-        description: "Hemos guardado tu progreso. Puedes completar el pago cuando desees.",
-      });
-
-      // Regresamos al inicio
-      navigate("/");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error al guardar",
-        description: "No pudimos guardar la información en este momento.",
-      });
-    }
-  };
-
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -312,14 +277,6 @@ const PaymentPage = () => {
                     ) : (
                       <><CreditCard className="w-5 h-5 mr-2" /> PAGAR AHORA</>
                     )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    disabled={isProcessing}
-                    className="w-full py-6 border-slate-300 text-slate-600 font-bold hover:bg-slate-50"
-                    onClick={handlePayLater}
-                  >
-                    PAGAR LUEGO
                   </Button>
 
                   <p className="text-[10px] text-center text-slate-400 px-4">
