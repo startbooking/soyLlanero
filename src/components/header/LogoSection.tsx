@@ -8,7 +8,6 @@ interface LogoSectionProps {
 
 export const LogoSection = ({ onHomeClick }: LogoSectionProps) => {
   const { appConfig } = useAppConfig();
-  // console.log(appConfig)
   return (
     <div 
       className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
@@ -18,10 +17,10 @@ export const LogoSection = ({ onHomeClick }: LogoSectionProps) => {
         <img className="rounded-lg" src={`/images/${appConfig?.app_logo_url}`} alt="" />
       </div>
       <div className="md:block">
-          <h1 className="text-xs md:text-xl font-bold text-sabana transition-colors uppercase leading-5">
+          <h1 className="text-sm md:text-xl font-bold text-sabana transition-colors uppercase leading-5">
             { appConfig?.app_name}
           </h1>
-          <h2 className="text-[8px] md:text-sm font-bold text-sabana/70 ">{appConfig?.app_slogan}</h2>
+          <h2 className="text-[10px] md:text-sm font-bold text-sabana/70 ">{appConfig?.app_slogan}</h2>
       </div>
       <div className="hidden md:block">
       </div>

@@ -22,7 +22,7 @@ export const HomeContent = ({ language }: HomeContentProps) => {
   return (
     <div className="space-y-16">
       {/* Slider de imágenes */}
-      <section className="container mx-auto p-1">
+      <section className="container mx-auto mt-4 p-0">
         <ImageSlider />
       </section>
 
