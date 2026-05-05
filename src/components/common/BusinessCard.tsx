@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Eye, Percent, Receipt, ShieldCheck } from "lucide-react";
+import { Star, MapPin, Eye, Percent, Receipt, ShieldCheck, Info, MessageSquare, Navigation, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WordCountDisplay from "@/utils/WordCountDisplay";
 import { Business } from "@/interface/interface";
 import { formatCurrency } from "@/utils/formatCurrency";
-
+import { useBusinessActions } from "@/hooks/useBusinessActions";
+import { RestaurantMenuModal } from "../restaurant/RestaurantMenuModal";
 interface BusinessCardProps {
   business: Business; // Recibe el registro completo
   onViewDetails?: (id: number) => void;
@@ -14,7 +15,7 @@ interface BusinessCardProps {
 
 export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => {
   const navigate = useNavigate();
-
+  const { handleNavigation, handleContact } = useBusinessActions();
   // Desestructuración del objeto business para limpieza
   const {
     id,
@@ -28,7 +29,14 @@ export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => 
     price,
     taxes,
     tax_percentage,
+    category_id
   } = business;
+
+  const mockSpecialties = ["Mamona a la Llanera", "Cachama Ahumada", "Carne a la Perra"];
+
+
+  const catId = Number(business.category_id);
+
 
   const handleViewDetails = () => {
     if (onViewDetails) {
@@ -41,7 +49,7 @@ export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => 
   };
 
   const taxPercentage = business?.tax_percentage || 0; // Default 0% si no viene del back
-  const calculatedTaxes = (business.price * taxPercentage)/100;
+  const calculatedTaxes = (business.price * taxPercentage) / 100;
 
   const DISPLAY_LIMIT = 20;
 
@@ -136,13 +144,60 @@ export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => 
           </div>
         )}
 
-        <Button
+        {/* <Button
           className="w-full bg-sabana text-white hover:bg-slate-900 hover:text-slate-100/50 transition-all duration-300 font-bold h-11"
           onClick={handleViewDetails}
         >
           <Eye className="w-4 h-4 mr-2" />
           Ver Disponibilidad
-        </Button>
+        </Button> */}
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          {catId === 2 ? ( // RESTAURANTES
+            <>
+              <Button
+                variant="secondary"
+                className="rounded-xl font-black text-[10px] uppercase border-slate-200"
+                onClick={() => handleNavigation(business)}
+              >
+                <Navigation className="w-3 h-3 mr-2 text-sabana" /> Cómo llegar
+              </Button>
+              {/* <Button
+                className="rounded-xl font-black text-[10px] uppercase bg-sabana text-white shadow-lg shadow-sabana/20"
+                onClick={() => handleViewDetails(business)}
+              >
+                <Menu className="w-3 h-3 mr-2" /> Ver Menú
+              </Button> */}
+              <RestaurantMenuModal
+                restaurantName={business.name}
+                description={business.description}
+                specialties={mockSpecialties} // Aquí pasarías la data real de la tabla si existe
+              />
+            </>
+          ) : catId === 3 ? ( // AGENCIAS
+            <Button
+              className="col-span-2 rounded-xl font-black text-[10px] uppercase bg-slate-900 text-white h-12 shadow-xl"
+              onClick={() => handleContact(business.phone || '')}
+            >
+              <MessageSquare className="w-4 h-4 mr-2 text-sabana" /> Contactar Agencia
+            </Button>
+          ) : ( // OTROS SERVICIOS (Hoteles, etc.)
+            <>
+              <Button
+                variant="secondary"
+                className="rounded-xl font-black text-[10px] uppercase border-slate-200"
+                onClick={() => handleNavigation(business)}
+              >
+                <Navigation className="w-3 h-3 mr-2 text-sabana" /> Cómo llegar
+              </Button>
+              <Button
+                className="rounded-xl font-black text-[10px] uppercase bg-sabana text-white shadow-lg"
+                onClick={() => handleViewDetails(business)}
+              >
+                <Info className="w-3 h-3 mr-2 text-white" /> Detalles
+              </Button>
+            </>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

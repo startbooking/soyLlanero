@@ -1,18 +1,17 @@
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Calendar, 
   MapPin, 
-  Users, 
   Clock, 
   X,
   Navigation,
-  Car
+  Car,
+  Star,
+  Info,
+  DollarSign,
+  ChevronRight
 } from "lucide-react";
 import { PointsData } from "@/interface/interface";
-
-
 
 interface PointDetailModalProps {
   point: PointsData;
@@ -21,153 +20,152 @@ interface PointDetailModalProps {
 
 export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
   const handleNavigation = () => {
-    const wazeUrl = `https://waze.com/ul?q=${encodeURIComponent(point.location + " Villavicencio Meta")}`;
-    window.open(wazeUrl, '_blank');
-  };
-
-  const handleReservation = () => {
-    // Aquí iría la lógica de reserva
-    alert("Funcionalidad de reserva próximamente disponible");
+    // Si tienes latitud y longitud en PointsData, es mejor usarlas. 
+    // Si no, usamos el nombre + ciudad.
+    const destination = point.latitude && point.longitude 
+      ? `${point.latitude},${point.longitude}` 
+      : encodeURIComponent(point.name + " Villavicencio Meta");
+      
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank');
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="relative">
+    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+      <div className="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+        
+        {/* Cabecera con Imagen */}
+        <div className="relative h-80 shrink-0">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 bg-white/80 hover:bg-white"
+            className="absolute top-6 right-6 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full transition-all"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </Button>
           
-          <div className="relative overflow-hidden rounded-t-lg">
-            <img 
-              src={`images/points/${point.image}`} 
-              alt={point.description}
-              className="w-full h-[60vh] object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-4 left-4 text-white">
-              <h1 className="text-3xl font-bold mb-2">{point.name}</h1>
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 mr-1" />
-                {point.address}
+          <img 
+            src={`images/points/${point.image}`} 
+            alt={point.name}
+            className="w-full h-full object-cover"
+            onError={(e) => (e.currentTarget.src = '/placeholder-service.jpg')}
+          />
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
+          
+          <div className="absolute bottom-8 left-8 right-8">
+            <div className="flex gap-2 mb-3">
+              <Badge className="bg-sabana text-white border-none font-black uppercase text-[10px] px-3 py-1">
+                {point.category}
+              </Badge>
+              <Badge className="bg-white/20 backdrop-blur text-white border-none font-bold text-[10px] uppercase px-3 py-1">
+                {point.entry_fee == 0 || point.entry_fee === "0" ? "Acceso Gratuito" : `$${point.entry_fee}`}
+              </Badge>
+            </div>
+            <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-2">
+              {point.name}
+            </h1>
+            <div className="flex items-center text-white/80 font-medium italic">
+              <MapPin className="w-4 h-4 mr-2 text-sabana" />
+              {point.address}
+            </div>
+          </div>
+        </div>
+
+        {/* Contenido */}
+        <div className="p-8 overflow-y-auto custom-scrollbar">
+          <div className="grid md:grid-cols-3 gap-8">
+            
+            {/* Columna Izquierda: Descripción */}
+            <div className="md:col-span-2 space-y-6">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-1 bg-sabana rounded-full" />
+                  <h2 className="text-sm font-black uppercase tracking-widest text-slate-400">Descripción del lugar</h2>
+                </div>
+                <p className="text-slate-600 leading-relaxed text-lg font-medium">
+                  {point.description}
+                </p>
+              </div>
+
+              {/* Horarios Estilizados */}
+              <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock className="w-5 h-5 text-sabana" />
+                  <h3 className="font-black uppercase tracking-tight text-slate-800">Horarios de visita</h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {Array.isArray(point.opening_hours) ? point.opening_hours.map((item, index) => (
+                    <div key={index} className="flex items-center gap-3 text-sm text-slate-500 font-bold bg-white p-3 rounded-xl border border-slate-200/50">
+                      <ChevronRight className="w-3 h-3 text-sabana" />
+                      {item}
+                    </div>
+                  )) : (
+                    <div className="text-sm text-slate-500 font-bold bg-white p-3 rounded-xl border border-slate-200/50">
+                      {point.opening_hours}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
-              {point.category}
-            </Badge>
-            <Badge 
-              variant={point.entry_fee == 0 ? "secondary" : "default"}
-              className="absolute top-4 right-16"
-            >
-              {point.entry_fee == 0 ? "Entrada Gratis" : point.entry_fee}
-            </Badge>
-          </div>
 
-          <div className="p-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-bold mb-4">Detalles del Punto de Interes</h2>
-                  <p className="text-muted-foreground text-sm leading-relaxed text-justify">
-                    {point.description}
-                  </p>
-                </div>
-
-                {point.opening_hours && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3"></h3>
-                    <ul className="space-y-2">
-                      {point.opening_hours.map((item, index) => (
-                        <li key={index} className="flex items-center text-muted-foreground">
-                          <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+            {/* Columna Derecha: Info Rápida y Acciones */}
+            <div className="space-y-6">
+              <div className="bg-slate-900 rounded-[2rem] p-6 text-white shadow-xl shadow-slate-200">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-sabana" /> Información Clave
+                </h3>
+                
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-white/10 rounded-lg shrink-0">
+                      <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-slate-400">Calificación</p>
+                      <p className="text-sm font-bold">{point.rating || '4.8'} / 5.0 (Google Maps)</p>
+                    </div>
                   </div>
-                )}
 
-                {/* 
-                {point.requirements && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Requisitos</h3>
-                    <ul className="space-y-2">
-                      {point.requirements.map((requirement, index) => (
-                        <li key={index} className="flex items-center text-muted-foreground">
-                          <span className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
-                          {requirement}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )} */}
-              </div>
-
-              <div className="space-y-6">
-                <div className="bg-muted/50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold mb-4">Información del Punto de Interes</h3>
-                  <div className="space-y-4">
-                    {/* <div className="flex items-center text-muted-foreground">
-                      <Calendar className="w-5 h-5 mr-3 text-primary" />
-                      <div>
-                        <p className="font-medium text-foreground">Fecha</p>
-                        <p>{point.date}</p>
-                      </div>
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-white/10 rounded-lg shrink-0">
+                      <DollarSign className="w-5 h-5 text-green-400" />
                     </div>
-                    
-                    <div className="flex items-center text-muted-foreground">
-                      <Clock className="w-5 h-5 mr-3 text-primary" />
-                      <div>
-                        <p className="font-medium text-foreground">Horario</p>
-                        <p>{point.time}</p>
-                      </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-slate-400">Costo de Entrada</p>
+                      <p className="text-sm font-bold">
+                        {point.entry_fee == 0 || point.entry_fee === "0" ? "Sin costo" : `$${point.entry_fee}`}
+                      </p>
                     </div>
-                    
-                    <div className="flex items-center text-muted-foreground">
-                      <Users className="w-5 h-5 mr-3 text-primary" />
-                      <div>
-                        <p className="font-medium text-foreground">Capacidad</p>
-                        <p>{point.capacity} personas</p>
-                      </div>
-                    </div>
-
-                    {point.organizer && (
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="w-5 h-5 mr-3 text-primary" />
-                        <div>
-                          <p className="font-medium text-foreground">Organizador</p>
-                          <p>{point.organizer}</p>
-                        </div>
-                      </div>
-                    )} */}
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  {/* <Button 
-                    onClick={handleReservation}
-                    className="w-full text-lg py-6"
-                    size="lg"
+                <div className="mt-8 space-y-3">
+                  <Button 
+                    onClick={handleNavigation}
+                    className="w-full bg-sabana hover:bg-sabana/90 text-white rounded-2xl font-black uppercase tracking-tighter h-14 shadow-lg shadow-sabana/20"
                   >
-                    Reservar {!point.price && `- ${point.price}`}
-                  </Button> */}
+                    <Navigation className="w-4 h-4 mr-2" />
+                    Abrir en el mapa
+                  </Button>
                   
                   <Button 
-                    variant="secondary" 
-                    onClick={handleNavigation}
-                    className="w-full"
+                    variant="outline" 
+                    className="w-full border-white/20 text-black hover:bg-white/80 rounded-2xl font-black uppercase tracking-tighter h-12"
+                    onClick={() => window.print()} // Opcional: imprimir info
                   >
-                    <Car className="w-4 h-4 mr-2" />
-                    Cómo llegar
+                    <Info className="w-4 h-4 mr-2" />
+                    Guardar guía
                   </Button>
                 </div>
               </div>
+
+              <div className="flex items-center justify-center gap-2 p-4 bg-sabana/5 rounded-2xl border border-sabana/10">
+                <Car className="w-4 h-4 text-sabana" />
+                <span className="text-[10px] font-black text-sabana uppercase">Parqueadero disponible</span>
+              </div>
             </div>
+
           </div>
         </div>
       </div>

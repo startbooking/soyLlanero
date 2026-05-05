@@ -12,7 +12,6 @@ import {
   ChevronRight
 } from "lucide-react";
 import { useBusinessActions } from "@/hooks/useBusinessActions";
-import { formatCurrency } from "@/utils/formatCurrency";
 
 interface Event {
   id: number;
@@ -21,9 +20,9 @@ interface Event {
   time: string;
   description: string;
   location: string;
-  price: number;
+  price: string;
   isFree: boolean;
-  max_capacity: number;
+  capacity: number;
   category: string;
   image: string;
   organizer?: string;
@@ -44,17 +43,17 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
         {/* Botón Cerrar Flotante */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-50 p-2 bg-sabana/50 hover:bg-sabana backdrop-blur-md rounded-full transition-all group"
+          className="absolute top-6 right-6 z-50 p-2 bg-white/20 hover:bg-white backdrop-blur-md rounded-full transition-all group"
         >
           <X className="w-5 h-5 text-white group-hover:text-slate-900" />
         </button>
 
         {/* COLUMNA IZQUIERDA: IMAGEN (40%) */}
-        <div className="relative w-full md:w-[45%] h-64 md:h-auto overflow-hidden">
+        <div className="relative w-full md:w-[45%] h-52 md:h-auto overflow-hidden">
           <img 
             src={`/images/events/${event.image}`} 
             alt={event.title}
-            className="w-full h-[50%] object-cover"
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
           
@@ -62,7 +61,7 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
             <Badge className="bg-sabana text-white border-none font-black uppercase text-[10px] px-4 py-1.5 mb-4">
               {event.category}
             </Badge>
-            <h1 className="text-xl md:text-3xl font-black text-white uppercase tracking-tighter leading-none">
+            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none">
               {event.title}
             </h1>
           </div>
@@ -79,7 +78,7 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
                 {event.location}
               </div>
               <div className="text-3xl font-black text-slate-900 tracking-tighter">
-                {event.isFree ? "GRATIS" : formatCurrency(event.price)}
+                {event.isFree ? "GRATIS" : event.price}
               </div>
             </div>
 
@@ -89,7 +88,7 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
             <div className="grid grid-cols-2 gap-6">
               <InfoItem icon={Calendar} label="Fecha" value={event.date} />
               <InfoItem icon={Clock} label="Horario" value={event.time} />
-              <InfoItem icon={Users} label="Capacidad" value={`${event.max_capacity} personas`} />
+              <InfoItem icon={Users} label="Capacidad" value={`${event.capacity} personas`} />
               <InfoItem icon={Sparkles} label="Organiza" value={event.organizer || "Clúster Turístico"} />
             </div>
 
@@ -108,19 +107,19 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
               <Button 
                 variant="secondary"
-                className="h-14 rounded-2xl border-2 border-slate-100 font-black uppercase text-[10px] tracking-widest text-white"
+                className="h-14 rounded-2xl border-2 border-slate-100 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 text-slate-600"
                 onClick={() => handleNavigation({ name: event.title, location: event.location })}
               >
                 <Navigation className="w-4 h-4 mr-2" />
-                Ir
+                Visitar
               </Button>
               
               <Button 
-                className="h-14 rounded-2xl bg-sabana/90 text-white hover:bg-sabana/60 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-slate-200"
+                className="h-14 rounded-2xl bg-sabana/90 text-white hover:bg-slate-800 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-slate-200"
                 onClick={() => alert("Reserva en proceso...")}
               >
                 Reservar Cupo
-                <ChevronRight className="w-4 h-4 ml-2 text-white" />
+                <ChevronRight className="w-4 h-4 ml-2 text-sabana" />
               </Button>
             </div>
 

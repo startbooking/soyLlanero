@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
@@ -6,7 +5,11 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Star, Camera } from "lucide-react";
+import {
+  MapPin, Clock, Star, Camera,
+  ChevronRight, Sparkles, Map as MapIcon,
+  Info
+} from "lucide-react";
 import { useCachedData } from "@/hooks/useCachedData";
 import { dataService } from "@/services/dataService";
 import { PointsData } from "@/interface/interface";
@@ -14,81 +17,144 @@ import { PointDetailModal } from "@/components/PointDetailModal";
 
 const PointsOfInterest = () => {
   const [currentLanguage, setCurrentLanguage] = useState("es");
-  const [selectedPoint, setSelectedPoint] = useState();
+  const [selectedPoint, setSelectedPoint] = useState<PointsData | null>(null);
 
   const { data: featuredPoints, isLoading } = useCachedData<PointsData[]>({
     cacheKey: 'featured-points',
     fetchFn: dataService.getPointsOfInterest
   });
 
-  const poinstToShow = featuredPoints && featuredPoints.length > 0 ? featuredPoints : [];
+  const handleExternalNavigation = (point: PointsData) => {
+    // Priorizamos coordenadas si existen, sino nombre + ciudad
+    const destination = point.latitude && point.longitude
+      ? `${point.latitude},${point.longitude}`
+      : encodeURIComponent(point.name + " Villavicencio Meta");
+
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank');
+  };
+
+  const pointsToShow = featuredPoints && featuredPoints.length > 0 ? featuredPoints : [];
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Desplaza la ventana al inicio (arriba izquierda)
-  }, []); // Se ejecuta cada vez que el ID o la ruta cambian
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-50/50">
       <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
       <Header activeSection="points-of-interest" onSectionChange={() => { }} language={currentLanguage} />
 
-      <main className="pt-24">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Puntos de Interés</h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Descubre los lugares más emblemáticos y atractivos de Villavicencio y el Meta
-            </p>
-          </div>
+      <main className="pt-24 pb-20">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {poinstToShow.map((point) => (
-              <Card key={point.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
-                <div className="relative h-48 overflow-hidden">
+        {/* SECCIÓN HERO / CABECERA */}
+        <div className="bg-white border-b border-slate-100 mb-12">
+          <div className="container mx-auto px-4 py-16">
+            <div className="max-w-4xl mx-auto text-center space-y-4">
+              <Badge className="bg-sabana/10 text-sabana border-none font-black px-4 py-1 uppercase tracking-widest text-[10px]">
+                <Sparkles className="w-3 h-3 mr-2 inline" /> Destinos Imperdibles
+              </Badge>
+              <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase">
+                LUGARES QUE <span className="text-sabana">ENAMORAN</span>
+              </h1>
+              <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">
+                Explora la riqueza natural, cultural y arquitectónica que hace de Villavicencio la verdadera Puerta del Llano.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4">
+          {/* GRID DE PUNTOS DE INTERÉS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {pointsToShow.map((point) => (
+              <Card
+                key={point.id}
+                className="group border-none shadow-xl shadow-slate-200/60 rounded-[2rem] overflow-hidden bg-white hover:translate-y-[-8px] transition-all duration-500"
+              >
+                {/* Imagen con Overlays */}
+                <div className="relative h-64 overflow-hidden">
                   <img
                     src={`images/points/${point.image}`}
                     alt={point.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    onError={(e) => (e.currentTarget.src = '/placeholder-service.jpg')}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground">
-                    {point.category}
-                  </Badge>
-                  <div className="absolute bottom-4 right-4 flex items-center bg-white/90 rounded-full px-3 py-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
-                    <span className="font-medium text-sm">{point.rating}</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
+
+                  {/* Categoría Flotante */}
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-white/90 backdrop-blur text-slate-900 border-none font-bold text-[10px] uppercase px-3 py-1 shadow-lg">
+                      {point.category}
+                    </Badge>
+                  </div>
+
+                  {/* Rating Flotante */}
+                  <div className="absolute bottom-4 left-4 flex items-center bg-sabana text-white rounded-xl px-2 py-1 shadow-lg">
+                    <Star className="w-3 h-3 fill-current mr-1" />
+                    <span className="font-black text-xs">{point.rating || '4.5'}</span>
                   </div>
                 </div>
 
-                <CardHeader>
-                  <CardTitle className="text-foreground group-hover:text-primary transition-colors">
-                    {point.name}
-                  </CardTitle>
-                  <div className="flex items-center text-muted-foreground">
-                    <MapPin className="w-4 h-4 mr-1" />
+                <CardHeader className="p-6 pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-xl font-black text-slate-900 uppercase tracking-tighter group-hover:text-sabana transition-colors duration-300">
+                      {point.name}
+                    </CardTitle>
+                  </div>
+                  <div className="flex items-center text-slate-400 font-bold text-[11px] uppercase tracking-wider mt-1">
+                    <MapPin className="w-3 h-3 mr-1 text-sabana" />
                     {point.address}
                   </div>
                 </CardHeader>
 
-                <CardContent>
-                  <p className="text-muted-foreground mb-4 text-justify text-sm">{point.description}</p>
+                <CardContent className="p-6 pt-0 space-y-4">
+                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 font-medium">
+                    {point.description}
+                  </p>
 
-                  <div className="flex items-center text-sm text-muted-foreground mb-4">
-                    <Clock className="w-4 h-4 mr-2" />
-                    {point.opening_hours}
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="flex items-center text-[11px] font-bold text-slate-600">
+                      <Clock className="w-4 h-4 mr-2 text-sabana" />
+                      {point.opening_hours}
+                    </div>
+                    <Badge variant="outline" className="text-[9px] border-sabana/20 text-sabana font-black uppercase">
+                      Abierto
+                    </Badge>
                   </div>
 
-                  <Button className="w-full bg-sabana"
-                    onClick={() => setSelectedPoint(point)}
-                  >
-
-                    <Camera className="w-4 h-4 mr-2" />
-                    Ver más detalles
-                  </Button>
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <Button
+                      className="bg-sabana hover:bg-sabana/90 text-white hover:bg-slate-800 text-white rounded-xl font-black text-[10px] uppercase h-11"
+                      onClick={() => setSelectedPoint(point)}
+                    >
+                      <Info className="w-3 h-3 mr-2" /> Detalles
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      className="rounded-xl font-black text-[10px] uppercase h-11 shadow-lg shadow-sabana/20"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Evita que se disparen otros eventos
+                        handleExternalNavigation(point);
+                      }}
+                    >
+                      <MapIcon className="w-3 h-3 mr-2" /> Cómo llegar
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
+
+          {/* Estado de carga vacío o error */}
+          {pointsToShow.length === 0 && !isLoading && (
+            <div className="text-center py-20">
+              <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapIcon className="w-10 h-10 text-slate-300" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">No encontramos puntos de interés</h3>
+              <p className="text-slate-500">Estamos actualizando nuestra base de datos para ti.</p>
+            </div>
+          )}
         </div>
       </main>
 

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Star, MapPin, Clock, Navigation, Eye, Users } from "lucide-react";
 import { Experience } from "@/interface/interface";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useNavigate } from "react-router-dom";
+import { useBusinessActions } from "@/hooks/useBusinessActions";
 
 interface AdventureCardProps {
   experience: Experience;
@@ -11,10 +13,13 @@ interface AdventureCardProps {
 }
 
 export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
+  const navigate = useNavigate();
+  const { handleNavigation, handleContact } = useBusinessActions();
+
   // Desestructuración limpia del registro
-  const { 
-    id, image, name, category, rating, difficulty, 
-    location, duration, price, description, max_people 
+  const {
+    id, image, name, category, rating, difficulty,
+    location, duration, price, short_description, max_people
   } = experience;
 
   const handleViewDetails = () => {
@@ -27,14 +32,14 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
   const getDifficultyStyles = (diff: string) => {
     const base = "text-[10px] uppercase font-black px-2 py-0.5 rounded-md border";
     switch (diff) {
-      case "Facil": 
+      case "Facil":
         return `${base} bg-emerald-50 text-emerald-700 border-emerald-200`;
-      case "Moderado": 
+      case "Moderado":
       case "Intermedio":
         return `${base} bg-amber-50 text-amber-700 border-amber-200`;
-      case "Difícil": 
+      case "Difícil":
         return `${base} bg-red-50 text-red-700 border-red-200`;
-      default: 
+      default:
         return `${base} bg-slate-50 text-slate-700 border-slate-200`;
     }
   };
@@ -43,16 +48,16 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
     <Card className="group hover:shadow-2xl transition-all duration-500 overflow-hidden border-slate-200 bg-white">
       {/* Media Section */}
       <div className="relative h-52 overflow-hidden">
-        <img 
-          src={image?.startsWith('http') ? image : `/images/experiences/${image}`} 
+        <img
+          src={image?.startsWith('http') ? image : `/images/experiences/${image}`}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           onError={(e) => (e.currentTarget.src = '/placeholder-adventure.jpg')}
         />
-        
+
         {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70" />
-        
+
         <Badge className="absolute top-4 right-4 bg-sky-500 text-white border-none shadow-lg">
           {category}
         </Badge>
@@ -68,7 +73,7 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
           </div>
         </div>
       </div>
-      
+
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start gap-2">
           <CardTitle className="text-lg font-black text-slate-800 line-clamp-1 group-hover:text-sky-600 transition-colors">
@@ -80,12 +85,12 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
           <span className="truncate">{location}</span>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <p className="text-slate-600 text-xs leading-relaxed line-clamp-2 italic">
-          {description}
+          {short_description}
         </p>
-        
+
         <div className="flex items-center gap-4 border-y py-3 border-slate-50">
           <Badge className={getDifficultyStyles(difficulty)}>
             {difficulty}
@@ -105,22 +110,17 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
             </p>
           </div>
         </div>
-        
+
         {/* Botones de Acción */}
         <div className="flex gap-2 pt-2">
-          <Button 
-            variant="outline"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(`https://waze.com/ul?q=${encodeURIComponent(location)}`, '_blank');
-            }}
-            className="border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-sky-600 transition-all px-3"
+          <Button
+            variant="secondary"
+            className="rounded-xl font-black text-[10px] uppercase border-slate-200"
+            onClick={() => handleNavigation(experience)}
           >
-            <Navigation className="w-3.5 h-3.5" />
+            <Navigation className="w-3 h-3 mr-2 text-sabana" /> Cómo llegar
           </Button>
-
-          <Button 
+          <Button
             onClick={handleViewDetails}
             size="sm"
             className="flex-1 bg-sabana text-white hover:bg-sabana hover:text-slate-500 font-bold transition-all"

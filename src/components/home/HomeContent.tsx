@@ -28,7 +28,7 @@ export const HomeContent = ({ language }: HomeContentProps) => {
 
       {/* Sección de búsqueda */}
       <section className="container mx-auto px-4 -mt-8 relative z-10">
-        <SearchSection />
+        {/* <SearchSection /> */}
       </section>
 
       {/* Sección hero */}

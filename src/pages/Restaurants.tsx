@@ -22,12 +22,20 @@ const RestaurantCard = ({ item }: { item: Business }) => {
   // const displayLocation = item.address || item.city || "Meta, Colombia";
 
   // Función para abrir Waze
-  const handleWazeClick = () => {
+  /* const handleWazeClick = () => {
     // Si tienes coordenadas lat/lng en tu tabla business, úsalas. 
     // De lo contrario, usamos la dirección.
     const query = encodeURIComponent(`${item.name} ${displayLocation}`);
     window.open(`https://waze.com/ul?q=${query}&navigate=yes`, "_blank");
+  }; */
+
+const handleNavigation = (business: Business) => {
+    const dest = business.latitude && business.longitude
+      ? `${business.latitude},${business.longitude}`
+      : encodeURIComponent(`${business.name} Villavicencio`);
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
   };
+
 
   const handleViewDetails = () => {
     // Redirigir a detalle de negocio o restaurante según tu ruta
@@ -89,7 +97,7 @@ const RestaurantCard = ({ item }: { item: Business }) => {
             {/* BOTÓN WAZE */}
             <Button
               variant="outline"
-              onClick={handleWazeClick}
+              onClick={handleNavigation}
               className="border-slate-200 hover:bg-blue-50 hover:text-blue-600 text-slate-600 font-bold rounded-sm transition-all flex items-center justify-center gap-2"
             >
               <Map className="w-4 h-4" />

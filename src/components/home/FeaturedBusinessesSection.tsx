@@ -7,6 +7,9 @@ import { useAppConfig } from "@/contexts/AppConfigContext";
 import { Business } from "@/interface/interface";
 import { shuffleArray } from '@/utils/arrayUtils';
 import { useMemo } from "react";
+import { MessageSquare, Utensils, Info, Navigation, Menu } from "lucide-react";
+import { Button } from "../ui/button";
+
 
 interface FeaturedBusinessesSectionProps {
   language: string;
@@ -24,28 +27,20 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
   // Memorizamos la lógica de filtrado y aleatoriedad para evitar cálculos en cada render
   const businessesToShowSlide = useMemo(() => {
     if (!featuredBusinesses || featuredBusinesses.length === 0) return [];
-    
     const vipBusinesses = featuredBusinesses.filter(
       (business) => business.is_vip === 1
     );
-
     // Mezclamos y tomamos los primeros 3
     return shuffleArray([...vipBusinesses]).slice(0, 3);
   }, [featuredBusinesses]);
 
-  // console.log(businessesToShowSlide)
-
   const handleViewDetails = (business: Business) => {
-    switch (business.category_id) {
-      case 1:
-        navigate(`/hotel/${business.id}`, { state: { hotel: business } });
-        break;
-      case 2:
-        //  navigate(`/business/${business.id}`, { state: { business: business } });
-        break;
-    
-      default:
-        break;
+    const categoryId = Number(business.category_id);
+    switch (categoryId) {
+      case 1: navigate(`/hotel/${business.id}`, { state: { hotel: business } }); break;
+      case 2: navigate(`/restaurant/${business.id}`, { state: { restaurant: business } }); break;
+      case 3: navigate(`/agency/${business.id}`, { state: { agency: business } }); break;
+      default: navigate(`/business/${business.id}`, { state: { business: business } }); break;
     }
   };
 
@@ -72,16 +67,36 @@ export const FeaturedBusinessesSection = ({ language }: FeaturedBusinessesSectio
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {businessesToShowSlide.map((business) => (
             <BusinessCard
               key={business.id}
               business={business} // Enviamos el registro completo
               onViewDetails={() => handleViewDetails(business)}
             />
+            
           ))}
+        </div> */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {businessesToShowSlide.map((business) => {
+            // const catId = Number(business.category_id);
+
+            return (
+              <div key={business.id} className="flex flex-col">
+                {/* Usamos el BusinessCard para la parte visual superior */}
+                <BusinessCard 
+                  business={business} 
+                  onViewDetails={() => handleViewDetails(business)} 
+                  hideFooterButtons={true} // Prop sugerida para que no se dupliquen botones internos
+                />
+                
+                {/* LÓGICA DE BOTONES CONDICIONALES */}
+                
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
-  );
+        );
 };

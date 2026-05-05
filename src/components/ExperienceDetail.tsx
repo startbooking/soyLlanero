@@ -1,267 +1,211 @@
-// src/pages/ExperienceDetailPage.tsx (o ExperienceDetail.tsx, si lo usas como página)
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
-  Badge,
   Calendar,
   Clock,
   MapPin,
   Navigation,
   Users,
+  Sparkles,
+  ShieldCheck,
+  ChevronRight,
+  Info
 } from "lucide-react";
 import { dataService } from "@/services/dataService";
 import { useCachedData } from "@/hooks/useCachedData";
 import { Experience } from "@/interface/interface";
+import { useBusinessActions } from "@/hooks/useBusinessActions"; // Usando el hook que creamos
 
-// Eliminamos ExperienceDetailModalProps y las props 'experience' y 'onClose'
-// ya que este componente ahora es una página que carga sus propios datos.
 export const ExperienceDetailPage = () => {
-  // Los estados 'currentLanguage' y 'navigate' se mantienen.
   const navigate = useNavigate();
   const [currentLanguage, setCurrentLanguage] = useState("es");
+  const { handleNavigation } = useBusinessActions(); // Hook de navegación unificado
 
-  // 1. OBTENER ID DE LA URL
   const { id: experienceIdFromUrl } = useParams<{ id: string }>();
 
-  // 2. CARGAR TODOS LOS DATOS Y BUSCAR LA EXPERIENCIA
   const { data: allExperiences, isLoading } = useCachedData<Experience[]>({
     cacheKey: "featured-experiences",
     fetchFn: dataService.getExperiences,
   });
+
   const experience = allExperiences?.find(
     (exp) => exp.id == experienceIdFromUrl
   );
-
+  
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [experienceIdFromUrl]);
 
-  const handleNavigation = () => {
-    const location = experience?.location || "Ubicación Desconocida";
-    window.open(
-      `https://waze.com/ul?q=${encodeURIComponent(location)}`,
-      "_blank"
-    );
-  };
-
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background pt-24 text-center">
-        <p className="text-lg text-foreground">
-          Cargando detalles de la experiencia...
-        </p>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-4 border-sabana border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-slate-400 font-black uppercase tracking-tighter italic">Cargando experiencia...</p>
       </div>
     );
   }
 
   if (!experience) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar
-          currentLanguage={currentLanguage}
-          onLanguageChange={setCurrentLanguage}
-        />
-        <Header
-          activeSection="experiences"
-          onSectionChange={() => { }}
-          language={currentLanguage}
-        />
-        <main className="pt-24">
-          <div className="container mx-auto px-4 py-8 text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">
-              Experiencia no encontrada
-            </h1>
-            <Button className="border border-black text-black bg-transparent hover:border-primary/50 hover:text-primary/70"onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver a Experiencias
-            </Button>
-          </div>
-        </main>
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter mb-4">No encontrada</h1>
+        <Button 
+          className="bg-slate-900 text-white rounded-2xl font-black px-8 py-6 uppercase tracking-tighter h-14"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" /> Volver
+        </Button>
       </div>
     );
   }
 
-  // --- Renderizado del Detalle ---
-
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-      />
-      <Header
-        activeSection="experiences"
-        onSectionChange={() => { }}
-        language={currentLanguage}
-      />
+    <div className="min-h-screen bg-slate-50/50 flex flex-col">
+      <TopBar currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
+      <Header activeSection="experiences" onSectionChange={() => { }} language={currentLanguage} />
 
-      <main className="pt-24">
-        <div className="container mx-auto px-4 py-8 flex">
-          <Button
-            variant="outline"
+      <main className="pt-28 pb-20 flex-grow">
+        <div className="container mx-auto px-4 max-w-6xl">
+          
+          {/* Botón Volver con estilo minimalista */}
+          <button
             onClick={() => navigate(-1)}
-            className="mb-6 border border-black text-black bg-transparent hover:border-primary/50 hover:text-primary/70"
+            className="group mb-8 flex items-center gap-2 text-slate-400 hover:text-sabana transition-colors font-black uppercase text-[10px] tracking-widest"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver a Experiencias
-          </Button>
+            <div className="p-2 bg-white rounded-full shadow-sm group-hover:shadow-md transition-all">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            Volver a experiencias
+          </button>
 
-          <div className="rounded-lg bg-white shadow-xl max-w-[80%] w-full mx-auto">
-            <div className="relative">
-              {/* Sección de Imagen y Título */}
-              <div className="relative overflow-hidden rounded-t-lg h-96">
-                {/* Aseguramos que la ruta de la imagen sea la correcta */}
+          <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 overflow-hidden border border-slate-100">
+            <div className="grid lg:grid-cols-5">
+              
+              {/* COLUMNA IZQUIERDA: IMAGEN (3/5) */}
+              <div className="lg:col-span-3 relative h-[50vh] lg:h-[85vh] overflow-hidden">
                 <img
                   src={`/images/experiences/${experience.image}`}
-                  alt={experience.name} // Usamos 'name' si 'title' no existe en Experience
-                  className="w-full h-[60vh] object-cover"
+                  alt={experience.name}
+                  className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h1 className="text-4xl font-extrabold mb-2">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
+                
+                {/* Badges sobre la imagen */}
+                <div className="absolute top-8 left-8 flex gap-2">
+                  <Badge className="bg-sabana text-white border-none font-black uppercase text-[10px] px-4 py-1.5 shadow-lg shadow-sabana/20">
+                    {experience.category}
+                  </Badge>
+                  <Badge className="bg-white/20 backdrop-blur-md text-white border-none font-black uppercase text-[10px] px-4 py-1.5">
+                    <Sparkles className="w-3 h-3 mr-2 inline" /> Recomendado
+                  </Badge>
+                </div>
+
+                {/* Título sobre la imagen */}
+                <div className="absolute bottom-12 left-12 right-12">
+                  <h1 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter leading-none mb-4">
                     {experience.name}
                   </h1>
-                  <p className="text-2xl ">{experience.short_description}</p>
-                  <div className="flex items-center text-lg">
-                    <MapPin className="w-5 h-5 mr-2" />
+                  <div className="flex items-center text-white/80 font-bold italic text-lg">
+                    <MapPin className="w-5 h-5 mr-2 text-sabana" />
                     {experience.location}
                   </div>
                 </div>
-
-                <Badge className="absolute top-4 left-4 bg-green-500 text-white text-base">
-                  {experience.category}
-                </Badge>
               </div>
 
-              {/* Contenido Principal */}
-              <div className="p-6">
-                <div className="grid md:grid-cols-3 gap-8">
-                  {/* Columna de Contenido y Requisitos (2/3) */}
-                  <div className="space-y-8 md:col-span-2">
-                    <div>
-                      <h2 className="text-2xl font-bold mb-4 border-b pb-2 text-green-700">
-                        Descripción
-                      </h2>
-                      <p className="text-muted-foreground text-md leading-relaxed text-justify">
-                        {experience.long_description}
-                      </p>
+              {/* COLUMNA DERECHA: INFO (2/5) */}
+              <div className="lg:col-span-2 p-6 lg:p-8 flex flex-col">
+                
+                <div className="flex-grow space-y-8">
+                  {/* Breve descripción destacada */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-1 bg-sabana rounded-full" />
+                      <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Resumen del tour</h2>
                     </div>
-
-                    {/* Nota: Asumo que 'includes' y 'requirements' existen en tu interfaz Experience */}
-                    {/* {experience.includes && experience.includes.length > 0 && (
-                      <div>
-                        <h3 className="text-xl font-bold mb-3">Incluye</h3>
-                        <ul className="space-y-2 list-disc list-inside">
-                          {experience.includes.map((item, index) => (
-                            <li key={index} className="text-muted-foreground">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )} */}
-
-                    {/* {(experience.requirements && experience.requirements.length > 0) && (
-                      <div>
-                        <h3 className="text-xl font-bold mb-3">Requisitos</h3>
-                        <ul className="space-y-2 list-disc list-inside">
-                          {experience.requirements.map((requirement, index) => (
-                            <li key={index} className="text-muted-foreground">
-                              {requirement}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )} */}
+                    <p className="text-xl font-bold text-slate-700 leading-tight italic">
+                      "{experience.short_description}"
+                    </p>
                   </div>
 
-                  {/* Columna de Información, Precio y Botones (1/3) */}
-                  <div className="space-y-6 md:col-span-1">
-                    <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-                      <h3 className="text-xl font-bold mb-4 text-green-700">
-                        Información Clave{" "}
-                      </h3>
-                      <div className="space-y-4">
-                        <InfoItem
-                          icon={Calendar}
-                          label="Fecha"
-                          value={experience.date}
-                        />
-                        <InfoItem
-                          icon={Clock}
-                          label="Duración"
-                          value={experience.duration || experience.time}
-                        />
-                        <InfoItem
-                          icon={Users}
-                          label="Máx. Personas"
-                          value={`${experience.max_people || experience.capacity
-                            } personas`}
-                        />
-                        <InfoItem
-                          icon={Users}
-                          label="Organizador"
-                          value={experience.organizer || "No Especificado"}
-                        />
-                      </div>
-                    </div>
+                  {/* Grid de Información Clave */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <InfoItem icon={Calendar} label="Fecha" value={experience.date} />
+                    <InfoItem icon={Clock} label="Duración" value={experience.duration || experience.time} />
+                    <InfoItem icon={Users} label="Capacidad" value={`${experience.max_people || experience.capacity} Pers.`} />
+                    <InfoItem icon={ShieldCheck} label="Seguro" value="Incluido" />
+                  </div>
 
-                    <div className="bg-primary-foreground rounded-lg p-6 shadow-md">
-                      <div className="flex justify-between items-baseline mb-4 ">
-                        <span className="text-xl font-semibold text-gray-700">
-                          Precio
-                        </span>
-                        <span className="text-3xl font-extrabold text-green-600">
-                          {experience.is_free || experience.price === "0"
-                            ? "Gratis"
-                            : experience.price}
-                        </span>
-                      </div>
-                      <Button
-                        size="sm"
-                        className="w-full text-md py-6 bg-green-600 hover:bg-green-700 mb-3"
-                        onClick={() => navigate('/experience-reservation', { state: { experience } })}
-                      >
-                        <Calendar className="w-4 h-4 mr-1" />
-                        Reservar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={handleNavigation}
-                        className="w-full border-green-600 text-green-600 hover:bg-green-50"
-                      >
-                        <Navigation className="w-4 h-4 mr-2" />
-                        Cómo llegar
-                      </Button>
-                    </div>
+                  <hr className="border-slate-100" />
+
+                  {/* Descripción Larga */}
+                  <div className="space-y-4">
+                    <h3 className="font-black text-slate-900 uppercase tracking-tighter text-sm">Detalles de la aventura</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed text-justify font-medium">
+                      {experience.long_description}
+                    </p>
                   </div>
                 </div>
+
+                {/* Footer de la tarjeta: Precio y Acciones */}
+                <div className="mt-12 border-t border-slate-100">
+                  <div className="flex items-end justify-between mb-8">
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Precio por persona</p>
+                      <p className="text-4xl font-black text-slate-900 tracking-tighter">
+                        {experience.is_free || experience.price === "0" ? "GRATIS" : `$${experience.price}`}
+                      </p>
+                    </div>
+                    <Badge className="bg-green-50 text-green-600 border-none font-bold text-[10px] px-3 py-1 uppercase">Cupos disponibles</Badge>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Button
+                      className="w-full bg-sabana hover:bg-sabana/90 text-white rounded-2xl font-black uppercase tracking-tighter h-16 text-lg shadow-xl shadow-sabana/20 transition-all hover:scale-[1.02]"
+                      onClick={() => navigate('/experience-reservation', { state: { experience } })}
+                    >
+                      Reservar aventura
+                      <ChevronRight className="w-5 h-5 ml-2" />
+                    </Button>
+                    
+                    <Button
+                      variant="secondary"
+                      onClick={() => handleNavigation({ name: experience.name, location: experience.location })}
+                      className="w-full hover:text-slate-900 font-black uppercase tracking-widest text-[10px]"
+                    >
+                      <Navigation className="w-3 h-3 mr-2" />
+                      Cómo llegar al punto de encuentro
+                    </Button>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Footer ya no se incluye en el código original, pero es bueno dejarlo */}
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
 
-export default ExperienceDetailPage;
-
-// Componente auxiliar para la información
-const InfoItem = ({ icon: Icon, label, value }) => (
-  <div className="flex items-start text-muted-foreground">
-    <Icon className="w-5 h-5 mr-3 text-green-600 flex-shrink-0 mt-0.5" />
+// Componente auxiliar estilizado para la información
+const InfoItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string }) => (
+  <div className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/50">
+    <div className="p-2 bg-white rounded-xl shadow-sm">
+      <Icon className="w-4 h-4 text-sabana" />
+    </div>
     <div>
-      <p className="font-medium text-foreground">{label}</p>
-      <p className="text-sm">{value}</p>
+      <p className="text-[9px] font-black uppercase text-slate-400 tracking-tighter leading-none mb-1">{label}</p>
+      <p className="text-xs font-bold text-slate-700 leading-none">{value}</p>
     </div>
   </div>
 );
+
+export default ExperienceDetailPage;
