@@ -17,11 +17,11 @@ export const LogoSection = ({ onHomeClick }: LogoSectionProps) => {
       <div className="w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300 pulse-glow">
         <img className="rounded-lg" src={`/images/${appConfig?.app_logo_url}`} alt="" />
       </div>
-      <div className="hidden md:block">
-          <h1 className="text-xl font-bold text-sabana transition-colors uppercase leading-5">
+      <div className="md:block">
+          <h1 className="text-xs md:text-xl font-bold text-sabana transition-colors uppercase leading-5">
             { appConfig?.app_name}
           </h1>
-          <h2 className="text-sm font-bold text-sabana/70 ">{appConfig?.app_slogan}</h2>
+          <h2 className="text-[8px] md:text-sm font-bold text-sabana/70 ">{appConfig?.app_slogan}</h2>
       </div>
       <div className="hidden md:block">
       </div>

@@ -1,12 +1,13 @@
-
+import React, { useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LucideIcon } from "lucide-react";
 import { NavigationItems } from "./NavigationItems";
 
+// 1. Tipado más estricto
 interface NavigationItem {
   id: string;
   label: string;
-  icon: any;
+  icon: LucideIcon | React.ElementType; 
   route: string;
 }
 
@@ -21,34 +22,40 @@ export const MobileNavigation = ({
   activeSection, 
   onNavigation 
 }: MobileNavigationProps) => {
-  const scrollNavigation = (direction: 'left' | 'right') => {
-    const container = document.querySelector('.nav-scroll-container');
-    if (container) {
+  // 2. Referencia al contenedor en lugar de querySelector
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollNavigation = useCallback((direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const { current: container } = scrollContainerRef;
       const scrollAmount = 200;
-      const newScrollLeft = direction === 'left' 
-        ? container.scrollLeft - scrollAmount 
-        : container.scrollLeft + scrollAmount;
       
-      container.scrollTo({
-        left: newScrollLeft,
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
       });
     }
-  };
+  }, []);
 
   return (
-    <div className="lg:hidden flex-1 mx-4 relative max-w-xs sm:max-w-md">
-      <div className="flex items-center">
+    <nav className="lg:hidden flex-1 mx-4 relative max-w-xs sm:max-w-md" aria-label="Navegación móvil">
+      <div className="flex items-center group">
+        {/* Botón Izquierdo */}
         <Button
           variant="ghost"
-          size="sm"
-          className="absolute left-0 z-10 bg-sabana-tenue backdrop-blur-sm hover:bg-sabana-200 shadow-sm h-8 w-8 p-0"
+          size="icon"
+          aria-label="Deslizar izquierda"
+          className="absolute left-0 z-10 bg-sabana-tenue/80 backdrop-blur-sm hover:bg-sabana-200 shadow-sm h-8 w-8 p-0 rounded-full"
           onClick={() => scrollNavigation('left')}
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
         
-        <div className="nav-scroll-container flex gap-1 overflow-x-auto scrollbar-hide nav-mobile-scroll mx-6 py-1">
+        {/* Contenedor de Scroll */}
+        <div 
+          ref={scrollContainerRef}
+          className="nav-scroll-container flex gap-1 overflow-x-auto scrollbar-hide nav-mobile-scroll mx-6 py-1 snap-x"
+        >
           <div className="flex gap-1 min-w-max">
             <NavigationItems 
               navigationItems={navigationItems}
@@ -59,15 +66,17 @@ export const MobileNavigation = ({
           </div>
         </div>
 
+        {/* Botón Derecho */}
         <Button
           variant="ghost"
-          size="sm"
-          className="absolute right-0 z-10 bg-sabana-tenue backdrop-blur-sm hover:bg-sabana-200 shadow-sm h-8 w-8 p-0"
+          size="icon"
+          aria-label="Deslizar derecha"
+          className="absolute right-0 z-10 bg-sabana-tenue/80 backdrop-blur-sm hover:bg-sabana-200 shadow-sm h-8 w-8 p-0 rounded-full"
           onClick={() => scrollNavigation('right')}
         >
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
-    </div>
+    </nav>
   );
 };

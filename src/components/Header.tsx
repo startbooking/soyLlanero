@@ -1,18 +1,16 @@
-
 import { useState } from "react";
 import { useTranslations } from "@/utils/translations";
 import { AuthModal } from "./AuthModal";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LogoSection } from "./header/LogoSection";
 import { NavigationItems, createNavigationItems } from "./header/NavigationItems";
-import { MobileNavigation } from "./header/MobileNavigation";
-import { UserActions } from "./header/UserActions";
 import { MobileMenu } from "./header/MobileMenu";
 import { WhatsAppButton } from "./header/WhatsAppButton";
 import { UserMenu } from "./dashboard/UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
+import { LogIn, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   activeSection: string;
@@ -25,7 +23,7 @@ export const Header = ({ activeSection, onSectionChange, language }: HeaderProps
   const navigate = useNavigate();
   const location = useLocation();
   const t = useTranslations(language);
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const navigationItems = createNavigationItems(t);
   const isDashboardRoute = location.pathname.startsWith('/admin');
@@ -39,87 +37,84 @@ export const Header = ({ activeSection, onSectionChange, language }: HeaderProps
     }
   };
 
-  const handleHomeClick = () => {
-    handleNavigation({ id: "home", route: "/" });
-  };
-
-  const handleAdminClick = () => {
-    navigate('/admin/dashboard');
-  };
-
-  const handleLoginClick = () => {
-    setShowAuthModal(true);
-  };
-
-  const handleUniqueExperiencesClick = () => {
-    navigate('/unique-experiences');
-  };
-
-  // Don't show main navigation in dashboard routes
-  const showMainNavigation = !isDashboardRoute;
-
   return (
     <>
-      <header className="fixed top-8 left-0 right-0 z-40 header-bg-green bg-white/70 border-b border-border shadow-sm">
+      <header 
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm h-20 flex items-center"
+        )}
+      >
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <LogoSection onHomeClick={handleHomeClick} />
+          <div className="flex items-center justify-between gap-4">
+            
+            {/* Logo: Siempre visible */}
+            <LogoSection onHomeClick={() => handleNavigation({ id: "home", route: "/" })} />
 
-            {showMainNavigation && (
-              <>
-                {/* Desktop Navigation */}
-                <nav className="hidden lg:flex items-center gap-2">
-                  <NavigationItems
-                    navigationItems={navigationItems}
-                    activeSection={activeSection}
-                    onNavigation={handleNavigation}
-                  />
-                </nav>
-
-                {/* Mobile/Tablet Navigation */}
-                <MobileNavigation
+            {/* Navegación Central: Visible solo en Desktop (lg) */}
+            {!isDashboardRoute && (
+              <div className="">
+                <NavigationItems
                   navigationItems={navigationItems}
                   activeSection={activeSection}
                   onNavigation={handleNavigation}
                 />
-              </>
+              </div>
             )}
 
-            {/* User Actions */}
-            {isDashboardRoute && isAuthenticated ? (
-              <UserMenu />
-            ) : (
-              <div className="flex items-center gap-2">
-                {!isAuthenticated && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2 hover:bg-llanero/20"
-                    onClick={handleLoginClick}
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span className="hidden sm:inline">Iniciar Sesión</span>
-                  </Button>
-                )}
+            {/* Acciones de Usuario y Menú Móvil */}
+            <div className="flex items-center gap-2 sm:gap-4">
+              
+              {/* Botón Experiencias: Solo Desktop para evitar saturación */}
+              {/* {!isDashboardRoute && (
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/unique-experiences')}
+                  className="hidden xl:flex items-center gap-2 font-black uppercase text-[10px] tracking-widest text-slate-600 hover:text-sabana transition-colors"
+                >
+                  <Sparkles className="w-4 h-4 text-sabana animate-pulse" />
+                  Experiencias
+                </Button>
+              )} */}
 
-                {isAuthenticated && <UserMenu />}
+              {/* Autenticación / Dashboard */}
+              {isAuthenticated ? (
+                <UserMenu />
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="hidden sm:flex h-10 px-6 rounded-xl bg-white text-slate font-black uppercase text-[10px] tracking-widest hover:bg-sabana/20 transition-all"
+                  onClick={() => setShowAuthModal(true)}
+                >
+                  <LogIn className="w-3.5 h-3.5 mr-2 text-slate" />
+                  Ingresar
+                </Button>
+              )}
 
-                {/* Mobile Menu */}
+              {/* Gatillo del Menú Móvil: Visible en < lg */}
+              {/* <div className="lg:hidden">
                 <MobileMenu
                   navigationItems={navigationItems}
                   activeSection={activeSection}
                   onNavigation={handleNavigation}
-                  onUniqueExperiencesClick={handleUniqueExperiencesClick}
-                  onAdminClick={handleAdminClick}
+                  onUniqueExperiencesClick={() => navigate('/unique-experiences')}
+                  onAdminClick={() => navigate('/admin/dashboard')}
                 />
-              </div>
-            )}
+              </div> */}
+            </div>
           </div>
         </div>
       </header>
 
+      {/* Botón flotante de WhatsApp: No se muestra en el panel admin */}
       {!isDashboardRoute && <WhatsAppButton />}
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
+      {/* Modal Global de Autenticación */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </>
   );
 };

@@ -1,5 +1,5 @@
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import {
   Home,
   Map,
@@ -43,6 +43,18 @@ export const NavigationItems = ({
 }: NavigationItemsProps) => {
   const navigate = useNavigate();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Cerrar menú al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSubItemClick = (route: string) => {
     navigate(route);
@@ -55,25 +67,27 @@ export const NavigationItems = ({
 
   if (isMobile) {
     return (
-      <>
+      <div className="flex flex-row items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {navigationItems.map((item) => (
           <Button
             key={item.id}
-            variant={activeSection === item.id ? "default" : "ghost"}
-            size="default"
+            variant="ghost"
             onClick={() => onNavigation(item)}
-            className="flex flex-col items-center gap-1 h-auto py-3 min-w-[80px] flex-shrink-0"
+            className={cn(
+              "flex flex-col items-center gap-1 h-auto py-4 px-6 min-w-[90px] rounded-2xl transition-all",
+              activeSection === item.id ? "bg-sababa/80 text-white" : "text-sabana-500"
+            )}
           >
-            <item.icon className="w-4 h-4" />
-            <span className="text-xs text-center whitespace-nowrap">{item.label}</span>
+            <item.icon className={cn("w-5 h-5", activeSection === item.id ? "text-sabana" : "")} />
+            <span className="text-[10px] font-black uppercase tracking-tighter italic">{item.label}</span>
           </Button>
         ))}
-      </>
+      </div>
     );
   }
 
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex items-center gap-2" ref={menuRef}>
       {navigationItems.map((item) => (
         <div key={item.id} className="relative">
           {item.subItems ? (
@@ -83,31 +97,39 @@ export const NavigationItems = ({
                 size="sm"
                 onClick={() => toggleMenu(item.id)}
                 className={cn(
-                  "flex items-center gap-2 whitespace-nowrap hover:bg-llanero/20",
-                  openMenuId === item.id && "bg-llanero/20"
+                  "flex items-center gap-2 px-4 h-10 rounded-xl font-black uppercase text-[11px] tracking-widest transition-all",
+                  openMenuId === item.id 
+                    ? "bg-sabana/80 text-slate-500 shadow-lg" 
+                    : "text-sabana-600 hover:bg-sabana/10 hover:text-slate-900",
+                  activeSection === item.id && "text-sabana"
                 )}
               >
-                <item.icon className="w-4 h-4" />
+                <item.icon className={cn("w-4 h-4", openMenuId === item.id && "text-sabana")} />
                 {item.label}
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 transition-transform duration-200",
-                    openMenuId === item.id && "rotate-180"
-                  )}
-                />
+                <ChevronDown className={cn(
+                  "w-3 h-3 transition-transform duration-300 opacity-50",
+                  openMenuId === item.id && "rotate-180 opacity-100"
+                )} />
               </Button>
 
+              {/* Dropdown Estilizado */}
               {openMenuId === item.id && (
-                <div className="absolute top-full left-0 mt-1 min-w-[240px] bg-popover border border-border rounded-md shadow-lg z-50 animate-in fade-in-0 zoom-in-95">
-                  <div className="p-2 space-y-1">
+                <div className="absolute top-[calc(100%+8px)] left-0 min-w-[280px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl shadow-slate-200/80 z-[100] p-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="grid gap-1">
                     {item.subItems.map((subItem) => (
                       <button
                         key={subItem.id}
                         onClick={() => handleSubItemClick(subItem.route)}
-                        className="w-full flex items-center gap-3 p-3 rounded-md hover:bg-llanero/20 transition-colors text-left"
+                        className="group w-full flex items-center gap-4 p-4 rounded-[1.2rem] hover:bg-slate-50 transition-all text-left"
                       >
-                        <subItem.icon className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium text-sm">{subItem.label}</span>
+                        <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-white group-hover:shadow-sm transition-all">
+                          <subItem.icon className="w-4 h-4 text-slate-400 group-hover:text-sabana" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-black text-slate-900 uppercase text-[10px] tracking-widest">
+                            {subItem.label}
+                          </span>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -116,12 +138,17 @@ export const NavigationItems = ({
             </div>
           ) : (
             <Button
-              variant={activeSection === item.id ? "default" : "ghost"}
+              variant="ghost"
               size="sm"
               onClick={() => onNavigation(item)}
-              className="flex items-center gap-2 whitespace-nowrap bg-white text-black hover:bg-llanero/20"
+              className={cn(
+                "flex items-center gap-2 px-4 h-10 rounded-xl font-black uppercase text-[11px] tracking-widest transition-all",
+                activeSection === item.id 
+                  ? "bg-white/80 text-slate-800 hover:bg-sabana/10" 
+                  : "text-slate-600 hover:bg-sabana/10"
+              )}
             >
-              <item.icon className="w-4 h-4" />
+              <item.icon className={cn("w-4 h-4", activeSection === item.id && "text-slate-800")} />
               {item.label}
             </Button>
           )}
@@ -140,36 +167,36 @@ export const createNavigationItems = (t: any): NavigationItem[] => [
   },
   {
     id: "discover",
-    label: "Descubre el Meta",
+    label: "Explorar",
     icon: Compass,
     route: "/discover",
     subItems: [
-      { id: "accommodation", label: "Alojamiento", icon: Hotel, route: "/hotels" },
-      { id: "activities", label: "Actividades y Tours", icon: Mountain, route: "/adventures" },
-      { id: "events", label: "Eventos", icon: Calendar, route: "/events" },
-      { id: "points-of-interest", label: "Puntos de Interés", icon: MapPin, route: "/points-of-interest" }
+      { id: "accommodation", label: "Donde Dormir", icon: Hotel, route: "/discover/hotels" },
+      { id: "activities", label: "Aventura y Tours", icon: Mountain, route: "/discover/adventure" },
+      { id: "events", label: "Agenda Eventos", icon: Calendar, route: "/events" },
+      { id: "points-of-interest", label: "Imperdibles", icon: MapPin, route: "/points-of-interest" }
     ]
   },
   {
     id: "tourist-services",
-    label: "Servicios Turísticos",
+    label: "Servicios",
     icon: Briefcase,
     route: "/services",
     subItems: [
-      { id: "restaurants", label: "Restaurantes", icon: Utensils, route: "/restaurants" },
-      { id: "agencies-operators", label: "Agencias / Operadores", icon: Building, route: "/agencies-operators" },
-      { id: "other-services", label: "Otros Servicios", icon: Star, route: "/services" }
+      { id: "restaurants", label: "Restaurantes", icon: Utensils, route: "/discover/restaurants" },
+      { id: "agencies-operators", label: "Agencias", icon: Building, route: "/agencies-operators" },
+      { id: "other-services", label: "Guías & Transporte", icon: Star, route: "/services" }
     ]
   },
   {
     id: "information",
-    label: "Información",
+    label: "Info",
     icon: FileText,
     route: "/institutional",
     subItems: [
-      { id: "about-us", label: "Quiénes Somos", icon: Users, route: "/institutional" },
-      { id: "interactive-map", label: "Mapa Interactivo", icon: Map, route: "/maps" },
-      { id: "contact", label: "Contacto", icon: Phone, route: "/contact" }
+      { id: "interactive-map", label: "Mapa del Meta", icon: Map, route: "/maps" },
+      { id: "about-us", label: "Nuestro Equipo", icon: Users, route: "/institutional" },
+      { id: "contact", label: "Soporte 24/7", icon: Phone, route: "/contact" }
     ]
   }
 ];
