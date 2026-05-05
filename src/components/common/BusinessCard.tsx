@@ -61,7 +61,7 @@ export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => 
           src={image?.startsWith('http') ? image : `/images/businnesses/${image}`}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          onError={(e) => (e.currentTarget.src = '/placeholder-hotel.jpg')}
+          onError={(e) => (e.currentTarget.src = '/placeholder.svg')}
         />
 
         {/* Overlays decorativos */}

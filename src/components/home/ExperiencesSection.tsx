@@ -27,7 +27,7 @@ export const ExperiencesSection = ({ language }: ExperiencesSectionProps) => {
     return shuffleArray([...featuredExperiences]).slice(0, 3);
   }, [featuredExperiences]);
 
-  console.log(serviceToShowSlide);
+  // console.log(serviceToShowSlide);
 
   const handleCardClick = (experience: Experience) => {
     // Enviamos el objeto completo en el state para evitar re-fetch

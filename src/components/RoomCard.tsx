@@ -76,7 +76,7 @@ export const RoomCard = ({ room, hotel, onAction, actionLabel }: RoomCardProps) 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
             fetchpriority="low"
-            onError={(e) => (e.currentTarget.src = '/placeholder-room.jpg')}
+            onError={(e) => (e.currentTarget.src = '/placeholder.svg')}
           />
 
           {/* Badge de Disponibilidad */}

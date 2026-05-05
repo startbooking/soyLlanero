@@ -12,6 +12,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { PointsData } from "@/interface/interface";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface PointDetailModalProps {
   point: PointsData;
@@ -39,7 +40,7 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="absolute top-6 right-6 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full transition-all"
+            className="absolute top-6 right-6 z-20 bg-sabana/60 hover:bg-sabana/80 backdrop-blur-md text-white rounded-full transition-all"
           >
             <X className="w-5 h-5" />
           </Button>
@@ -59,7 +60,7 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                 {point.category}
               </Badge>
               <Badge className="bg-white/20 backdrop-blur text-white border-none font-bold text-[10px] uppercase px-3 py-1">
-                {point.entry_fee == 0 || point.entry_fee === "0" ? "Acceso Gratuito" : `$${point.entry_fee}`}
+                {point.entry_fee == 0 || point.entry_fee === "0" ? "Acceso Gratuito" : `${formatCurrency(point.entry_fee)}`}
               </Badge>
             </div>
             <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-2">
@@ -134,7 +135,7 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                     <div>
                       <p className="text-[10px] font-black uppercase text-slate-400">Costo de Entrada</p>
                       <p className="text-sm font-bold">
-                        {point.entry_fee == 0 || point.entry_fee === "0" ? "Sin costo" : `$${point.entry_fee}`}
+                        {point.entry_fee == 0 || point.entry_fee === "0" ? "Sin costo" : `${formatCurrency(point.entry_fee)}`}
                       </p>
                     </div>
                   </div>

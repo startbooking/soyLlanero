@@ -50,6 +50,12 @@ const AccommodationCard = ({ item }: { item: BusinessAccommodation }) => {
     navigate(`/hotel/${item.id}`, { state: { hotel: item } });
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+
+  
   return (
     <Card className="group hover:shadow-2xl transition-all duration-300 border-none shadow-md overflow-hidden">
       <div className="relative h-56 overflow-hidden">

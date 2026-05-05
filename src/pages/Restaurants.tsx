@@ -11,6 +11,7 @@ import { useCachedData } from "@/hooks/useCachedData";
 import { Business } from "@/interface/interface";
 import { dataService } from "@/services/dataService";
 import { RestaurantMenuModal } from "@/components/restaurant/RestaurantMenuModal";
+import { useBusinessActions } from "@/hooks/useBusinessActions";
 
 // --- Sub-componente: RestaurantCard ---
 const RestaurantCard = ({ item }: { item: Business }) => {
@@ -18,6 +19,7 @@ const RestaurantCard = ({ item }: { item: Business }) => {
   // Validación de datos
   const displayLocation = item.address || item.city || "Meta, Colombia";
   const displayRating = item.rating ? parseFloat(item.rating).toFixed(1) : "N/A";
+  const { handleNavigation, handleContact,  } = useBusinessActions();
 
   // const displayLocation = item.address || item.city || "Meta, Colombia";
 
@@ -29,12 +31,14 @@ const RestaurantCard = ({ item }: { item: Business }) => {
     window.open(`https://waze.com/ul?q=${query}&navigate=yes`, "_blank");
   }; */
 
-const handleNavigation = (business: Business) => {
+// handleNavigation
+
+  /* const handleNavigation = (business: Business) => {
     const dest = business.latitude && business.longitude
       ? `${business.latitude},${business.longitude}`
       : encodeURIComponent(`${business.name} Villavicencio`);
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
-  };
+  }; */
 
 
   const handleViewDetails = () => {
@@ -43,6 +47,12 @@ const handleNavigation = (business: Business) => {
   };
 
   const mockSpecialties = ["Mamona a la Llanera", "Cachama Ahumada", "Carne a la Perra"];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+
 
   return (
     <Card className="group hover:shadow-2xl transition-all duration-500 border-none shadow-sm overflow-hidden rounded-2xl bg-white">

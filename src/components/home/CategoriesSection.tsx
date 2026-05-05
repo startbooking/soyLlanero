@@ -37,7 +37,7 @@ export const CategoriesSection = ({ language }: CategoriesSectionProps) => {
     const routes: Record<number, string> = {
       1: "/hotels",
       2: "/restaurants",
-      3: "/agencies",
+      3: "/agencies-operators",
       4: "/points-of-interest"
     };
     navigate(routes[categoryId] || "/map");

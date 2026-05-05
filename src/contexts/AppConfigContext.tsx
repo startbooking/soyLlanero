@@ -173,7 +173,7 @@ export const AppConfigProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setAppImagesSlider(sliderData);
       setAppStats(statsData);
       setAppCategoriesStats(statCategorieData);
-      // console.log(appTexts)
+      // console.log(statCategorieData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar configuración');
       console.error('Error fetching app config:', err);

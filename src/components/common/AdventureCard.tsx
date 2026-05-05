@@ -52,7 +52,7 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
           src={image?.startsWith('http') ? image : `/images/experiences/${image}`}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          onError={(e) => (e.currentTarget.src = '/placeholder-adventure.jpg')}
+          onError={(e) => (e.currentTarget.src = '/placeholder.svg')}
         />
 
         {/* Overlays */}
