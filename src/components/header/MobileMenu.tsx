@@ -160,7 +160,7 @@ export const MobileMenu = ({
                   )}
                 </div>
               ))}
-              <UserAuthAction className="sm:hidden" />
+              <UserAuthAction className="sm:hidden bg-white" />
             </nav>
           </div>
         </div>

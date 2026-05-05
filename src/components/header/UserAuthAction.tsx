@@ -26,7 +26,7 @@ export const UserAuthAction = ({ className, showIconOnly = false }: UserAuthActi
         size="sm"
         onClick={() => setShowAuthModal(true)}
         className={cn(
-          "w-full h-10 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all",
+          "w-full h-10 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all bg-white",
           "text-slate hover:bg-slate-50/80", // Estilo Premium
           showIconOnly ? "px-3" : "px-6",
           className
