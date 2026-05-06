@@ -105,13 +105,13 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
                 <MapPin className="w-5 h-5 mr-2 text-white" />
                 Explorar Destinos
               </Button>
-              <Button
+              <Button 
                 size="lg"
                 variant="outline"
                 className="h-16 px-10 border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-900 rounded-2xl font-black uppercase tracking-tighter text-sm transition-all hover:scale-105"
                 onClick={() => navigate("/events")}
               >
-                <Calendar className="w-5 h-5 mr-2 text-sabana" />
+                <Calendar className="w-5 h-5 mr-2 text-slate" />
                 Agenda de Eventos
               </Button>
             </div>

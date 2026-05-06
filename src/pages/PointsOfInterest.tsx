@@ -14,24 +14,16 @@ import { useCachedData } from "@/hooks/useCachedData";
 import { dataService } from "@/services/dataService";
 import { PointsData } from "@/interface/interface";
 import { PointDetailModal } from "@/components/PointDetailModal";
-
+import { useBusinessActions } from "@/hooks/useBusinessActions"
 const PointsOfInterest = () => {
   const [currentLanguage, setCurrentLanguage] = useState("es");
   const [selectedPoint, setSelectedPoint] = useState<PointsData | null>(null);
+  const { handleNavigation, handleContact,  } = useBusinessActions();
 
   const { data: featuredPoints, isLoading } = useCachedData<PointsData[]>({
     cacheKey: 'featured-points',
     fetchFn: dataService.getPointsOfInterest
   });
-
-  const handleExternalNavigation = (point: PointsData) => {
-    // Priorizamos coordenadas si existen, sino nombre + ciudad
-    const destination = point.latitude && point.longitude
-      ? `${point.latitude},${point.longitude}`
-      : encodeURIComponent(point.name + " Villavicencio Meta");
-
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank');
-  };
 
   const pointsToShow = featuredPoints && featuredPoints.length > 0 ? featuredPoints : [];
 
@@ -124,17 +116,18 @@ const PointsOfInterest = () => {
 
                   <div className="grid grid-cols-2 gap-3 pt-2">
                     <Button
-                      className="bg-sabana hover:bg-sabana/90 text-white hover:bg-slate-800 text-white rounded-xl font-black text-[10px] uppercase h-11"
+                      variant="default"
+                      className="text-white rounded-xl font-black text-[10px] uppercase h-11"
                       onClick={() => setSelectedPoint(point)}
                     >
                       <Info className="w-3 h-3 mr-2" /> Detalles
                     </Button>
                     <Button
-                      variant="secondary"
-                      className="rounded-xl font-black text-[10px] uppercase h-11 shadow-lg shadow-sabana/20"
+                      variant="outline"
+                      className="rounded-xl font-black text-[10px] uppercase h-11 shadow-lg"
                       onClick={(e) => {
                         e.stopPropagation(); // Evita que se disparen otros eventos
-                        handleExternalNavigation(point);
+                        handleNavigation(point);
                       }}
                     >
                       <MapIcon className="w-3 h-3 mr-2" /> Cómo llegar

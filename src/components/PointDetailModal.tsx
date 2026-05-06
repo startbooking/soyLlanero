@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  MapPin, 
-  Clock, 
+import {
+  MapPin,
+  Clock,
   X,
   Navigation,
   Car,
@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { PointsData } from "@/interface/interface";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useBusinessActions } from "@/hooks/useBusinessActions";
+
+
 
 interface PointDetailModalProps {
   point: PointsData;
@@ -20,20 +23,22 @@ interface PointDetailModalProps {
 }
 
 export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
-  const handleNavigation = () => {
+  /* const handleNavigation = () => {
     // Si tienes latitud y longitud en PointsData, es mejor usarlas. 
     // Si no, usamos el nombre + ciudad.
-    const destination = point.latitude && point.longitude 
-      ? `${point.latitude},${point.longitude}` 
+    const destination = point.latitude && point.longitude
+      ? `${point.latitude},${point.longitude}`
       : encodeURIComponent(point.name + " Villavicencio Meta");
-      
+
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank');
-  };
+  }; */
+  const { handleNavigation, handleContact,  } = useBusinessActions();
+
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
       <div className="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
-        
+
         {/* Cabecera con Imagen */}
         <div className="relative h-80 shrink-0">
           <Button
@@ -44,39 +49,47 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
           >
             <X className="w-5 h-5" />
           </Button>
-          
-          <img 
-            src={`images/points/${point.image}`} 
+
+          <img
+            src={`images/points/${point.image}`}
             alt={point.name}
             className="w-full h-full object-cover"
             onError={(e) => (e.currentTarget.src = '/placeholder-service.jpg')}
           />
-          
+
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
-          
-          <div className="absolute bottom-8 left-8 right-8">
-            <div className="flex gap-2 mb-3">
+          <div className="absolute inset-0 flex flex-col justify-between p-8">
+
+            {/* Parte superior */}
+            <div className="flex gap-2">
               <Badge className="bg-sabana text-white border-none font-black uppercase text-[10px] px-3 py-1">
                 {point.category}
               </Badge>
               <Badge className="bg-white/20 backdrop-blur text-white border-none font-bold text-[10px] uppercase px-3 py-1">
-                {point.entry_fee == 0 || point.entry_fee === "0" ? "Acceso Gratuito" : `${formatCurrency(point.entry_fee)}`}
+                {point.entry_fee == 0
+                  ? "Acceso Gratuito"
+                  : `${formatCurrency(point.entry_fee)}`}
               </Badge>
             </div>
-            <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-2">
-              {point.name}
-            </h1>
-            <div className="flex items-center text-white/80 font-medium italic">
-              <MapPin className="w-4 h-4 mr-2 text-sabana" />
-              {point.address}
+
+            {/* Parte inferior */}
+            <div>
+              <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-2">
+                {point.name}
+              </h1>
+              <div className="flex items-center text-white/80 font-medium italic">
+                <MapPin className="w-4 h-4 mr-2 text-sabana" />
+                {point.address}
+              </div>
             </div>
+
           </div>
         </div>
 
         {/* Contenido */}
         <div className="p-8 overflow-y-auto custom-scrollbar">
           <div className="grid md:grid-cols-3 gap-8">
-            
+
             {/* Columna Izquierda: Descripción */}
             <div className="md:col-span-2 space-y-6">
               <div>
@@ -84,7 +97,7 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                   <div className="w-8 h-1 bg-sabana rounded-full" />
                   <h2 className="text-sm font-black uppercase tracking-widest text-slate-400">Descripción del lugar</h2>
                 </div>
-                <p className="text-slate-600 leading-relaxed text-lg font-medium">
+                <p className="text-slate-600 leading-relaxed text-md font-medium">
                   {point.description}
                 </p>
               </div>
@@ -116,7 +129,7 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">
                   <Info className="w-4 h-4 text-sabana" /> Información Clave
                 </h3>
-                
+
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="p-2 bg-white/10 rounded-lg shrink-0">
@@ -135,24 +148,24 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                     <div>
                       <p className="text-[10px] font-black uppercase text-slate-400">Costo de Entrada</p>
                       <p className="text-sm font-bold">
-                        {point.entry_fee == 0 || point.entry_fee === "0" ? "Sin costo" : `${formatCurrency(point.entry_fee)}`}
+                        {point.entry_fee == 0  ? "Sin costo" : `${formatCurrency(point.entry_fee)}`}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8 space-y-3">
-                  <Button 
+                  <Button
                     onClick={handleNavigation}
-                    className="w-full bg-sabana hover:bg-sabana/90 text-white rounded-2xl font-black uppercase tracking-tighter h-14 shadow-lg shadow-sabana/20"
+                    className="px-8 border-2 border-slate-200 bg-sabana hover:bg-sabana/100 text-slate-900 rounded-2xl font-black uppercase tracking-tighter"
                   >
                     <Navigation className="w-4 h-4 mr-2" />
                     Abrir en el mapa
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-white/20 text-black hover:bg-white/80 rounded-2xl font-black uppercase tracking-tighter h-12"
+
+                  <Button
+                    variant="outline"
+                    className="px-10 border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-900 rounded-2xl font-black uppercase tracking-tighter"
                     onClick={() => window.print()} // Opcional: imprimir info
                   >
                     <Info className="w-4 h-4 mr-2" />

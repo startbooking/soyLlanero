@@ -20,6 +20,7 @@ import { useCachedData } from "@/hooks/useCachedData";
 import { dataService } from "@/services/dataService";
 import { EventsData } from "@/interface/interface";
 import { useBusinessActions } from "@/hooks/useBusinessActions";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const Events = () => {
   const { handleNavigation, handleContact } = useBusinessActions();
@@ -88,7 +89,7 @@ const Events = () => {
                     className={`absolute top-5 left-5 border-none font-black text-[10px] uppercase px-3 py-1 shadow-lg ${event.is_free ? "bg-green-500 text-white" : "bg-sabana text-white"
                       }`}
                   >
-                    {event.is_free ? "Entrada Libre" : event.price}
+                    {event.is_free ? "Entrada Libre" : formatCurrency(event.price)}
                   </Badge>
                 </div>
 
@@ -130,13 +131,14 @@ const Events = () => {
 
                   <div className="grid grid-cols-2 gap-3">
                     <Button
-                      className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[10px] uppercase h-12"
+                      className="bg-sabana/90 hover:bg-sabana/700 text-white rounded-2xl font-black text-[10px] uppercase h-12"
                       onClick={() => setSelectedEvent(event)}
                     >
                       <Info className="w-3 h-3 mr-2" /> Detalles
                     </Button>
                     <Button
-                      className="bg-sabana hover:bg-sabana/90 text-white rounded-2xl font-black text-[10px] uppercase h-12 shadow-lg shadow-sabana/20"
+                      variant="outline"
+                      className="rounded-2xl font-black text-[10px] uppercase h-12 shadow-lg"
                       onClick={() => handleNavigation(event.location)}
                     >
                       <Navigation className="w-3 h-3 mr-2" /> Ir ahora

@@ -38,7 +38,7 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
   const { handleNavigation } = useBusinessActions();
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in">
       <div className="bg-white rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative flex flex-col md:flex-row">
         
         {/* Botón Cerrar Flotante */}
@@ -79,7 +79,7 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
                 {event.location}
               </div>
               <div className="text-3xl font-black text-slate-900 tracking-tighter">
-                {event.isFree ? "GRATIS" : formatCurrency(event.price)}
+                {event.isFree || event.price == 0 ? "Entrada Libre" : formatCurrency(event.price)}
               </div>
             </div>
 
@@ -107,12 +107,12 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
             {/* Botones de Acción (Simétricos) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
               <Button 
-                variant="secondary"
-                className="h-14 rounded-2xl border-2 border-slate-100 font-black uppercase text-[10px] tracking-widest text-white"
+                variant="outline"
+                className="h-14 rounded-2xl border-2 uppercase text-[10px]"
                 onClick={() => handleNavigation({ name: event.title, location: event.location })}
               >
                 <Navigation className="w-4 h-4 mr-2" />
-                Ir
+                Ir al Evento
               </Button>
               
               <Button 
