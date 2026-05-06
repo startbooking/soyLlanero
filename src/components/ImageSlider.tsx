@@ -39,7 +39,7 @@ export const ImageSlider = () => {
 
   return (
     <section 
-      className="relative h-[60vh] md:h-[75vh] overflow-hidden rounded-xl shadow-2xl group"
+      className="relative h-[60vh] md:h-[75vh] overflow-hidden md:rounded-xl shadow-2xl group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       aria-roledescription="carousel"

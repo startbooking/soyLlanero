@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Menu, 
-  Mountain, 
-  Building, 
-  ChevronRight, 
-  X, 
+import {
+  Menu,
+  Mountain,
+  Building,
+  ChevronRight,
+  X,
   Sparkles,
   MapPin,
   Calendar,
@@ -45,9 +45,9 @@ interface MobileMenuProps {
   onAdminClick: () => void;
 }
 
-export const MobileMenu = ({ 
-  navigationItems, 
-  activeSection, 
+export const MobileMenu = ({
+  navigationItems,
+  activeSection,
   onNavigation,
   onUniqueExperiencesClick,
   onAdminClick
@@ -57,8 +57,8 @@ export const MobileMenu = ({
   const { appConfig } = useAppConfig();
 
   const toggleGroup = (groupId: string) => {
-    setOpenGroups(prev => 
-      prev.includes(groupId) 
+    setOpenGroups(prev =>
+      prev.includes(groupId)
         ? prev.filter(id => id !== groupId)
         : [...prev, groupId]
     );
@@ -81,19 +81,19 @@ export const MobileMenu = ({
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden hover:bg-slate-100 rounded-xl">
-          <Menu className="w-6 h-6 text-slate-900" />
+          <Menu className="w-8 h-8 text-slate-900" />
         </Button>
       </SheetTrigger>
-      
+
       {/* Contenido del Menú con Fondo Premium */}
-      <SheetContent side="right" className="w-[320px] p-0 bg-white border-l-0">
+      <SheetContent side="right" className="w-[350px] p-0 bg-white border-l-0 z-[9999]">
         <div className="flex flex-col h-full">
-          
+
           {/* Header del Menú */}
           <div className="p-8 bg-slate-800 text-white relative overflow-hidden">
-             {/* Decoración de fondo */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-sabana/20 rounded-full blur-3xl -mr-16 -mt-16" />
-              <LogoSection onHomeClick={() => handleNavigation ({ id: "home", route: "/" })} />
+            {/* Decoración de fondo */}
+            <div className="absolute top-2 right-2 w-8 h-8 bg-sabana rounded-full blur" />
+            <LogoSection onHomeClick={() => handleNavigation({ id: "home", route: "/" })} />
           </div>
 
           {/* Navegación Scrolleable */}
@@ -102,7 +102,7 @@ export const MobileMenu = ({
               {navigationItems.map((item) => (
                 <div key={item.id} className="mb-1">
                   {item.subItems ? (
-                    <Collapsible 
+                    <Collapsible
                       open={openGroups.includes(item.id)}
                       onOpenChange={() => toggleGroup(item.id)}
                     >
@@ -116,10 +116,10 @@ export const MobileMenu = ({
                         >
                           <div className="flex items-center gap-3">
                             <div className={cn(
-                                "p-2 rounded-xl transition-colors",
-                                openGroups.includes(item.id) ? "bg-white text-sabana" : "bg-slate-50"
+                              "p-2 rounded-xl transition-colors",
+                              openGroups.includes(item.id) ? "bg-white text-sabana" : "bg-slate-50"
                             )}>
-                                <item.icon className="w-4 h-4" />
+                              <item.icon className="w-4 h-4" />
                             </div>
                             <span className="font-black uppercase text-[11px] tracking-widest">{item.label}</span>
                           </div>
@@ -133,11 +133,11 @@ export const MobileMenu = ({
                         {item.subItems.map((subItem) => (
                           <SheetClose asChild key={subItem.id}>
                             <Button
-                                variant="ghost"
-                                className="w-full justify-start h-12 text-slate-500 hover:text-sabana hover:bg-transparent pl-8"
-                                onClick={() => handleSubItemClick(subItem.route)}
+                              variant="ghost"
+                              className="w-full justify-start h-12 text-slate-500 hover:text-sabana hover:bg-transparent pl-8"
+                              onClick={() => handleSubItemClick(subItem.route)}
                             >
-                                <span className="font-bold text-[11px] uppercase tracking-wider">{subItem.label}</span>
+                              <span className="font-bold text-[11px] uppercase tracking-wider">{subItem.label}</span>
                             </Button>
                           </SheetClose>
                         ))}
@@ -145,17 +145,17 @@ export const MobileMenu = ({
                     </Collapsible>
                   ) : (
                     <SheetClose asChild>
-                        <Button
+                      <Button
                         variant="ghost"
                         onClick={() => onNavigation(item)}
                         className={cn(
-                            "w-full justify-start h-14 rounded-2xl px-4 gap-3",
-                            activeSection === item.id ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-50"
+                          "w-full justify-start h-14 rounded-2xl px-4 gap-3",
+                          activeSection === item.id ? "bg-sabana-900 text-slate" : "text-slate-500 hover:bg-slate-50"
                         )}
-                        >
-                        <item.icon className={cn("w-4 h-4", activeSection === item.id && "text-sabana")} />
+                      >
+                        <item.icon className={cn("w-4 h-4", activeSection === item.id && "text-slate")} />
                         <span className="font-black uppercase text-[11px] tracking-widest">{item.label}</span>
-                        </Button>
+                      </Button>
                     </SheetClose>
                   )}
                 </div>

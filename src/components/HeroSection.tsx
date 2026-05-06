@@ -75,31 +75,32 @@ export const HeroSection = ({ language }: HeroSectionProps) => {
             {/* Estadísticas en Capsulas */}
             <div className="flex flex-wrap justify-center gap-4 md:gap-12 py-8 animate-fade-in">
               <div className="flex flex-col items-center">
-                <span className="text-2xl font-black text-slate-900 tracking-tighter">{appStats?.activeBusinesses || "120"}+</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t.hero.stats.businesses}</span>
+                <span className="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter">{appStats?.activeBusinesses || "120"}+</span>
+                <span className="text-[12px] font-black uppercase tracking-widest text-slate-400">{t.hero.stats.businesses}</span>
               </div>
               <div className="h-12 w-[1px] bg-slate-200 hidden md:block" />
               <div className="flex flex-col items-center">
-                <span className="text-4xl font-black text-slate-900 tracking-tighter">{appStats?.activeEvents || "25"}+</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t.hero.stats.events}</span>
+                <span className="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter">{appStats?.activeEvents || "25"}+</span>
+                <span className="text-[12px] font-black uppercase tracking-widest text-slate-400">{t.hero.stats.events}</span>
               </div>
               <div className="h-12 w-[1px] bg-slate-200 hidden md:block" />
               <div className="flex flex-col items-center">
                 <div className="flex items-center gap-1">
                   <Star className="w-6 h-6 text-yellow-500 fill-current" />
-                  <span className="text-4xl font-black text-slate-900 tracking-tighter">
+                  <span className="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter">
                     {Number(appStats?.averageBusinnesses ?? 4.9).toFixed(1)}
                   </span>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t.hero.stats.rating}</span>
+                <span className="text-[12px] font-black uppercase tracking-widest text-slate-400">{t.hero.stats.rating}</span>
               </div>
             </div>
 
             {/* Botones de Acción de Gran Tamaño */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <Button
+                variant="default"
                 size="lg"
-                className="h-16 px-10 bg-sabana/90 hover:bg-sabana/80 text-white rounded-2xl font-black uppercase tracking-tighter text-sm transition-all hover:scale-105 shadow-2xl shadow-slate-200"
+                className="h-16 px-10 hover:bg-sabana/80 text-white rounded-2xl font-black uppercase tracking-tighter text-sm transition-all hover:scale-105 shadow-2xl shadow-slate-200"
                 onClick={() => navigate("/points-of-interest")}
               >
                 <MapPin className="w-5 h-5 mr-2 text-white" />

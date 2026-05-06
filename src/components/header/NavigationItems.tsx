@@ -105,66 +105,64 @@ export const NavigationItems = ({
         const hasSubItems = !!item.subItems;
 
         return (
-          <>
-            <div key={item.id} className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => hasSubItems ? setOpenMenuId(openMenuId === item.id ? null : item.id) : onNavigation(item)}
-                className={cn(
-                  "flex items-center gap-2 px-3 xl:px-4 h-10 rounded-xl font-black uppercase text-[10px] xl:text-[11px] tracking-widest transition-all duration-300",
-                  isActive
-                    ? "text-slate"
-                    : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900",
-                  openMenuId === item.id && "bg-sabana/80 text-white"
-                )}
-              >
-                <item.icon className={cn("w-4 h-4", isActive || openMenuId === item.id ? "text-slate" : "text-current")} />
-                <span className="hidden xl:inline">{item.label}</span>
-                {hasSubItems && (
-                  <ChevronDown className={cn(
-                    "w-3 h-3 transition-transform duration-300",
-                    openMenuId === item.id && "rotate-180"
-                  )} />
-                )}
-              </Button>
-              {/* Dropdown Mejorado */}
-              {hasSubItems && openMenuId === item.id && (
-                <div className="absolute top-[calc(100%+12px)] left-0 min-w-[260px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl shadow-slate-200/50 z-[100] p-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="space-y-1">
-                    {item.subItems?.map((subItem) => (
-                      <button
-                        key={subItem.id}
-                        onClick={() => handleSubItemClick(subItem.route)}
-                        className={cn(
-                          "group w-full flex items-center gap-4 p-3.5 rounded-[1.2rem] transition-all text-left",
-                          location.pathname === subItem.route ? "bg-slate-50" : "hover:bg-slate-50/80"
-                        )}
-                      >
-                        <div className={cn(
-                          "p-2 rounded-xl transition-all",
-                          location.pathname === subItem.route ? "bg-white shadow-sm text-sabana" : "bg-sabana/10 text-slate-400 group-hover:bg-white group-hover:text-sabana"
-                        )}>
-                          <subItem.icon className="w-4 h-4" />
-                        </div>
-                        <span className={cn(
-                          "font-black uppercase text-[10px] tracking-widest",
-                          location.pathname === subItem.route ? "text-sabana/80" : "text-slate-500 group-hover:text-slate-900"
-                        )}>
-                          {subItem.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+          <div key={item.id} className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => hasSubItems ? setOpenMenuId(openMenuId === item.id ? null : item.id) : onNavigation(item)}
+              className={cn(
+                "flex items-center gap-2 px-3 xl:px-4 h-10 rounded-xl font-black uppercase text-[10px] xl:text-[11px] tracking-widest transition-all duration-300",
+                isActive
+                  ? "text-slate"
+                  : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900",
+                openMenuId === item.id && "bg-sabana/80 text-white"
               )}
-            </div>
-          </>
+            >
+              <item.icon className={cn("w-4 h-4", isActive || openMenuId === item.id ? "text-slate" : "text-current")} />
+              <span className="hidden xl:inline">{item.label}</span>
+              {hasSubItems && (
+                <ChevronDown className={cn(
+                  "w-3 h-3 transition-transform duration-300",
+                  openMenuId === item.id && "rotate-180"
+                )} />
+              )}
+            </Button>
+            {/* Dropdown Mejorado */}
+            {hasSubItems && openMenuId === item.id && (
+              <div className="absolute top-[calc(100%+12px)] left-0 min-w-[260px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl shadow-slate-200/50 z-[100] p-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="space-y-1">
+                  {item.subItems?.map((subItem) => (
+                    <button
+                      key={subItem.id}
+                      onClick={() => handleSubItemClick(subItem.route)}
+                      className={cn(
+                        "group w-full flex items-center gap-4 p-3.5 rounded-[1.2rem] transition-all text-left",
+                        location.pathname === subItem.route ? "bg-slate-50" : "hover:bg-slate-50/80"
+                      )}
+                    >
+                      <div className={cn(
+                        "p-2 rounded-xl transition-all",
+                        location.pathname === subItem.route ? "bg-white shadow-sm text-sabana" : "bg-sabana/10 text-slate-400 group-hover:bg-white group-hover:text-sabana"
+                      )}>
+                        <subItem.icon className="w-4 h-4" />
+                      </div>
+                      <span className={cn(
+                        "font-black uppercase text-[10px] tracking-widest",
+                        location.pathname === subItem.route ? "text-sabana/80" : "text-slate-500 group-hover:text-slate-900"
+                      )}>
+                        {subItem.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         );
       })}
-      
+
       <UserAuthAction />
-      
+
     </nav>
   );
 };
