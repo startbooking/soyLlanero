@@ -210,6 +210,9 @@ export const Footer = () => {
                 2026 Todos los derechos reservados.
               </a>
             </div>
+            <p className="text-xs text-muted-foreground text-center md:text-left italic">
+              Prohibida la reproducción total o parcial de nuestro contenido, así como su traducción a cualquier idioma sin autorización escrita del titular.
+            </p>
           </div>
         </div>
       </footer>

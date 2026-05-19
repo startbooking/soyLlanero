@@ -5,6 +5,7 @@ import { Calendar, Clock, MapPin, ArrowRight, Navigation, Sparkles } from "lucid
 import { EventsData } from "@/interface/interface";
 import { useBusinessActions } from "@/hooks/useBusinessActions";
 import { useState } from "react";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface EventCardProps {
   event: EventsData;
@@ -85,9 +86,9 @@ export const EventCard = ({ event, onViewMore }: EventCardProps) => {
         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
           <div>
             <p className="text-[9px] font-black uppercase text-slate-400 mb-1">Inversión</p>
-            <p className="text-xl font-black text-slate-900 tracking-tighter">
-              {is_free ? "ACCESO LIBRE" : price}
-            </p>
+            <Badge className="bg-slate-100/20 hover:bg-slate-100/50 text-sm font-black text-slate-900 tracking-tighter ">
+              {is_free ? "ACCESO GRATUITO" : formatCurrency(price)}
+            </Badge>
           </div>
           <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-bold text-[10px] rounded-lg">
             Próximamente
@@ -97,7 +98,7 @@ export const EventCard = ({ event, onViewMore }: EventCardProps) => {
         {/* Botones de Acción SIMÉTRICOS */}
         <div className="grid grid-cols-2 gap-3 pt-2">
           <Button
-            variant="secondary"
+            variant="outline"
             className="h-12 rounded-2xl border-2 border-slate-100 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all"
             onClick={(e) => {
               e.stopPropagation();
@@ -109,11 +110,11 @@ export const EventCard = ({ event, onViewMore }: EventCardProps) => {
           </Button>
 
           <Button
-            className="h-12 rounded-2xl bg-sabana/90 text-white hover:bg-sabana/50 font-black uppercase text-[10px] tracking-widest shadow-lg shadow-slate-200 transition-all hover:scale-[1.03]"
+            className="h-12 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-slate-200 transition-all hover:scale-[1.03]"
             onClick={() => onViewMore(event)}
           >
             Ver más
-            <ArrowRight className="w-4 h-4 ml-2 text-white" />
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
 
          {/*  <Button

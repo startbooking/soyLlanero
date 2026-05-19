@@ -1,6 +1,4 @@
-import { Home } from "lucide-react";
 import { useAppConfig } from "@/contexts/AppConfigContext";
-import TitleWithLineBreak from "@/utils/TitleWithLineBreak";
 
 interface LogoSectionProps {
   onHomeClick: () => void;
@@ -8,21 +6,31 @@ interface LogoSectionProps {
 
 export const LogoSection = ({ onHomeClick }: LogoSectionProps) => {
   const { appConfig } = useAppConfig();
+  
   return (
     <div 
       className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
       onClick={onHomeClick}
     >
-      <div className="w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300 pulse-glow">
-        <img className="rounded-lg" src={`/images/${appConfig?.app_logo_url}`} alt="" />
+      {/* Contenedor del Logo */}
+      <div className="w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300 pulse-glow bg-white shadow-sm overflow-hidden">
+        <img 
+          className="w-full h-full object-cover" 
+          src={`/images/${appConfig?.app_logo_url}`} 
+          alt="Logo" 
+        />
       </div>
-      <div className="md:block">
-          <h1 className="text-sm md:text-xl font-bold text-sabana transition-colors uppercase leading-5">
-            { appConfig?.app_name}
+
+      {/* Bloque de Texto: Agregamos flex-col y justify-center para evitar que las cajas se estiren */}
+      <div className="flex flex-col justify-center select-none">
+          <h1 className="text-sm md:text-xl font-extrabold text-sabana transition-colors uppercase leading-none tracking-tight">
+            {appConfig?.app_name}
           </h1>
-          <h2 className="text-[10px] md:text-sm font-bold text-sabana/70 ">{appConfig?.app_slogan}</h2>
-      </div>
-      <div className="hidden md:block">
+          {appConfig?.app_slogan && (
+            <h2 className="text-[9px] md:text-xs font-medium text-sabana/80 leading-tight mt-0.5">
+              {appConfig?.app_slogan}
+            </h2>
+          )}
       </div>
     </div>
   );

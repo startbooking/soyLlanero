@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, Eye, Utensils, Clock, Phone, Map } from "lucide-react";
+import { MapPin, Star, Eye, Utensils, Clock, Phone, Map, Navigation } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -88,10 +88,10 @@ const RestaurantCard = ({ item }: { item: Business }) => {
             <Button
               variant="outline"
               onClick={handleNavigation}
-              className="border-slate-200 hover:bg-blue-50 hover:text-blue-600 text-slate-600 font-bold rounded-sm transition-all flex items-center justify-center gap-2"
+              className="border-slate-200 rounded-xl hover:bg-blue-50 hover:text-blue-600 text-slate-600 font-bold transition-all flex items-center justify-center gap-2"
             >
-              <Map className="w-4 h-4" />
-              Waze
+              <Navigation className="w-3 h-3 mr-2 text-slate" /> Cómo llegar
+
             </Button>
             <RestaurantMenuModal
               restaurantName={item.name}

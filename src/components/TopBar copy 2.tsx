@@ -31,12 +31,12 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
     { code: "fr", name: "Français", flag: "🇫🇷" },
   ];
 
-  // Configuración de redes sociales
+  // Configuración de redes sociales para evitar repetición
   const socialPlatforms = [
-    { id: 'facebook', name: 'Facebook', icon: Facebook, url: appConfig?.facebook_url },
-    { id: 'instagram', name: 'Instagram', icon: Instagram, url: appConfig?.instagram_url },
-    { id: 'youtube', name: 'YouTube', icon: Youtube, url: appConfig?.youtube_url },
-    { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, url: appConfig?.linkedin_url },
+    { id: 'facebook', icon: Facebook, url: appConfig?.facebook_url },
+    { id: 'instagram', icon: Instagram, url: appConfig?.instagram_url },
+    { id: 'youtube', icon: Youtube, url: appConfig?.youtube_url },
+    { id: 'linkedin', icon: Linkedin, url: appConfig?.linkedin_url },
   ];
 
   const handleSocialClick = (url: string) => {
@@ -46,7 +46,7 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
   const formattedPhone = formatPhoneNumber(appConfig?.company_phone);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-white/70 backdrop-blur-md border-b border-gray-100 text-slate-700 h-8 flex items-center">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 text-slate-700 h-8 flex items-center">
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Contact Info */}
         <div className="flex items-center gap-4 md:gap-6 text-xs font-medium">
@@ -54,7 +54,6 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
             <a
               className="flex items-center gap-2 hover:text-green-600 transition-colors"
               href={`tel:${appConfig.company_phone}`}
-              aria-label={`Llamar al teléfono ${formattedPhone}`}
             >
               <Phone className="w-4 h-4" />
               <span className="hidden md:inline">{formattedPhone}</span>
@@ -64,14 +63,12 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
             <a
               className="flex items-center gap-2 hover:text-green-600 transition-colors"
               href={`mailto:${appConfig.company_email}`}
-              aria-label={`Enviar correo a ${appConfig.company_email}`}
             >
               <Mail className="w-4 h-4" />
               <span className="hidden md:inline">{appConfig.company_email}</span>
             </a>
           )}
         </div>
-
         {/* Actions (Social & Language) */}
         <div className="flex items-center gap-2">
           {/* Social Media Loop */}
@@ -81,10 +78,8 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
                 key={platform.id}
                 variant="ghost"
                 size="icon"
-                // Solución al problema visual quitando los anillos de enfoque por defecto
-                className="h-7 w-7 hover:bg-slate-100 text-slate-600 hover:text-slate-950 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus:bg-slate-100"
+                className="h-7 w-7 hover:bg-slate-100"
                 onClick={() => handleSocialClick(platform.url!)}
-                aria-label={`Visitar nuestro ${platform.name}`}
               >
                 <platform.icon className="w-4 h-4" />
               </Button>
@@ -97,7 +92,7 @@ export const TopBar = ({ currentLanguage, onLanguageChange }: TopBarProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 gap-2 hover:bg-slate-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
+                className="h-7 px-2 gap-2 hover:bg-slate-100"
               >
                 <Languages className="w-4 h-4" />
                 <span className="text-xs uppercase font-bold">

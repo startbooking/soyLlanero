@@ -35,7 +35,7 @@ export const HomeContent = ({ language }: HomeContentProps) => {
       <HeroSection language={language} />
 
       {/* Sección de categorías destacadas */}
-      <CategoriesSection language={language} />
+      {/* <CategoriesSection language={language} /> */}
 
       {/* Sección de empresas destacadas */}
       <FeaturedBusinessesSection language={language} />

@@ -43,7 +43,7 @@ export const Header = ({ activeSection, onSectionChange, language }: HeaderProps
       <header
         className={cn(
           "fixed top-8 md:top-6 left-0 right-0",
-          "bg-slate-800 md:bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm h-20 flex items-center z-[9999]"
+          "bg-slate-800 md:bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm h-20 flex items-center z-[100]"
         )}
       >
         <div className="container mx-auto px-4 ">

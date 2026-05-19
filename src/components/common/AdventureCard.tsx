@@ -58,7 +58,7 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
         {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70" />
 
-        <Badge className="absolute top-4 right-4 bg-sky-500 text-white border-none shadow-lg">
+        <Badge className="absolute top-4 right-4 bg-sabana/80 text-white border-none shadow-lg">
           {category}
         </Badge>
 
@@ -76,7 +76,7 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
 
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start gap-2">
-          <CardTitle className="text-lg font-black text-slate-800 line-clamp-1 group-hover:text-sky-600 transition-colors">
+          <CardTitle className="text-lg font-black text-slate-800 line-clamp-1 group-hover:text-sabana transition-colors">
             {name}
           </CardTitle>
         </div>
@@ -91,39 +91,43 @@ export const AdventureCard = ({ experience, onAction }: AdventureCardProps) => {
           {short_description}
         </p>
 
-        <div className="flex items-center gap-4 border-y py-3 border-slate-50">
+        <div className="flex items-center gap-4 border-y py-3 border-slate-100"> {/* Borde un poco más visible */}
           <Badge className={getDifficultyStyles(difficulty)}>
             {difficulty}
           </Badge>
-          <div className="flex items-center text-[10px] font-bold text-slate-400 uppercase">
-            <Users className="w-3 h-3 mr-1" />
-            Máx. {max_people} pers.
+
+          {/* Ajustado de 10px a 12px (text-xs) y color más oscuro */}
+          <div className="flex items-center text-xs font-bold text-slate-600 uppercase tracking-tight">
+            <Users className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
+            <span>Máx. {max_people} pers.</span>
           </div>
         </div>
 
-        {/* Precio */}
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-[9px] uppercase font-black text-slate-400 tracking-tighter">Precio por persona</p>
-            <p className="text-xl font-black text-slate-900 tracking-tight">
+        {/* Sección de Precio */}
+        <div className="flex justify-between items-center mt-2">
+          <div className="flex flex-col">
+            {/* Ajustado de 9px a 11px y color con mejor contraste */}
+            <p className="text-[11px] uppercase font-bold text-slate-500 tracking-wide mb-0.5">
+              Precio por persona
+            </p>
+            <p className="text-xl font-black text-slate-900 tracking-tight leading-none">
               {formatCurrency(Number(price))}
             </p>
           </div>
         </div>
-
         {/* Botones de Acción */}
         <div className="flex gap-2 pt-2">
           <Button
-            variant="secondary"
-            className="rounded-xl font-black text-[10px] uppercase border-slate-200"
+            variant="outline"
+            className="rounded-xl font-black uppercase border-slate-200"
             onClick={() => handleNavigation(experience)}
           >
-            <Navigation className="w-3 h-3 mr-2 text-sabana" /> Cómo llegar
+            <Navigation className="w-3 h-3 mr-2 text-slate-500" /> Cómo llegar
           </Button>
           <Button
             onClick={handleViewDetails}
             size="sm"
-            className="flex-1 bg-sabana text-white hover:bg-sabana hover:text-slate-500 font-bold transition-all"
+            className="flex-1 rounded-xl uppercase hover:text-slate-500 font-bold transition-all"
           >
             <Eye className="w-3.5 h-3.5 mr-2" />
             Ver Detalles

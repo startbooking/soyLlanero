@@ -63,7 +63,7 @@ export const UpcomingEventsSection = ({ language }: UpcomingEventsSectionProps) 
           <Button
             variant="outline"
             onClick={() => navigate('/events')}
-            className="rounded-2xl border-2 border-slate-900 font-black uppercase text-[10px] tracking-widest h-12 px-8 hover:bg-slate-900 hover:text-white transition-all"
+            className="rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest h-12 px-8 hover:bg-slate-200/60 transition-all"
           >
             Ver calendario completo
           </Button>
@@ -84,17 +84,17 @@ export const UpcomingEventsSection = ({ language }: UpcomingEventsSectionProps) 
         </div>
 
         {/* Banner de invitación (Call to Action) */}
-        <div className="mt-20 p-1 bg-gradient-to-r from-sabana via-accent to-secondary rounded-[3rem]">
-          <div className="bg-slate-900 rounded-[2.8rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="mt-20 p-1 rounded-[3rem]">
+          <div className="bg-slate-100/50 rounded-[2.8rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left space-y-2">
-              <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">
+              <h3 className="text-2xl md:text-3xl font-black text-slate uppercase tracking-tighter">
                 ¿Organizas un evento?
               </h3>
               <p className="text-slate-400 font-medium">
                 Únete a nuestra red de aliados y promociona tus actividades con nosotros.
               </p>
             </div>
-            <Button className="bg-white text-slate-900 hover:bg-sabana hover:text-white rounded-2xl font-black uppercase tracking-widest text-[10px] h-14 px-10 transition-all">
+            <Button className="bg-white text-slate-900 hover:bg-slate-100/20 rounded-2xl font-black uppercase tracking-widest text-[12px] h-14 px-10 transition-all">
               Postular mi evento <Sparkles className="w-4 h-4 ml-2" />
             </Button>
           </div>

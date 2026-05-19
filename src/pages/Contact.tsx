@@ -170,8 +170,8 @@ export const Contact = () => {
                       </div>
 
                       <Button 
-                        type="submit" 
-                        className="w-full h-14 bg-sabana hover:bg-sabana/90 text-white font-black rounded-xl shadow-lg shadow-sabana/20 transition-all active:scale-[0.98]" 
+                        type="submit"
+                        className="w-full h-14 font-black rounded-xl shadow-lg shadow-sabana/20 transition-all active:scale-[0.98]" 
                         disabled={!isCaptchaVerified || isSubmitting}
                       >
                         {isSubmitting ? "ENVIANDO..." : (

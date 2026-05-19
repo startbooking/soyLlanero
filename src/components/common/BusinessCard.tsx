@@ -113,44 +113,38 @@ export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => 
         {/* Sección de Precio (Sanitizada) */}
         {price && (
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 group-hover:border-sabana/30 transition-colors">
-            <div className="flex justify-between items-end">
-              <div>
-                <p className="text-[10px] uppercase font-black text-slate-400 tracking-wider">Precio desde</p>
-                <p className="text-2xl font-black text-slate-800 tracking-tighter">
-                  {formatCurrency(price)}
-                </p>
-              </div>
+          <div className="flex justify-between items-center"> {/* items-center para mejor balance visual */}
+            <div>
+              {/* Aumentamos de 10px a 11px y oscurecemos el gris para accesibilidad */}
+              <p className="text-[11px] uppercase font-bold text-slate-600 tracking-wider mb-0.5">
+                Precio desde
+              </p>
+              <p className="text-2xl font-black text-slate-900 tracking-tighter">
+                {formatCurrency(price)}
+              </p>
+            </div>
 
-              {/* <div className="text-right">
-                <div className="flex items-center justify-end text-[10px] font-bold text-slate-500 uppercase">
-                  <Receipt className="w-3 h-3 mr-1 text-slate-400" />
-                  IVA: {formatCurrency(taxes || 0)}
-                </div>
-                <div className="flex items-center justify-end text-[10px] font-bold text-sky-600">
-                  <Percent className="w-3 h-3 mr-1" />
-                  Tasa: {tax_percentage}
-                </div>
-              </div> */}
-              <div className="flex flex-col items-end space-y-1">
-                <div className="flex items-center justify-end text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  <Receipt className="w-3 h-3 mr-1 text-slate-400" />
-                  Impuestos ({taxPercentage}%)
-                </div>
-                <p className="text-sm font-semibold text-slate-700">
-                  {formatCurrency(calculatedTaxes)}
-                </p>
+            <div className="flex flex-col items-end space-y-1">
+              <div
+                className="flex items-center justify-end text-[10px] font-bold text-slate-600 uppercase tracking-widest"
+                // Añadimos un label para que el lector de pantalla explique qué es este porcentaje
+                aria-label={`Porcentaje de impuestos: ${taxPercentage} por ciento`}
+              >
+                <Receipt className="w-3 h-3 mr-1 text-slate-500" />
+                Impuestos ({taxPercentage}%)
               </div>
+              <p
+                className="text-sm font-semibold text-slate-800"
+                aria-label={`Valor total de impuestos: ${formatCurrency(calculatedTaxes)}`}
+              >
+                {formatCurrency(calculatedTaxes)}
+              </p>
             </div>
           </div>
+        </div>
         )}
 
-        {/* <Button
-          className="w-full bg-sabana text-white hover:bg-slate-900 hover:text-slate-100/50 transition-all duration-300 font-bold h-11"
-          onClick={handleViewDetails}
-        >
-          <Eye className="w-4 h-4 mr-2" />
-          Ver Disponibilidad
-        </Button> */}
+
         <div className="grid grid-cols-2 gap-3 mt-4">
           {catId === 2 ? ( // RESTAURANTES
             <>
@@ -178,16 +172,16 @@ export const BusinessCard = ({ business, onViewDetails }: BusinessCardProps) => 
               className="col-span-2 rounded-xl font-black text-[10px] uppercase bg-slate-900 text-white h-12 shadow-xl"
               onClick={() => handleContact(business.phone || '')}
             >
-              <MessageSquare className="w-4 h-4 mr-2 text-sabana" /> Contactar Agencia
+              <MessageSquare className="w-4 h-4 mr-2" /> Contactar Agencia
             </Button>
           ) : ( // OTROS SERVICIOS (Hoteles, etc.)
             <>
               <Button
-                variant="secondary"
-                className="rounded-xl font-black text-[10px] uppercase border-slate-200"
+                variant="outline"
+                className="rounded-xl uppercase border-slate-200"
                 onClick={() => handleNavigation(business)}
               >
-                <Navigation className="w-3 h-3 mr-2 text-sabana" /> Cómo llegar
+                <Navigation className="w-3 h-3 mr-2" /> Cómo llegar
               </Button>
               <Button
                 className="rounded-xl font-black text-[10px] uppercase bg-sabana text-white shadow-lg"

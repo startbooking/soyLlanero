@@ -163,14 +163,14 @@ export const PointDetailModal = ({ point, onClose }: PointDetailModalProps) => {
                     Abrir en el mapa
                   </Button>
 
-                  <Button
+                  {/* <Button
                     variant="outline"
                     className="px-10 border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-900 rounded-2xl font-black uppercase tracking-tighter"
                     onClick={() => window.print()} // Opcional: imprimir info
                   >
                     <Info className="w-4 h-4 mr-2" />
                     Guardar guía
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
 

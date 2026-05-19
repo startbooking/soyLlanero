@@ -131,14 +131,15 @@ const Events = () => {
 
                   <div className="grid grid-cols-2 gap-3">
                     <Button
-                      className="bg-sabana/90 hover:bg-sabana/700 text-white rounded-2xl font-black text-[10px] uppercase h-12"
+                      variant="default"
+                      className="rounded-2xl font-black uppercase h-12"
                       onClick={() => setSelectedEvent(event)}
                     >
                       <Info className="w-3 h-3 mr-2" /> Detalles
                     </Button>
                     <Button
                       variant="outline"
-                      className="rounded-2xl font-black text-[10px] uppercase h-12 shadow-lg"
+                      className="rounded-2xl font-black uppercase h-12 shadow-lg"
                       onClick={() => handleNavigation(event.location)}
                     >
                       <Navigation className="w-3 h-3 mr-2" /> Ir ahora

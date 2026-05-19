@@ -70,7 +70,7 @@ export const ExperiencesSection = ({ language }: ExperiencesSectionProps) => {
         <div className="text-center mt-14">
           <Button 
             variant="outline" 
-            className="border-slate-300 text-slate-700 hover:bg-sabana hover:text-slate-900 hover:border-sabana font-bold px-8 py-6 rounded-xl transition-all"
+            className="border-slate-300 text-slate-700 hover:text-slate-900 font-bold px-8 py-6 rounded-xl transition-all text-[14px]"
             onClick={() => navigate('/experiences')}
           >
             Ver Todas las Experiencias

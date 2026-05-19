@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Utensils, Info } from "lucide-react";
+import { Utensils, Info, SquareMenu } from "lucide-react";
 
 interface MenuModalProps {
   restaurantName: string;
@@ -19,11 +19,12 @@ export const RestaurantMenuModal = ({ restaurantName, specialties, description }
   return (
     <Dialog>
       <DialogTrigger asChild className="w-full">
-        <Button className="bg-sabana hover:bg-sabana/90 text-white font-bold rounded-sm px-6 shadow-md shadow-sabana/20 transition-all active:scale-95">
+        <Button className="bg-sabana rounded-xl font-bold px-6 shadow-md shadow-sabana/20 transition-all active:scale-95 ">
           Ver Menú
+          <SquareMenu />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] rounded-2xl">
+      <DialogContent className="sm:max-w-[425px] rounded-2xl z-[9999]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black text-slate-800 flex items-center gap-2">
             <Utensils className="text-sabana w-6 h-6" />

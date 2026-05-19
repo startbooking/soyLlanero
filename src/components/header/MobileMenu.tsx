@@ -80,7 +80,9 @@ export const MobileMenu = ({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden hover:bg-slate-100 rounded-xl">
+        <Button variant="ghost" size="icon" className="md:hidden hover:bg-slate-100 rounded-xl"
+        aria-label="Abrir menú de navegación"
+        >
           <Menu className="w-8 h-8 text-slate-900" />
         </Button>
       </SheetTrigger>

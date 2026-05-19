@@ -107,21 +107,21 @@ export const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
             {/* Botones de Acción (Simétricos) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
               <Button 
-                variant="outline"
-                className="h-14 rounded-2xl border-2 uppercase text-[10px]"
+                variant="default"
+                className="h-14 rounded-2xl border-2 uppercase text-[10px] text-slate-900 rigth"
                 onClick={() => handleNavigation({ name: event.title, location: event.location })}
               >
                 <Navigation className="w-4 h-4 mr-2" />
                 Ir al Evento
               </Button>
               
-              <Button 
+              {/* <Button 
                 className="h-14 rounded-2xl bg-sabana/90 text-white hover:bg-sabana/60 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-slate-200"
                 onClick={() => alert("Reserva en proceso...")}
               >
                 Reservar Cupo
                 <ChevronRight className="w-4 h-4 ml-2 text-white" />
-              </Button>
+              </Button> */}
             </div>
 
           </div>

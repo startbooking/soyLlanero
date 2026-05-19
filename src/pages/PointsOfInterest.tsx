@@ -42,10 +42,13 @@ const PointsOfInterest = () => {
         <div className="bg-white border-b border-slate-100 mb-12">
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-4xl mx-auto text-center space-y-4">
-              <Badge className="bg-sabana/10 text-sabana border-none font-black px-4 py-1 uppercase tracking-widest text-[10px]">
-                <Sparkles className="w-3 h-3 mr-2 inline" /> Destinos Imperdibles
-              </Badge>
-              <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase">
+              <div className="flex justify-center animate-fade-in">
+                <Badge className="bg-white shadow-xl shadow-slate-200 border-none text-slate-900 px-6 py-2 rounded-full flex items-center gap-2 group cursor-default">
+                  <Sparkles className="w-4 h-4 text-slate animate-pulse" />
+                  <span className="font-black uppercase tracking-widest text-[10px]">Destinos Imperdibles</span>
+                </Badge>
+              </div>
+              <h1 className="text-3xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase">
                 LUGARES QUE <span className="text-sabana">ENAMORAN</span>
               </h1>
               <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">
@@ -81,7 +84,7 @@ const PointsOfInterest = () => {
                   </div>
 
                   {/* Rating Flotante */}
-                  <div className="absolute bottom-4 left-4 flex items-center bg-sabana text-white rounded-xl px-2 py-1 shadow-lg">
+                  <div className="absolute bottom-4 left-4 flex items-center bg-slate-700/50 text-white rounded-xl px-2 py-1 shadow-lg">
                     <Star className="w-3 h-3 fill-current mr-1" />
                     <span className="font-black text-xs">{point.rating || '4.5'}</span>
                   </div>
@@ -117,14 +120,14 @@ const PointsOfInterest = () => {
                   <div className="grid grid-cols-2 gap-3 pt-2">
                     <Button
                       variant="default"
-                      className="text-white rounded-xl font-black text-[10px] uppercase h-11"
+                      className="rounded-xl font-black uppercase h-11"
                       onClick={() => setSelectedPoint(point)}
                     >
                       <Info className="w-3 h-3 mr-2" /> Detalles
                     </Button>
                     <Button
                       variant="outline"
-                      className="rounded-xl font-black text-[10px] uppercase h-11 shadow-lg"
+                      className="rounded-xl font-black uppercase h-11 shadow-lg"
                       onClick={(e) => {
                         e.stopPropagation(); // Evita que se disparen otros eventos
                         handleNavigation(point);

@@ -158,7 +158,7 @@ export const RoomCard = ({ room, hotel, onAction, actionLabel }: RoomCardProps) 
                   {formatCurrency(room.price_per_night)}
                 </span>
                 {room.has_tax === 1 && (
-                  <Badge variant="outline" className="text-[11px] h-5 border-green-100 text-sabana/70 bg-green-50">
+                  <Badge variant="outline" className="text-[11px] h-5 border-green-100/50 text-slate/70 bg-green-50">
                     + {room.tax_percentage}% IVA
                   </Badge>
                 )}
@@ -178,12 +178,12 @@ export const RoomCard = ({ room, hotel, onAction, actionLabel }: RoomCardProps) 
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button> */}
             <Button
+              variant="default"
               onClick={handleButtonClick}
               disabled={!isAvailable && !onAction} // Si hay onAction, permitimos el click aunque no haya cupo en fechas anteriores
-              size="lg"
               className={`rounded-sm px-8 font-bold transition-all ${
                 (isAvailable || onAction)
-                  ? 'bg-sabana hover:bg-sabana/80 shadow-sabana/10 shadow-xl'
+                  ? 'hover:bg-sabana/80 shadow-sabana/10 shadow-xl'
                   : 'bg-slate-300 cursor-not-allowed'
               }`}
             >

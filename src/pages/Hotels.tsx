@@ -124,8 +124,8 @@ const AccommodationCard = ({ item }: { item: BusinessAccommodation }) => {
           </div>
           <Button
             onClick={handleViewDetails}
-            variant="outline"
-            className="rounded-sm hover:bg-sabana/70 hover:text-white border-sabana text-white bg-sabana transition-all w-[50%]"
+            variant="default"
+            className="rounded-xl  transition-all w-[50%]"
           >
             <Eye className="w-4 h-4 mr-2" />
             Ver más

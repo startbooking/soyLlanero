@@ -187,7 +187,7 @@ export const createNavigationItems = (t: any): NavigationItem[] => [
     icon: Briefcase,
     route: "/services",
     subItems: [
-      { id: "restaurants", label: "Comer", icon: Utensils, route: "/discover/restaurants" },
+      { id: "restaurants", label: "Comer", icon: Utensils, route: "/restaurants" },
       { id: "agencies-operators", label: "Agencias", icon: Building, route: "/agencies-operators" },
       { id: "other-services", label: "Guías", icon: Star, route: "/services" }
     ]
